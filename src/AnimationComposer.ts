@@ -1,11 +1,10 @@
-import { DEFAULT_TRANSITION_DURATION_MS, DEFAULT_TRANSITION_EASING } from "./config";
-import { type Length, addUnit } from "./utils";
 import type { Property, StandardPropertiesHyphen } from "csstype";
 import { css, keyframes } from "styled-components";
-import { isDefined, isInteger } from "./utils";
 import { resolveMaybeBaseValue, resolveMaybeBaseValues } from "./SizeComposer";
+import { type Length, addUnit, isInteger } from "./utils";
 
-import { StylesComposer } from "./StylesComposer";
+import { ComposerConfig } from "./ComposerConfig";
+import { Composer } from "./Composer";
 
 type PropertyAnimationSteps<V> = Array<V>;
 
@@ -57,12 +56,7 @@ export function getHasAnimationProperty(property: keyof AnimatableProperties, pr
 }
 
 interface StyledAnimationConfig {
-  duration?: Length;
-  easing?: string;
   properties?: PropertiesSteps;
-  delay?: Length;
-  fillMode?: Property.AnimationFillMode;
-  iterationCount?: Property.AnimationIterationCount;
 }
 
 function getKeyframePercentageLabel(value: number) {
@@ -386,39 +380,30 @@ function getAnimationStyles(config: StyledAnimationConfig) {
     ${keyframesString}
   `;
 
-  const { duration = DEFAULT_TRANSITION_DURATION_MS, delay, fillMode, iterationCount, easing } = config;
-
   const willChangeProperties = getWillChangeProperties(config.properties);
 
   return css`
     animation-name: ${animation};
-    animation-duration: ${addUnit(duration, "ms")};
-    ${isDefined(delay) ? `animation-delay: ${addUnit(delay, "ms")};` : ""}
-    ${isDefined(fillMode) ? `animation-fill-mode: ${fillMode};` : ""}
-    ${isDefined(iterationCount) ? `animation-iteration-count: ${iterationCount};` : ""}
-    ${isDefined(easing) ? `animation-timing-function: ${easing};` : ""}
     ${willChangeProperties ? `will-change: ${willChangeProperties.join(", ")};` : ""}
     ${variables}
   `;
 }
 
-export class AnimationComposer extends StylesComposer<StyledAnimationConfig> {
-  constructor(config?: StyledAnimationConfig) {
-    super({ properties: {}, duration: DEFAULT_TRANSITION_DURATION_MS, easing: DEFAULT_TRANSITION_EASING, ...config });
-  }
+const config = new ComposerConfig<StyledAnimationConfig>({});
 
+export class AnimationComposer extends Composer {
   property<T extends keyof AnimatableProperties>(property: T, steps: PropertyAnimationSteps<AnimatableProperties[T]>) {
-    const currentProperties = this.config.properties ?? {};
+    const currentProperties = this.getConfig(config).properties ?? {};
 
-    return this.updateConfig({ properties: { ...currentProperties, [property]: steps } });
+    return this.updateConfig(config, { properties: { ...currentProperties, [property]: steps } });
   }
 
   duration(duration: Length) {
-    return this.updateConfig({ duration });
+    return this.addStyle({ animationDuration: addUnit(duration, "ms") });
   }
 
   delay(delay: Length) {
-    return this.updateConfig({ delay });
+    return this.addStyle({ animationDelay: addUnit(delay, "ms") });
   }
 
   get fadeIn() {
@@ -446,7 +431,7 @@ export class AnimationComposer extends StylesComposer<StyledAnimationConfig> {
   }
 
   easing(easing: Property.AnimationTimingFunction) {
-    return this.updateConfig({ easing });
+    return this.addStyle({ animationTimingFunction: easing });
   }
 
   slideLeftFromRight(by: Length) {
@@ -458,11 +443,11 @@ export class AnimationComposer extends StylesComposer<StyledAnimationConfig> {
   }
 
   fillMode(mode: Property.AnimationFillMode) {
-    return this.updateConfig({ fillMode: mode });
+    return this.addStyle({ animationFillMode: mode });
   }
 
   iterationCount(count: Property.AnimationIterationCount) {
-    return this.updateConfig({ iterationCount: count });
+    return this.addStyle({ animationIterationCount: count });
   }
 
   rotate(angles: Length[]) {
@@ -493,7 +478,7 @@ export class AnimationComposer extends StylesComposer<StyledAnimationConfig> {
   }
 
   get infinite() {
-    return this.iterationCount("infinite");
+    return this.addStyle({ animationIterationCount: "infinite" });
   }
 
   get spin() {
@@ -504,9 +489,27 @@ export class AnimationComposer extends StylesComposer<StyledAnimationConfig> {
     return "";
   }
 
-  getStyles(): string {
-    return getAnimationStyles(this.config) as string;
+  compile() {
+    const currentConfig = this.getConfig(config);
+
+    if (!currentConfig.properties) return "";
+    const variables = getPropertiesAnimationVariablesString(currentConfig.properties);
+    const keyframesString = getAnimationKeyframesString(currentConfig.properties);
+
+    const animation = keyframes`
+    ${keyframesString}
+  `;
+
+    const willChangeProperties = getWillChangeProperties(currentConfig.properties);
+
+    return css`
+      ${super.compile()};
+
+      animation-name: ${animation};
+      ${willChangeProperties ? `will-change: ${willChangeProperties.join(", ")};` : ""}
+      ${variables}
+    `;
   }
 }
 
-export const animation = new AnimationComposer().start();
+export const animation = new AnimationComposer().init();

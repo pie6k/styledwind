@@ -1,85 +1,51 @@
+import { Composer } from "./Composer";
 import { Length } from "./utils";
 import type { Properties } from "csstype";
-import { StylesComposer } from "./StylesComposer";
 import { resolveMaybeBaseValue } from "./SizeComposer";
 
-interface CommonStylesConfig {
-  styles?: string[];
-}
-
-export class CommonComposer extends StylesComposer<CommonStylesConfig> {
-  constructor(config: CommonStylesConfig) {
-    super(config);
-  }
-
-  getStyles() {
-    return this.config.styles ?? null;
-  }
-
-  addStyle(...styles: string[]) {
-    return this.updateConfig({ styles: [...(this.config.styles ?? []), ...styles] });
-  }
-
+export class CommonComposer extends Composer {
   get disabled() {
-    return this.addStyle(`opacity: 0.5;`, `pointer-events: none;`);
+    return this.addStyle({ opacity: 0.5, pointerEvents: "none" });
   }
 
   get round() {
-    return this.addStyle(`border-radius: 1000px;`);
+    return this.addStyle({ borderRadius: "1000px" });
   }
 
   get secondary() {
-    return this.addStyle(`opacity: 0.5;`);
+    return this.addStyle({ opacity: 0.5 });
   }
 
   get tertiary() {
-    return this.addStyle(`opacity: 0.25;`);
+    return this.addStyle({ opacity: 0.25 });
   }
 
   get quaternary() {
-    return this.addStyle(`opacity: 0.125;`);
-  }
-
-  get ring() {
-    return this.addStyle(`
-      outline: 2px solid var(--ring, #000000);
-      outline-offset: 2px;
-      --ring: #000000;
-    `);
-  }
-
-  get focusRing() {
-    return this.addStyle(`
-      &:focus-visible {
-        outline: 2px solid var(--ring, #000000);
-        outline-offset: 2px;
-        --ring: #00000088;
-      }
-    `);
+    return this.addStyle({ opacity: 0.125 });
   }
 
   get notAllowed() {
-    return this.addStyle("cursor: not-allowed; opacity: 0.5;");
+    return this.addStyle({ cursor: "not-allowed", opacity: 0.5 });
   }
 
   get fullWidth() {
-    return this.addStyle("width: 100%;");
+    return this.addStyle({ width: "100%" });
   }
 
   get fullHeight() {
-    return this.addStyle("height: 100%;");
+    return this.addStyle({ height: "100%" });
   }
 
   width(width: Length) {
-    return this.addStyle(`width: ${resolveMaybeBaseValue(width)};`);
+    return this.addStyle({ width: resolveMaybeBaseValue(width) });
   }
 
   height(height: Length) {
-    return this.addStyle(`height: ${resolveMaybeBaseValue(height)};`);
+    return this.addStyle({ height: resolveMaybeBaseValue(height) });
   }
 
   get circle() {
-    return this.addStyle(`border-radius: 1000px;`);
+    return this.addStyle({ borderRadius: "1000px" });
   }
 
   size(size: Length) {
@@ -87,7 +53,7 @@ export class CommonComposer extends StylesComposer<CommonStylesConfig> {
   }
 
   z(z: number) {
-    return this.addStyle(`z-index: ${z};`);
+    return this.addStyle({ zIndex: z });
   }
 
   get widthFull() {
@@ -99,31 +65,31 @@ export class CommonComposer extends StylesComposer<CommonStylesConfig> {
   }
 
   get relative() {
-    return this.addStyle("position: relative;");
+    return this.addStyle({ position: "relative" });
   }
 
   get absolute() {
-    return this.addStyle("position: absolute;");
+    return this.addStyle({ position: "absolute" });
   }
 
   get fixed() {
-    return this.addStyle("position: fixed;");
+    return this.addStyle({ position: "fixed" });
   }
 
   get notSelectable() {
-    return this.addStyle("user-select: none;");
+    return this.addStyle({ userSelect: "none" });
   }
 
   cursor(cursor: Properties["cursor"]) {
-    return this.addStyle(`cursor: ${cursor};`);
+    return this.addStyle({ cursor });
   }
 
   pt(py: Length) {
-    return this.addStyle(`padding-top: ${resolveMaybeBaseValue(py)};`);
+    return this.addStyle({ paddingTop: resolveMaybeBaseValue(py) });
   }
 
   pb(py: Length) {
-    return this.addStyle(`padding-bottom: ${resolveMaybeBaseValue(py)};`);
+    return this.addStyle({ paddingBottom: resolveMaybeBaseValue(py) });
   }
 
   py(px: Length) {
@@ -131,11 +97,11 @@ export class CommonComposer extends StylesComposer<CommonStylesConfig> {
   }
 
   pl(px: Length) {
-    return this.addStyle(`padding-left: ${resolveMaybeBaseValue(px)};`);
+    return this.addStyle({ paddingLeft: resolveMaybeBaseValue(px) });
   }
 
   pr(px: Length) {
-    return this.addStyle(`padding-right: ${resolveMaybeBaseValue(px)};`);
+    return this.addStyle({ paddingRight: resolveMaybeBaseValue(px) });
   }
 
   px(px: Length) {
@@ -147,11 +113,11 @@ export class CommonComposer extends StylesComposer<CommonStylesConfig> {
   }
 
   mt(mt: Length) {
-    return this.addStyle(`margin-top: ${resolveMaybeBaseValue(mt)};`);
+    return this.addStyle({ marginTop: resolveMaybeBaseValue(mt) });
   }
 
   mb(mb: Length) {
-    return this.addStyle(`margin-bottom: ${resolveMaybeBaseValue(mb)};`);
+    return this.addStyle({ marginBottom: resolveMaybeBaseValue(mb) });
   }
 
   my(my: Length) {
@@ -159,11 +125,11 @@ export class CommonComposer extends StylesComposer<CommonStylesConfig> {
   }
 
   ml(ml: Length) {
-    return this.addStyle(`margin-left: ${resolveMaybeBaseValue(ml)};`);
+    return this.addStyle({ marginLeft: resolveMaybeBaseValue(ml) });
   }
 
   mr(mr: Length) {
-    return this.addStyle(`margin-right: ${resolveMaybeBaseValue(mr)};`);
+    return this.addStyle({ marginRight: resolveMaybeBaseValue(mr) });
   }
 
   mx(mx: Length) {
@@ -175,19 +141,19 @@ export class CommonComposer extends StylesComposer<CommonStylesConfig> {
   }
 
   left(left: Length) {
-    return this.addStyle(`left: ${resolveMaybeBaseValue(left)};`);
+    return this.addStyle({ left: resolveMaybeBaseValue(left) });
   }
 
   right(right: Length) {
-    return this.addStyle(`right: ${resolveMaybeBaseValue(right)};`);
+    return this.addStyle({ right: resolveMaybeBaseValue(right) });
   }
 
   top(top: Length) {
-    return this.addStyle(`top: ${resolveMaybeBaseValue(top)};`);
+    return this.addStyle({ top: resolveMaybeBaseValue(top) });
   }
 
   bottom(bottom: Length) {
-    return this.addStyle(`bottom: ${resolveMaybeBaseValue(bottom)};`);
+    return this.addStyle({ bottom: resolveMaybeBaseValue(bottom) });
   }
 
   inset(inset: Length) {
@@ -195,7 +161,7 @@ export class CommonComposer extends StylesComposer<CommonStylesConfig> {
   }
 
   aspectRatio(ratio: number) {
-    return this.addStyle(`aspect-ratio: ${ratio};`);
+    return this.addStyle({ aspectRatio: ratio });
   }
 
   get square() {
@@ -203,41 +169,41 @@ export class CommonComposer extends StylesComposer<CommonStylesConfig> {
   }
 
   maxWidth(maxWidth: Length) {
-    return this.addStyle(`max-width: ${resolveMaybeBaseValue(maxWidth)};`);
+    return this.addStyle({ maxWidth: resolveMaybeBaseValue(maxWidth) });
   }
 
   maxHeight(maxHeight: Length) {
-    return this.addStyle(`max-height: ${resolveMaybeBaseValue(maxHeight)};`);
+    return this.addStyle({ maxHeight: resolveMaybeBaseValue(maxHeight) });
   }
 
   minWidth(minWidth: Length) {
-    return this.addStyle(`min-width: ${resolveMaybeBaseValue(minWidth)};`);
+    return this.addStyle({ minWidth: resolveMaybeBaseValue(minWidth) });
   }
 
   minHeight(minHeight: Length) {
-    return this.addStyle(`min-height: ${resolveMaybeBaseValue(minHeight)};`);
+    return this.addStyle({ minHeight: resolveMaybeBaseValue(minHeight) });
   }
 
   x(x: Length) {
-    return this.addStyle(`transform: translateX(${resolveMaybeBaseValue(x)});`);
+    return this.addStyle({ transform: `translateX(${resolveMaybeBaseValue(x)})` });
   }
 
   y(y: Length) {
-    return this.addStyle(`transform: translateY(${resolveMaybeBaseValue(y)});`);
+    return this.addStyle({ transform: `translateY(${resolveMaybeBaseValue(y)})` });
   }
 
   get overflowHidden() {
-    return this.addStyle(`overflow: hidden;`);
+    return this.addStyle({ overflow: "hidden" });
   }
 
   lineClamp(lines: number) {
-    return this.addStyle(`
-      overflow: hidden;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: ${lines};
-    `);
+    return this.addStyle({
+      overflow: "hidden",
+      display: "-webkit-box",
+      WebkitBoxOrient: "vertical",
+      WebkitLineClamp: lines,
+    });
   }
 }
 
-export const style = new CommonComposer({}).start();
+export const style = new CommonComposer().init();

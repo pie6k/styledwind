@@ -2,7 +2,7 @@ import { ComponentProps, createElement, FunctionComponent, HTMLAttributes, React
 
 import styled from "styled-components";
 import { resolveStylesInput, StylesInput } from "./input";
-import { type AnyStylesComposer } from "./StylesComposer";
+import { type AnyStyledComposer } from "./Composer";
 import { useElementDebugUIId } from "./utils/debug";
 import { useInnerForwardRef, useSameArray } from "./utils/hooks";
 import { memoizeFn } from "./utils/memoize";
@@ -265,6 +265,6 @@ export const UI = new Proxy(styledwindBuiltInComponents, {
   },
 }) as StyledWindComponentsLibrary;
 
-const SW = styled.div<{ $styles?: AnyStylesComposer[] }>`
+const SW = styled.div<{ $styles?: AnyStyledComposer[] }>`
   ${(props) => props.$styles}
 `;

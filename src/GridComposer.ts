@@ -1,92 +1,30 @@
+import { CSSProperties } from "styled-components";
+import { Composer } from "./Composer";
 import type { Property } from "csstype";
-import { SpacingBoxConfig } from "./BoxComposer";
-import { StylesComposer } from "./StylesComposer";
-import { getIsDefined } from "./utils";
 import { size } from "./SizeComposer";
 
-interface GridBoxConfig extends SpacingBoxConfig {
-  columns?: number | string;
-  rows?: number | string;
-  gapLevel?: number;
-  alignItems?: Property.AlignItems;
-  justifyItems?: Property.JustifyItems;
-  alignContent?: Property.AlignContent;
-  justifyContent?: Property.JustifyContent;
-  autoFlow?: Property.GridAutoFlow;
-  isInline?: boolean;
-}
+const DISPLAY_GRID: CSSProperties = { display: "grid" };
+const DISPLAY_INLINE_GRID: CSSProperties = { display: "inline-grid" };
 
-function getGridBoxStyles(config: GridBoxConfig) {
-  const styles: string[] = [];
-
-  if (config.isInline) {
-    styles.push(`display: inline-grid;`);
-  } else {
-    styles.push(`display: grid;`);
+export class GridComposer extends Composer {
+  init() {
+    return this.addStyle(DISPLAY_GRID);
   }
 
-  if (getIsDefined(config.columns)) {
-    if (typeof config.columns === "number") {
-      styles.push(`grid-template-columns: repeat(${config.columns}, 1fr);`);
-    } else {
-      styles.push(`grid-template-columns: ${config.columns};`);
-    }
+  columns(value: CSSProperties["gridTemplateColumns"]) {
+    return this.addStyle({ gridTemplateColumns: value });
   }
 
-  if (getIsDefined(config.rows)) {
-    if (typeof config.rows === "number") {
-      styles.push(`grid-template-rows: repeat(${config.rows}, 1fr);`);
-    } else {
-      styles.push(`grid-template-rows: ${config.rows};`);
-    }
-  }
-
-  if (getIsDefined(config.gapLevel)) {
-    styles.push(size.level(config.gapLevel).gap.toString() + ";");
-  }
-
-  if (getIsDefined(config.alignItems)) {
-    styles.push(`align-items: ${config.alignItems};`);
-  }
-
-  if (getIsDefined(config.justifyItems)) {
-    styles.push(`justify-items: ${config.justifyItems};`);
-  }
-
-  if (getIsDefined(config.alignContent)) {
-    styles.push(`align-content: ${config.alignContent};`);
-  }
-
-  if (getIsDefined(config.justifyContent)) {
-    styles.push(`justify-content: ${config.justifyContent};`);
-  }
-
-  if (getIsDefined(config.autoFlow)) {
-    styles.push(`grid-auto-flow: ${config.autoFlow};`);
-  }
-
-  return styles;
-}
-
-export class GridComposer<C extends GridBoxConfig> extends StylesComposer<C> {
-  constructor(config?: C) {
-    super(config ?? ({} as C));
-  }
-
-  columns(value: number | string) {
-    return this.updateConfig({ columns: value } as Partial<C>);
-  }
-
-  rows(value: number | string) {
-    return this.updateConfig({ rows: value } as Partial<C>);
+  rows(value: CSSProperties["gridTemplateRows"]) {
+    return this.addStyle({ gridTemplateRows: value });
   }
 
   gap(value: number = 1) {
-    return this.updateConfig({ gapLevel: value } as Partial<C>);
+    return this.addStyle(size.level(value).gap);
   }
 
-  alignItems(value: GridBoxConfig["alignItems"]) {
-    return this.updateConfig({ alignItems: value } as Partial<C>);
+  alignItems(value: Property.AlignItems) {
+    return this.addStyle({ alignItems: value });
   }
 
   get alignItemsCenter() {
@@ -105,8 +43,8 @@ export class GridComposer<C extends GridBoxConfig> extends StylesComposer<C> {
     return this.alignItems("stretch");
   }
 
-  justifyItems(value: GridBoxConfig["justifyItems"]) {
-    return this.updateConfig({ justifyItems: value } as Partial<C>);
+  justifyItems(value: Property.JustifyItems) {
+    return this.addStyle({ justifyItems: value });
   }
 
   get justifyItemsCenter() {
@@ -125,8 +63,8 @@ export class GridComposer<C extends GridBoxConfig> extends StylesComposer<C> {
     return this.justifyItems("stretch");
   }
 
-  alignContent(value: GridBoxConfig["alignContent"]) {
-    return this.updateConfig({ alignContent: value } as Partial<C>);
+  alignContent(value: Property.AlignContent) {
+    return this.addStyle({ alignContent: value });
   }
 
   get alignContentCenter() {
@@ -157,8 +95,8 @@ export class GridComposer<C extends GridBoxConfig> extends StylesComposer<C> {
     return this.alignContent("space-evenly");
   }
 
-  justifyContent(value: GridBoxConfig["justifyContent"]) {
-    return this.updateConfig({ justifyContent: value } as Partial<C>);
+  justifyContent(value: Property.JustifyContent) {
+    return this.addStyle({ justifyContent: value });
   }
 
   get justifyContentCenter() {
@@ -189,8 +127,8 @@ export class GridComposer<C extends GridBoxConfig> extends StylesComposer<C> {
     return this.justifyContent("space-evenly");
   }
 
-  autoFlow(value: GridBoxConfig["autoFlow"]) {
-    return this.updateConfig({ autoFlow: value } as Partial<C>);
+  autoFlow(value: Property.GridAutoFlow) {
+    return this.addStyle({ gridAutoFlow: value });
   }
 
   get flowRow() {
@@ -214,12 +152,8 @@ export class GridComposer<C extends GridBoxConfig> extends StylesComposer<C> {
   }
 
   get inline() {
-    return this.updateConfig({ isInline: true } as Partial<C>);
-  }
-
-  getStyles() {
-    return getGridBoxStyles(this.config);
+    return this.addStyle(DISPLAY_INLINE_GRID);
   }
 }
 
-export const grid = new GridComposer().start();
+export const grid = new GridComposer().init();

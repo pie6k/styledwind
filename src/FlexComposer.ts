@@ -1,82 +1,58 @@
-import type { Property } from "csstype";
-import { SpacingBoxConfig } from "./BoxComposer";
-import { StylesComposer } from "./StylesComposer";
-import { getIsDefined } from "./utils";
+import { CSSProperties } from "styled-components";
+import { Composer } from "./Composer";
 import { size } from "./SizeComposer";
 
-interface FlexBoxConfig extends SpacingBoxConfig {
-  direction?: Property.FlexDirection;
-  gapLevel?: number;
-  alignItems?: Property.AlignItems;
-  justifyContent?: Property.JustifyContent;
-  isReverse?: boolean;
-  isWrap?: boolean;
-  isInline?: boolean;
-}
-
-function getFlexBoxStyles(config: FlexBoxConfig) {
-  const styles: string[] = [];
-
-  if (config.isInline) {
-    styles.push(`display: inline-flex;`);
-  } else {
-    styles.push(`display: flex;`);
+export class FlexComposer extends Composer {
+  init() {
+    return this.addStyle({ display: "flex" });
   }
 
-  if (getIsDefined(config.gapLevel)) {
-    styles.push(size.level(config.gapLevel).gap.toString() + ";");
+  direction(value: CSSProperties["flexDirection"]) {
+    return this.addStyle({ flexDirection: value });
   }
 
-  if (getIsDefined(config.alignItems)) {
-    styles.push(`align-items: ${config.alignItems};`);
+  get row() {
+    return this.direction("row");
   }
 
-  if (getIsDefined(config.justifyContent)) {
-    styles.push(`justify-content: ${config.justifyContent};`);
+  get column() {
+    return this.direction("column");
   }
 
-  if (config.isWrap) {
-    styles.push(`flex-wrap: wrap;`);
-  }
-
-  if (getIsDefined(config.isReverse) || getIsDefined(config.direction)) {
-    if (config.isReverse) {
-      styles.push(`flex-direction: ${config.direction}-reverse;`);
-    } else if (config.direction === "column") {
-      styles.push(`flex-direction: column;`);
-    }
-  }
-
-  return styles;
-}
-
-export class FlexComposer<Config extends FlexBoxConfig> extends StylesComposer<Config> {
-  constructor(config?: Config) {
-    super(config ?? ({} as Config));
-  }
-
+  /**
+   * @alias row
+   */
   get horizontal() {
-    return this.updateConfig({ direction: "row" } as Partial<Config>);
+    return this.row;
   }
 
+  /**
+   * @alias column
+   */
   get vertical() {
-    return this.updateConfig({ direction: "column" } as Partial<Config>);
+    return this.column;
   }
 
+  /**
+   * @alias row
+   */
   get x() {
-    return this.horizontal;
+    return this.row;
   }
 
+  /**
+   * @alias column
+   */
   get y() {
-    return this.vertical;
+    return this.column;
   }
 
   gap(value: number = 1) {
-    return this.updateConfig({ gapLevel: value } as Partial<Config>);
+    return this.addStyle(size.level(value).gap);
   }
 
-  align(value: FlexBoxConfig["alignItems"]) {
-    return this.updateConfig({ alignItems: value } as Partial<Config>);
+  align(value: CSSProperties["alignItems"]) {
+    return this.addStyle({ alignItems: value });
   }
 
   get alignCenter() {
@@ -99,8 +75,8 @@ export class FlexComposer<Config extends FlexBoxConfig> extends StylesComposer<C
     return this.align("baseline");
   }
 
-  justify(value: FlexBoxConfig["justifyContent"]) {
-    return this.updateConfig({ justifyContent: value } as Partial<Config>);
+  justify(value: CSSProperties["justifyContent"]) {
+    return this.addStyle({ justifyContent: value });
   }
 
   get justifyCenter() {
@@ -128,24 +104,25 @@ export class FlexComposer<Config extends FlexBoxConfig> extends StylesComposer<C
   }
 
   get center() {
+    console.log("center");
     return this.alignCenter.justifyCenter;
   }
 
   get reverse() {
-    return this.updateConfig({ isReverse: true } as Partial<Config>);
+    return this.addStyle({ flexDirection: "row-reverse" });
   }
 
   get wrap() {
-    return this.updateConfig({ isWrap: true } as Partial<Config>);
+    return this.addStyle({ flexWrap: "wrap" });
   }
 
   get inline() {
-    return this.updateConfig({ isInline: true } as Partial<Config>);
+    return this.addStyle({ display: "inline-flex" });
   }
 
-  getStyles() {
-    return getFlexBoxStyles(this.config);
+  compile() {
+    return super.compile();
   }
 }
 
-export const flex = new FlexComposer().start();
+export const flex = new FlexComposer().init();

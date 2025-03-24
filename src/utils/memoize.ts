@@ -37,15 +37,15 @@ export function memoizeFn<F extends AnyFunction>(callback: F, options?: MemoizeO
   type R = ReturnType<F>;
   const deepMap = new DeepMap(getMapToUse<A, R>(options?.mode ?? "maybeWeak"));
 
-  function getMemoized(...args: A): R {
+  const getMemoized = (...args: A): R => {
     const result = deepMap.getOrCreateCallback<A>(callback, ...args);
 
     return result;
-  }
+  };
 
-  function remove(...args: A): void {
+  const remove = (...args: A): void => {
     deepMap.delete(args);
-  }
+  };
 
   getMemoized.remove = remove;
 

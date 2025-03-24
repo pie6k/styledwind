@@ -1,9 +1,9 @@
 import { ComponentPropsWithoutRef, ElementType, HTMLAttributes } from "react";
 
-import { AnyStylesComposer } from "./StylesComposer";
+import { AnyStyledComposer } from "./Composer";
 import { Falsy } from "./utils/nullish";
 
-export type StylesInput = Falsy | AnyStylesComposer | Array<AnyStylesComposer>;
+export type StylesInput = Falsy | AnyStyledComposer | Array<AnyStyledComposer>;
 
 export type StyledStylesProps = {
   $styles?: StylesInput;
@@ -13,7 +13,7 @@ export type PropsWithStyles<T> = T & {
   styles?: StylesInput;
 };
 
-export function resolveStylesInput(styles?: StylesInput): Array<AnyStylesComposer> {
+export function resolveStylesInput(styles?: StylesInput): Array<AnyStyledComposer> {
   if (!styles) return [];
 
   if (!Array.isArray(styles)) return [styles];

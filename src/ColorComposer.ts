@@ -1,6 +1,7 @@
 import { blendColors, getColorBorderColor, getHighlightedColor, isColorDark, setColorOpacity } from "./utils/color";
 
-import { StylesComposer } from "./StylesComposer";
+import { Composer } from "./Composer";
+import { ComposerConfig } from "./ComposerConfig";
 import { isDefined } from "./utils";
 
 interface ColorsInput {
@@ -17,6 +18,10 @@ export interface ColorConfig extends ColorsInput {
   isBackgroundWithBorder?: boolean;
   interactive?: boolean;
 }
+
+const config = new ComposerConfig<ColorConfig>({
+  color: "#000000",
+});
 
 const hovers = [":hover", ".hover"];
 const svgActives = [":active", ".active"];
@@ -112,17 +117,19 @@ function getColorStyles(config: ColorConfig) {
   return styles;
 }
 
-export class ColorComposer extends StylesComposer<ColorConfig> {
-  constructor(config: ColorConfig) {
-    super(config);
+export class ColorComposer extends Composer {
+  define(value: ColorsInput) {
+    return this.updateConfig(config, value);
   }
 
   color(value: string) {
-    return this.updateConfig({ color: value });
+    return this.updateConfig(config, { color: value });
   }
 
   opacity(value: number) {
-    return this.updateConfig({ color: setColorOpacity(this.config.color, value) });
+    const currentConfig = this.getConfig(config);
+
+    return this.updateConfig(config, { color: setColorOpacity(currentConfig.color, value) });
   }
 
   get secondary() {
@@ -138,7 +145,7 @@ export class ColorComposer extends StylesComposer<ColorConfig> {
   }
 
   outputType(value: ColorConfig["outputType"]) {
-    return this.updateConfig({ outputType: value });
+    return this.updateConfig(config, { outputType: value });
   }
 
   get asBg() {
@@ -162,42 +169,60 @@ export class ColorComposer extends StylesComposer<ColorConfig> {
   }
 
   get withBorder() {
-    return this.updateConfig({ isBackgroundWithBorder: true });
+    return this.updateConfig(config, { isBackgroundWithBorder: true });
   }
 
   get interactive() {
-    return this.updateConfig({ interactive: true });
+    return this.updateConfig(config, { interactive: true });
   }
 
   private changeColor(value: string) {
-    return this.updateConfig({ color: value, border: this.config.border, foreground: this.config.foreground });
+    const currentConfig = this.getConfig(config);
+
+    return this.updateConfig(config, {
+      color: value,
+      border: currentConfig.border,
+      foreground: currentConfig.foreground,
+    });
   }
 
   get hover() {
-    return this.changeColor(getHighlightedColor(this.config.color));
+    const currentConfig = this.getConfig(config);
+
+    return this.changeColor(getHighlightedColor(currentConfig.color));
   }
 
   get active() {
-    return this.changeColor(getHighlightedColor(this.config.color, 2));
+    const currentConfig = this.getConfig(config);
+
+    return this.changeColor(getHighlightedColor(currentConfig.color, 2));
   }
 
   get muted() {
-    return this.changeColor(getHighlightedColor(this.config.color, 0.33));
+    const currentConfig = this.getConfig(config);
+
+    return this.changeColor(getHighlightedColor(currentConfig.color, 0.33));
   }
 
   highlight(ratio: number = 1) {
-    return this.changeColor(getHighlightedColor(this.config.color, ratio));
+    const currentConfig = this.getConfig(config);
+
+    return this.changeColor(getHighlightedColor(currentConfig.color, ratio));
   }
 
   get foreground() {
-    return this.updateConfig({ color: getColorForeground(this.config) });
+    const currentConfig = this.getConfig(config);
+
+    return this.updateConfig(config, { color: getColorForeground(currentConfig) });
   }
 
-  getStyles() {
-    return getColorStyles(this.config);
+  compile() {
+    const currentConfig = this.getConfig(config);
+
+    return [super.compile(), getColorStyles(currentConfig)];
   }
 }
 
-export function colorComposer(color: ColorsInput) {
-  return new ColorComposer(color).start();
+export function color(color: ColorsInput) {
+  return new ColorComposer().define(color);
 }

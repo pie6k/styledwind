@@ -35,16 +35,12 @@ function getParentComponentName() {
   return functionName;
 }
 
-export function useElementDebugUIId(ref: RefObject<any>, customName?: string) {
-  if (!IS_DEV) return;
-
+function useElementDebugUIIdDev(ref: RefObject<any>, customName?: string) {
   const parentComponentName = useConst(() => {
     return getParentComponentName();
   });
 
   useEffect(() => {
-    if (!IS_DEV) return;
-
     const element = ref.current;
 
     if (!element) return;
@@ -56,3 +52,5 @@ export function useElementDebugUIId(ref: RefObject<any>, customName?: string) {
     element.setAttribute("data-ui", items.join("."));
   }, [ref, customName]);
 }
+
+export const useElementDebugUIId = IS_DEV ? useElementDebugUIIdDev : () => {};

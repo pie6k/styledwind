@@ -25,7 +25,7 @@ pnpm install styledwind
 - Simple, chainable, composable API that is enjoyable to use
 - Automate some styling tasks (eg. generate hover color variants)
 
-# Example
+# Examples
 
 ## Composing styles inside styled-components
 

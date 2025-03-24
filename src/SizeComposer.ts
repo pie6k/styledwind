@@ -1,5 +1,6 @@
+import { Composer } from "./Composer";
+import { ComposerConfig } from "./ComposerConfig";
 import { Length } from "./utils";
-import { StylesComposer } from "./StylesComposer";
 import { isNotNullish } from "./utils/nullish";
 
 type SizeOutputTarget =
@@ -60,6 +61,11 @@ interface StyledSizeConfig {
   value: Length;
 }
 
+const config = new ComposerConfig<StyledSizeConfig>({
+  targets: "inline",
+  value: 0,
+});
+
 export function resolveMaybeBaseValue(value: Length) {
   if (typeof value === "number") {
     return `${value / 4}rem`;
@@ -84,66 +90,23 @@ export function resolveSizeValues(values: Length[]) {
   return values.map(resolveSizeValue);
 }
 
-function getSizeStyles(config: StyledSizeConfig) {
-  const value = resolveSizeValue(config.value);
-
-  const { targets } = config;
-
-  if (targets === "inline") {
-    return value;
-  }
-
-  const properties = targets.flatMap(resolveProperty);
-
-  const styleLines = properties
-    .map((property) => {
-      if (property === "transform-x" || property === "transform-y") {
-        return null;
-      }
-
-      return `${property}: ${value}`;
-    })
-    .filter(isNotNullish);
-
-  const hasTransformX = targets.includes("transform-x");
-  const hasTransformY = targets.includes("transform-y");
-
-  if (hasTransformX || hasTransformY) {
-    const transformParts: string[] = [];
-
-    if (hasTransformX) {
-      transformParts.push(`translateX(${value})`);
-    }
-
-    if (hasTransformY) {
-      transformParts.push(`translateY(${value})`);
-    }
-
-    styleLines.push(`transform: ${transformParts.join(" ")}`);
-  }
-
-  return styleLines;
-}
-
-export class SizeComposer extends StylesComposer<StyledSizeConfig> {
-  constructor(config: StyledSizeConfig) {
-    super(config);
-  }
-
-  getStyles() {
-    return getSizeStyles(this.config);
+export class SizeComposer extends Composer {
+  private get resolvedSize() {
+    return resolveSizeValue(this.getConfig(config).value);
   }
 
   private setValue(value: Length) {
-    return this.updateConfig({ value });
+    return this.updateConfig(config, { value });
   }
 
   private addTarget(target: SizeOutputTarget) {
-    if (this.config.targets === "inline") {
-      return this.updateConfig({ targets: [target] });
+    const currentConfig = this.getConfig(config);
+
+    if (currentConfig.targets === "inline") {
+      return this.updateConfig(config, { targets: [target] });
     }
 
-    return this.updateConfig({ targets: [...this.config.targets, target] });
+    return this.updateConfig(config, { targets: [...currentConfig.targets, target] });
   }
 
   base(value: number) {
@@ -169,99 +132,109 @@ export class SizeComposer extends StylesComposer<StyledSizeConfig> {
   }
 
   get width() {
-    return this.addTarget("width");
+    return this.addStyle({ width: this.resolvedSize });
   }
 
   get height() {
-    return this.addTarget("height");
+    return this.addStyle({ height: this.resolvedSize });
   }
 
   get marginX() {
-    return this.addTarget("margin-x");
+    return this.addStyle({ marginLeft: this.resolvedSize, marginRight: this.resolvedSize });
   }
 
   get marginY() {
-    return this.addTarget("margin-y");
+    return this.addStyle({ marginTop: this.resolvedSize, marginBottom: this.resolvedSize });
   }
 
   get marginTop() {
-    return this.addTarget("margin-top");
+    return this.addStyle({ marginTop: this.resolvedSize });
   }
 
   get marginBottom() {
-    return this.addTarget("margin-bottom");
+    return this.addStyle({ marginBottom: this.resolvedSize });
   }
 
   get marginLeft() {
-    return this.addTarget("margin-left");
+    return this.addStyle({ marginLeft: this.resolvedSize });
   }
 
   get marginRight() {
-    return this.addTarget("margin-right");
+    return this.addStyle({ marginRight: this.resolvedSize });
   }
 
   get margin() {
-    return this.addTarget("margin");
+    return this.addStyle({
+      marginTop: this.resolvedSize,
+      marginRight: this.resolvedSize,
+      marginBottom: this.resolvedSize,
+      marginLeft: this.resolvedSize,
+    });
   }
 
   get paddingX() {
-    return this.addTarget("padding-x");
+    return this.addStyle({ paddingLeft: this.resolvedSize, paddingRight: this.resolvedSize });
   }
 
   get paddingY() {
-    return this.addTarget("padding-y");
+    return this.addStyle({ paddingTop: this.resolvedSize, paddingBottom: this.resolvedSize });
   }
 
   get paddingTop() {
-    return this.addTarget("padding-top");
+    return this.addStyle({ paddingTop: this.resolvedSize });
   }
 
   get paddingBottom() {
-    return this.addTarget("padding-bottom");
+    return this.addStyle({ paddingBottom: this.resolvedSize });
   }
 
   get paddingLeft() {
-    return this.addTarget("padding-left");
+    return this.addStyle({ paddingLeft: this.resolvedSize });
   }
 
   get paddingRight() {
-    return this.addTarget("padding-right");
+    return this.addStyle({ paddingRight: this.resolvedSize });
   }
 
   get padding() {
-    return this.addTarget("padding");
+    return this.addStyle({
+      paddingTop: this.resolvedSize,
+      paddingRight: this.resolvedSize,
+      paddingBottom: this.resolvedSize,
+      paddingLeft: this.resolvedSize,
+    });
   }
 
   get gap() {
-    return this.addTarget("gap");
+    return this.addStyle({ gap: this.resolvedSize });
   }
 
   get size() {
-    return this.addTarget("width").addTarget("height");
+    return this.width.height;
   }
 
   get minSize() {
-    return this.addTarget("min-width").addTarget("min-height");
+    return this.minWidth.minHeight;
   }
 
   get maxSize() {
-    return this.addTarget("max-width").addTarget("max-height");
+    return this.maxWidth.maxHeight;
   }
 
   get minWidth() {
-    return this.addTarget("min-width");
+    return this.addStyle({ minWidth: this.resolvedSize });
   }
 
   get maxWidth() {
-    return this.addTarget("max-width");
+    return this.addStyle({ maxWidth: this.resolvedSize });
   }
 
   get minHeight() {
-    return this.addTarget("min-height");
+    return this.addStyle({ minHeight: this.resolvedSize });
   }
 
   get maxHeight() {
-    return this.addTarget("max-height");
+    return this.addStyle({ maxHeight: this.resolvedSize });
   }
 
   get transformX() {
@@ -271,6 +244,45 @@ export class SizeComposer extends StylesComposer<StyledSizeConfig> {
   get transformY() {
     return this.addTarget("transform-y");
   }
+
+  compile() {
+    const { value, targets } = this.getConfig(config);
+
+    if (targets === "inline") {
+      return `${value}`;
+    }
+
+    const properties = targets.flatMap(resolveProperty);
+
+    const styleLines = properties
+      .map((property) => {
+        if (property === "transform-x" || property === "transform-y") {
+          return null;
+        }
+
+        return `${property}: ${value}`;
+      })
+      .filter(isNotNullish);
+
+    const hasTransformX = targets.includes("transform-x");
+    const hasTransformY = targets.includes("transform-y");
+
+    if (hasTransformX || hasTransformY) {
+      const transformParts: string[] = [];
+
+      if (hasTransformX) {
+        transformParts.push(`translateX(${value})`);
+      }
+
+      if (hasTransformY) {
+        transformParts.push(`translateY(${value})`);
+      }
+
+      styleLines.push(`transform: ${transformParts.join(" ")}`);
+    }
+
+    return [super.compile(), ...styleLines];
+  }
 }
 
-export const size = new SizeComposer({ value: 0, targets: "inline" });
+export const size = new SizeComposer().init();

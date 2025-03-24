@@ -1,3 +1,5 @@
+import "./dev";
+
 import { Demo } from "./Demo";
 import { createRoot } from "react-dom/client";
 

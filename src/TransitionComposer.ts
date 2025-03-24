@@ -1,60 +1,40 @@
-import { DEFAULT_TRANSITION_DURATION_MS, DEFAULT_TRANSITION_EASING } from "./config";
+import { DEFAULT_TRANSITION_DURATION_MS, DEFAULT_TRANSITION_EASING } from "./defaults";
 import { Length, addUnit, multiplyUnit } from "./utils";
 
 import type { CSSProperty } from "./types";
-import { StylesComposer } from "./StylesComposer";
+import { Composer } from "./Composer";
+import { ComposerConfig } from "./ComposerConfig";
+import { Property } from "csstype";
 
 interface StyledTransitionConfig {
-  easing?: string;
-  duration?: Length;
-  properties?: CSSProperty[] | "all";
-  slowRelease?: boolean;
+  easing: string;
+  duration: Length;
+  properties: CSSProperty[] | "all";
+  slowRelease: boolean;
 }
 
-function getTransitionStyles({
-  easing = DEFAULT_TRANSITION_EASING,
-  duration = DEFAULT_TRANSITION_DURATION_MS,
-  properties = ["all"],
-  slowRelease = false,
-}: StyledTransitionConfig) {
-  const propertiesString = properties === "all" ? "all" : properties.join(", ");
+const config = new ComposerConfig<StyledTransitionConfig>({
+  easing: DEFAULT_TRANSITION_EASING,
+  duration: DEFAULT_TRANSITION_DURATION_MS,
+  properties: ["all"],
+  slowRelease: false,
+});
 
-  const styles = [
-    `transition-property: ${propertiesString};`,
-    `transition-timing-function: ${easing};`,
-    `transition-duration: ${multiplyUnit(duration, 3, "ms")};`,
-  ];
-
-  if (slowRelease) {
-    styles.push(`
-      &:hover {
-        transition-duration: ${addUnit(duration, "ms")};
-      }
-    `);
-  }
-
-  return styles;
-}
-
-export class TransitionComposer extends StylesComposer<StyledTransitionConfig> {
-  constructor(props: StyledTransitionConfig) {
-    super(props);
-  }
-
-  easing(easing: string) {
-    return this.updateConfig({ easing });
+export class TransitionComposer extends Composer {
+  easing(easing: Property.TransitionTimingFunction) {
+    return this.updateConfig(config, { easing });
   }
 
   duration(duration: Length) {
-    return this.updateConfig({ duration });
+    return this.updateConfig(config, { duration });
   }
 
   get slowRelease() {
-    return this.updateConfig({ slowRelease: true });
+    return this.updateConfig(config, { slowRelease: true });
   }
 
   get all() {
-    return this.updateConfig({ properties: "all" });
+    return this.property("all");
   }
 
   get colors() {
@@ -78,12 +58,29 @@ export class TransitionComposer extends StylesComposer<StyledTransitionConfig> {
   }
 
   property(...properties: CSSProperty[]) {
-    return this.updateConfig({ properties });
+    return this.updateConfig(config, { properties });
   }
 
-  getStyles() {
-    return getTransitionStyles(this.config);
+  compile() {
+    const { easing, duration, properties, slowRelease } = this.getConfig(config);
+    const propertiesString = properties === "all" ? "all" : properties.join(", ");
+
+    const styles = [
+      `transition-property: ${propertiesString};`,
+      `transition-timing-function: ${easing};`,
+      `transition-duration: ${multiplyUnit(duration, 3, "ms")};`,
+    ];
+
+    if (slowRelease) {
+      styles.push(`
+      &:hover {
+        transition-duration: ${addUnit(duration, "ms")};
+      }
+    `);
+    }
+
+    return styles;
   }
 }
 
-export const transition = new TransitionComposer({}).start();
+export const transition = new TransitionComposer().init();
