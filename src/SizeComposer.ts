@@ -244,45 +244,6 @@ export class SizeComposer extends Composer {
   get transformY() {
     return this.addTarget("transform-y");
   }
-
-  compile() {
-    const { value, targets } = this.getConfig(config);
-
-    if (targets === "inline") {
-      return `${value}`;
-    }
-
-    const properties = targets.flatMap(resolveProperty);
-
-    const styleLines = properties
-      .map((property) => {
-        if (property === "transform-x" || property === "transform-y") {
-          return null;
-        }
-
-        return `${property}: ${value}`;
-      })
-      .filter(isNotNullish);
-
-    const hasTransformX = targets.includes("transform-x");
-    const hasTransformY = targets.includes("transform-y");
-
-    if (hasTransformX || hasTransformY) {
-      const transformParts: string[] = [];
-
-      if (hasTransformX) {
-        transformParts.push(`translateX(${value})`);
-      }
-
-      if (hasTransformY) {
-        transformParts.push(`translateY(${value})`);
-      }
-
-      styleLines.push(`transform: ${transformParts.join(" ")}`);
-    }
-
-    return [super.compile(), ...styleLines];
-  }
 }
 
 export const size = new SizeComposer().init();

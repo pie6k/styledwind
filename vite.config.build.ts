@@ -10,8 +10,6 @@ function collectExternalDependencies() {
   return Object.keys(dependencies).concat(Object.keys(peerDependencies));
 }
 
-console.log(collectExternalDependencies());
-
 export default defineConfig({
   build: {
     lib: {

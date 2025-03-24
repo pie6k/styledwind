@@ -1,5 +1,6 @@
 import { FlexComposer } from "./FlexComposer";
 import { composerConfig } from "./ComposerConfig";
+import { memoizeFn } from "./utils/memoize";
 import { resolveSizeValue } from "./SizeComposer";
 
 interface SizingBoxConfig {
@@ -95,6 +96,9 @@ export class SurfaceComposer extends FlexComposer {
   }
 }
 
-export function surface(config: SizingBoxConfig) {
-  return new SurfaceComposer().define(config).init();
-}
+export const surface = memoizeFn(
+  function surface(config: SizingBoxConfig) {
+    return new SurfaceComposer().define(config).init();
+  },
+  { mode: "equal" },
+);

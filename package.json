@@ -18,20 +18,25 @@
     "dev": "vite --config vite.config.demo.ts",
     "build": "vite --config vite.config.build.ts build",
     "preview": "vite preview",
-    "prettier": "prettier --write \"src/**/*.{ts,tsx}\""
+    "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "test": "jest"
   },
   "devDependencies": {
+    "@jest/globals": "^29.7.0",
     "@types/node": "^22.13.11",
     "@types/react": "*",
     "@types/react-dom": "*",
     "@types/styled-components": "*",
+    "jest": "^29.7.0",
     "prettier": "^3.0.3",
     "react": "*",
     "react-dom": "*",
     "styled-components": "*",
+    "ts-jest": "^29.2.5",
     "typescript": "*",
     "vite": "^4.4.9",
-    "vite-plugin-dts": "^4.5.3"
+    "vite-plugin-dts": "^4.5.3",
+    "vitest": "^3.0.9"
   },
   "files": [
     "dist"

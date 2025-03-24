@@ -1,5 +1,4 @@
 import { DeepMap } from "./map/DeepMap";
-import { EqualKeyMap } from "./map/EqualKeyMap";
 import { memoizeFn } from "./memoize";
 
 type AnyFunction = (...args: any[]) => any;
@@ -68,46 +67,54 @@ function createMemoizedGetter(originalGetter: AnyFunction, methodName: string) {
   };
 }
 
+const memoizedPrototypes = new WeakSet<object>();
+
 /**
  * Memoizes all methods and getters on a prototype
  */
-const memoizePrototype = memoizeFn(
-  (prototype: object): void => {
-    const propertyNames = Object.getOwnPropertyNames(prototype);
+function memoizePrototype(prototype: object, exclude?: Array<unknown>): void {
+  if (memoizedPrototypes.has(prototype)) return;
 
-    for (const propertyName of propertyNames) {
-      if (propertyName === "constructor") continue;
+  memoizedPrototypes.add(prototype);
 
-      const property = Object.getOwnPropertyDescriptor(prototype, propertyName)!;
+  if (prototype === Object.prototype || prototype === null) return;
 
-      if (typeof property.value === "function") {
-        Object.defineProperty(prototype, propertyName, {
-          ...property,
-          value: createMemoizedMethod(property.value, propertyName),
-        });
-      } else if (property.get) {
-        Object.defineProperty(prototype, propertyName, {
-          ...property,
-          get: createMemoizedGetter(property.get, propertyName),
-        });
-      }
+  const parentPrototype = Object.getPrototypeOf(prototype);
+
+  if (parentPrototype) {
+    memoizePrototype(parentPrototype, exclude);
+  }
+
+  const propertyNames = Object.getOwnPropertyNames(prototype);
+
+  for (const propertyName of propertyNames) {
+    if (propertyName === "constructor") continue;
+
+    if (exclude?.includes(propertyName)) continue;
+
+    const property = Object.getOwnPropertyDescriptor(prototype, propertyName)!;
+
+    if (typeof property.value === "function") {
+      Object.defineProperty(prototype, propertyName, {
+        ...property,
+        value: createMemoizedMethod(property.value, propertyName),
+      });
+    } else if (property.get) {
+      Object.defineProperty(prototype, propertyName, {
+        ...property,
+        get: createMemoizedGetter(property.get, propertyName),
+      });
     }
-  },
-  { mode: "weak" },
-);
+  }
+}
 
 /**
  * Memoizes all methods and getters in the prototype chain of the target instance.
  * This will affect all instances sharing these prototypes.
  */
-export function memoizePrototypeOf<T extends object>(target: T): void {
+export function memoizePrototypeOf<T extends object>(target: T, exclude?: Array<keyof T>): void {
   let proto = Object.getPrototypeOf(target);
-
-  // Traverse the prototype chain
-  while (proto && proto !== Object.prototype) {
-    memoizePrototype(proto);
-    proto = Object.getPrototypeOf(proto);
-  }
+  memoizePrototype(proto, exclude);
 }
 
 /**

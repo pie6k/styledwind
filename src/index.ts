@@ -10,5 +10,6 @@ export { size } from "./SizeComposer";
 export { Composer, type AnyStyledComposer, type StyledComposer } from "./Composer";
 export { surface } from "./SurfaceComposer";
 export { transition } from "./TransitionComposer";
+export { ComposerConfig, composerConfig } from "./ComposerConfig";
 export * from "./types";
 export { UI } from "./UI";

@@ -3,8 +3,10 @@ import { css, keyframes } from "styled-components";
 import { resolveMaybeBaseValue, resolveMaybeBaseValues } from "./SizeComposer";
 import { type Length, addUnit, isInteger } from "./utils";
 
-import { ComposerConfig } from "./ComposerConfig";
 import { Composer } from "./Composer";
+import { ComposerConfig } from "./ComposerConfig";
+import { DEFAULT_TRANSITION_DURATION_MS } from "./defaults";
+import { simplifyRule } from "./compilation";
 
 type PropertyAnimationSteps<V> = Array<V>;
 
@@ -56,6 +58,8 @@ export function getHasAnimationProperty(property: keyof AnimatableProperties, pr
 }
 
 interface StyledAnimationConfig {
+  duration: Length;
+  easing: Property.AnimationTimingFunction;
   properties?: PropertiesSteps;
 }
 
@@ -111,27 +115,36 @@ function getWillChangeProperties(properties: PropertiesSteps) {
   return Array.from(willChangeProperties);
 }
 
-function getPropertyAnimationVariablesString<T extends keyof AnimatableProperties>(
+function getPropertyAnimationVariables<T extends keyof AnimatableProperties>(
   property: T,
   steps: PropertyAnimationSteps<AnimatableProperties[T]>,
-) {
-  return steps
-    .map((step, index) => {
-      const progress = index / (steps.length - 1);
-      const variableName = getAnimationStepVariableName(property, progress);
+): Record<string, string> {
+  const result: Record<string, string> = {};
 
-      return `${variableName}: ${step};`;
-    })
-    .join("\n");
+  for (const [index, step] of steps.entries()) {
+    const progress = index / (steps.length - 1);
+    const variableName = getAnimationStepVariableName(property, progress);
+
+    result[variableName] = `${step}`;
+  }
+
+  return result;
 }
 
-function getPropertiesAnimationVariablesString(properties: PropertiesSteps) {
-  return Object.entries(properties)
+function mergeRecords(records: Record<string, string>[]) {
+  return records.reduce((acc, record) => {
+    return { ...acc, ...record };
+  }, {});
+}
+
+function getPropertiesAnimationVariables(properties: PropertiesSteps): Record<string, string> {
+  const variablesPerProperty = Object.entries(properties)
     .filter(([property]) => getDoesNeedVariables(property as keyof AnimatableProperties))
     .map(([property, steps]) => {
-      return getPropertyAnimationVariablesString(property as keyof AnimatableProperties, steps);
-    })
-    .join("\n");
+      return getPropertyAnimationVariables(property as keyof AnimatableProperties, steps);
+    });
+
+  return mergeRecords(variablesPerProperty);
 }
 
 function getIsTransformProperty(property: keyof AnimatableProperties) {
@@ -306,9 +319,7 @@ function getBackdropFilterAnimationStyleString(progress: number, properties: Pro
     filters.push(`sepia(var(${sepiaVar}, 0))`);
   }
 
-  return `
-    backdrop-filter: ${filters.join(" ")};
-  `;
+  return `backdrop-filter: ${filters.join(" ")};`;
 }
 
 function getDoesNeedVariables(property: keyof AnimatableProperties) {
@@ -365,31 +376,14 @@ function getAnimationKeyframesString(properties: PropertiesSteps) {
   }
 
   return Array.from(keyframesMap.entries()).map(([percentage, styles]) => {
-    return `${percentage} {
-      ${Array.from(styles).join("\n")}
-    }`;
+    return `${percentage} { ${Array.from(styles).join("")} } `;
   });
 }
 
-function getAnimationStyles(config: StyledAnimationConfig) {
-  if (!config.properties) return "";
-  const variables = getPropertiesAnimationVariablesString(config.properties);
-  const keyframesString = getAnimationKeyframesString(config.properties);
-
-  const animation = keyframes`
-    ${keyframesString}
-  `;
-
-  const willChangeProperties = getWillChangeProperties(config.properties);
-
-  return css`
-    animation-name: ${animation};
-    ${willChangeProperties ? `will-change: ${willChangeProperties.join(", ")};` : ""}
-    ${variables}
-  `;
-}
-
-const config = new ComposerConfig<StyledAnimationConfig>({});
+const config = new ComposerConfig<StyledAnimationConfig>({
+  duration: "150ms",
+  easing: "ease-in-out",
+});
 
 export class AnimationComposer extends Composer {
   property<T extends keyof AnimatableProperties>(property: T, steps: PropertyAnimationSteps<AnimatableProperties[T]>) {
@@ -399,7 +393,7 @@ export class AnimationComposer extends Composer {
   }
 
   duration(duration: Length) {
-    return this.addStyle({ animationDuration: addUnit(duration, "ms") });
+    return this.updateConfig(config, { duration: addUnit(duration, "ms") });
   }
 
   delay(delay: Length) {
@@ -431,7 +425,7 @@ export class AnimationComposer extends Composer {
   }
 
   easing(easing: Property.AnimationTimingFunction) {
-    return this.addStyle({ animationTimingFunction: easing });
+    return this.updateConfig(config, { easing });
   }
 
   slideLeftFromRight(by: Length) {
@@ -493,22 +487,26 @@ export class AnimationComposer extends Composer {
     const currentConfig = this.getConfig(config);
 
     if (!currentConfig.properties) return "";
-    const variables = getPropertiesAnimationVariablesString(currentConfig.properties);
+    const variables = getPropertiesAnimationVariables(currentConfig.properties);
     const keyframesString = getAnimationKeyframesString(currentConfig.properties);
 
-    const animation = keyframes`
-    ${keyframesString}
-  `;
+    // prettier-ignore
+    const animation = keyframes`${keyframesString}`;
 
     const willChangeProperties = getWillChangeProperties(currentConfig.properties);
 
-    return css`
+    return simplifyRule(css`
       ${super.compile()};
 
       animation-name: ${animation};
-      ${willChangeProperties ? `will-change: ${willChangeProperties.join(", ")};` : ""}
-      ${variables}
-    `;
+
+      ${{
+        animationDuration: addUnit(currentConfig.duration, "ms"),
+        animationTimingFunction: currentConfig.easing,
+        willChange: willChangeProperties?.join(", ") ?? undefined,
+        ...variables,
+      }}
+    `);
   }
 }
 

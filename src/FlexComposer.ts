@@ -104,7 +104,6 @@ export class FlexComposer extends Composer {
   }
 
   get center() {
-    console.log("center");
     return this.alignCenter.justifyCenter;
   }
 

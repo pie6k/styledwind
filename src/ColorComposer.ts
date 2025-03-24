@@ -3,6 +3,7 @@ import { blendColors, getColorBorderColor, getHighlightedColor, isColorDark, set
 import { Composer } from "./Composer";
 import { ComposerConfig } from "./ComposerConfig";
 import { isDefined } from "./utils";
+import { memoizeFn } from "./utils/memoize";
 
 interface ColorsInput {
   color: string;
@@ -223,6 +224,9 @@ export class ColorComposer extends Composer {
   }
 }
 
-export function color(color: ColorsInput) {
-  return new ColorComposer().define(color);
-}
+export const color = memoizeFn(
+  function color(color: ColorsInput) {
+    return new ColorComposer().define(color);
+  },
+  { mode: "equal" },
+);
