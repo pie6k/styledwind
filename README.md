@@ -10,7 +10,9 @@ If you want to see examples, scroll down to the [Examples](#examples) section.
 
 ```bash
 yarn install styledwind
+# or
 npm install styledwind
+# or
 pnpm install styledwind
 ```
 
@@ -108,3 +110,157 @@ function Form() {
 ```
 
 - For custom tags, eg `UI.Foo_h2`, Typescript will infer the correct type. Eg for `ref` it will be `RefObject<HTMLHeadingElement>`.
+
+# Theme System
+
+Styledwind provides a powerful theming system that allows you to create and manage theme variants while maintaining type safety and performance.
+
+## Creating Themes
+
+Themes are created using the `createTheme` function. It takes an object where you can pass composable and primitive values.
+
+```tsx
+import { createTheme, color, font } from "styledwind";
+
+const baseFont = font.family("Inter, sans-serif").lineHeight(1.5).antialiased;
+
+const theme = createTheme({
+  // Primitive values
+  spacing: 16,
+
+  // Typography styles
+  typo: {
+    base: baseFont,
+    header: baseFont.size("2rem").bold,
+  },
+
+  // Color styles
+  colors: {
+    primary: color({ color: "red" }),
+    text: color({ color: "black" }),
+    background: color({ color: "white" }),
+  },
+});
+```
+
+## Theme Variants
+
+You can then create theme variants that inherit from a source theme but override specific values:
+
+```tsx
+import { createThemeVariant } from "styledwind";
+
+const darkTheme = createThemeVariant(theme, {
+  // Note: we can only pass values that we want to override. Everything else will be taken from the source theme.
+  colors: {
+    text: color({ color: "white" }),
+    background: color({ color: "black" }),
+  },
+});
+```
+
+## Using Themes
+
+To use theme, you simply read values from the theme object created before.
+
+```tsx
+import { theme } from "./theme";
+
+function Card() {
+  return (
+    <UI.Card styles={theme.colors.background.readableText.asBg}>
+      <UI.CardHeader_h1 styles={theme.typo.header} />
+      <UI.CardBody styles={flex.vertical.gap(2)}>Card content</UI.CardBody>
+    </UI.Card>
+  );
+}
+
+// Or
+
+const UICard = styled.div`
+  ${theme.colors.background.readableText.asBg};
+`;
+```
+
+## Theme provider
+
+To use the theme, you need to wrap your app in the `ThemeProvider` component.
+
+```tsx
+import { ThemeProvider } from "styledwind";
+import { theme, darkTheme } from "./theme";
+
+function App() {
+  const [currentTheme, setCurrentTheme] = useState(theme);
+
+  function setLightTheme() {
+    setCurrentTheme(theme);
+  }
+
+  function setDarkTheme() {
+    setCurrentTheme(darkTheme);
+  }
+
+  return (
+    <ThemeProvider theme={theme}>
+      <App onSetLightTheme={setLightTheme} onSetDarkTheme={setDarkTheme} />
+    </ThemeProvider>
+  );
+}
+```
+
+## Reading theme values
+
+If your theme defines some primitive values, you can read them using `useThemeValue` hook.
+
+```tsx
+import { useThemeValue, createTheme } from "styledwind";
+
+// theme.ts
+const theme = createTheme({
+  footerColumns: 3,
+});
+
+const wideTheme = createThemeVariant(theme, {
+  footerColumns: 4,
+});
+
+// Footer.tsx
+function Footer() {
+  const footerColumns = useThemeValue(theme.footerColumns);
+  return <div style={{ gridTemplateColumns: `repeat(${footerColumns}, 1fr)` }}>Hello</div>;
+}
+```
+
+Optionally, anywhere (even outside of React) you can read theme values by calling theme values with `theme` argument.
+
+```ts
+const footerColumns = theme.footerColumns(theme); // 3
+const wideFooterColumns = theme.footerColumns(wideTheme); // 4
+```
+
+Note: All the code above is fully typed and will give you autocomplete and type safety.
+
+# Core concepts
+
+## Colors
+
+Stylewind is semi-opinionated about how we define and work with colors.
+
+Every color is defined together with its 'hover', 'active' and 'readable text' variants.
+
+> [!NOTE]
+> If color variants are not defined, stylewind will automatically generate them for you.
+
+```ts
+const dangerColor = color({
+  color: "rgb(255, 0, 0)",
+  hover: "rgb(180, 0, 0)", // Optional
+  active: "rgb(140, 0, 0)", // Optional
+  readableText: "rgb(255, 255, 255)", // Optional
+});
+
+const hoverColor = color.hover;
+const activeColor = color.active;
+const readableTextColor = color.readableText;
+```
