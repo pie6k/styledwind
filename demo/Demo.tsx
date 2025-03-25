@@ -4,7 +4,7 @@ import { styled } from "styled-components";
 
 export function Demo() {
   return (
-    <UI.Box_h2 styles={[flex.vertical.gap(2), animation.fadeIn.slideUpFromBottom(10).fillMode("both")]}>
+    <UI.Box_h2 styles={[flex.vertical.gap(1), animation.fadeIn.slideUpFromBottom(10).fillMode("both")]}>
       <UIContent>Hello, world!</UIContent>
       <UIContent>Hello, world!</UIContent>
     </UI.Box_h2>

@@ -398,3 +398,35 @@ const UISelect = styled.select`
 ```
 
 We took the control object and declared which parts of it we want to apply
+
+## Gaps
+
+`flex` and `grid` have `.gap(gapLevel)` modifier.
+
+Gap level increases spacing exponentially, not linearly.
+
+I believe this is a more intuitive way to handle gaps, as in information hierarchy, more important groups usually have 2x more spacing than their child groups.
+
+Also, I believe it results in more consistent spacing across the app, as you have 'less' options to intuitively choose from.
+
+```ts
+flex.gap(1); // 0.5rem
+flex.gap(2); // 1rem
+flex.gap(3); // 2rem
+flex.gap(4); // 4rem
+flex.gap(5); // 8rem
+
+flex.gap(); // same as .gap(1)
+// etc.
+```
+
+> [!NOTE]
+> Gap is calculated using formula: `Math.pow(2, level) * 0.25rem`.
+
+If you want, you can pass exact values as well.
+
+```ts
+flex.gap("4px"); // 4px
+flex.gap("1em"); // 1em
+// etc.
+```
