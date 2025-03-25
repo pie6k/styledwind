@@ -405,10 +405,6 @@ We took the control object and declared which parts of it we want to apply
 
 Gap level increases spacing exponentially, not linearly.
 
-I believe this is a more intuitive way to handle gaps, as in information hierarchy, more important groups usually have 2x more spacing than their child groups.
-
-Also, I believe it results in more consistent spacing across the app, as you have 'less' options to intuitively choose from.
-
 ```ts
 flex.gap(1); // 0.5rem
 flex.gap(2); // 1rem
@@ -419,6 +415,10 @@ flex.gap(5); // 8rem
 flex.gap(); // same as .gap(1)
 // etc.
 ```
+
+I believe this is a more intuitive way to handle gaps, as in information hierarchy, more important groups usually have 2x more spacing than their child groups.
+
+Also, I believe it results in more consistent spacing across the app, as you have 'less' options to intuitively choose from.
 
 > [!NOTE]
 > Gap is calculated using formula: `Math.pow(2, level) * 0.25rem`.
