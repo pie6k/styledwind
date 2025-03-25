@@ -406,11 +406,11 @@ We took the control object and declared which parts of it we want to apply
 Gap level increases spacing exponentially, not linearly.
 
 ```ts
-flex.gap(1); // 0.5rem
-flex.gap(2); // 1rem
-flex.gap(3); // 2rem
-flex.gap(4); // 4rem
-flex.gap(5); // 8rem
+flex.gap(1); // gap: 0.5rem
+flex.gap(2); // gap: 1rem
+flex.gap(3); // gap: 2rem
+flex.gap(4); // gap: 4rem
+flex.gap(5); // gap: 8rem
 
 flex.gap(); // same as .gap(1)
 // etc.
