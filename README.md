@@ -300,3 +300,42 @@ subtleDangerColor === subtleDangerColor2; // true
 ```
 
 ## Typography
+
+To work with typography, we can use the `font` object. It provides a comprehensive set of properties to create and reuse typography styles.
+
+```ts
+import { font } from "styledwind";
+
+// Basic typography composition. We define core, shared styles which we will later compose into more specific styles.
+const baseText = font.family("Inter, sans-serif").size("1rem").lineHeight(1.5).antialiased;
+
+// Heading styles - we use baseText as a starting point and compose more specific styles from it.
+const heading = baseText.size("2rem").weight(700).lineHeight(1.25);
+
+// Label styles - we use baseText as a starting point and compose more specific styles from it.
+const label = baseText.size("0.875rem").opacity(0.7);
+```
+
+Each of the styles can then be used in our components or customized further.
+
+```tsx
+const UISmallLink = styled.a`
+  ${label.underline};
+`;
+
+const UIHeroHeader = styled.h1`
+  ${heading.uppercase.center};
+`;
+```
+
+You can group your typography styles into a single object and reuse it across your app.
+
+From JavaScript perspective, those styles are just objects, so you can export or group them as you want.
+
+```ts
+export const typo = {
+  base: baseText,
+  heading: heading,
+  label: label,
+};
+```
