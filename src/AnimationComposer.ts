@@ -3,10 +3,10 @@ import { css, keyframes } from "styled-components";
 import { resolveMaybeBaseValue, resolveMaybeBaseValues } from "./SizeComposer";
 import { type Length, addUnit, isInteger } from "./utils";
 
+import { simplifyRule } from "./compilation";
 import { Composer } from "./Composer";
 import { ComposerConfig } from "./ComposerConfig";
-import { DEFAULT_TRANSITION_DURATION_MS } from "./defaults";
-import { simplifyRule } from "./compilation";
+import { getHasValue } from "./utils/maybeValue";
 
 type PropertyAnimationSteps<V> = Array<V>;
 
@@ -386,7 +386,7 @@ const config = new ComposerConfig<StyledAnimationConfig>({
 });
 
 export class AnimationComposer extends Composer {
-  property<T extends keyof AnimatableProperties>(property: T, steps: PropertyAnimationSteps<AnimatableProperties[T]>) {
+  property<P extends keyof AnimatableProperties>(property: P, steps: PropertyAnimationSteps<AnimatableProperties[P]>) {
     const currentProperties = this.getConfig(config).properties ?? {};
 
     return this.updateConfig(config, { properties: { ...currentProperties, [property]: steps } });
@@ -484,9 +484,12 @@ export class AnimationComposer extends Composer {
   }
 
   compile() {
+    if (getHasValue(this.compileCache)) return this.compileCache;
+
     const currentConfig = this.getConfig(config);
 
-    if (!currentConfig.properties) return "";
+    if (!currentConfig.properties) return super.compile();
+
     const variables = getPropertiesAnimationVariables(currentConfig.properties);
     const keyframesString = getAnimationKeyframesString(currentConfig.properties);
 
@@ -495,9 +498,7 @@ export class AnimationComposer extends Composer {
 
     const willChangeProperties = getWillChangeProperties(currentConfig.properties);
 
-    return simplifyRule(css`
-      ${super.compile()};
-
+    const rule = simplifyRule(css`
       animation-name: ${animation};
 
       ${{
@@ -507,6 +508,8 @@ export class AnimationComposer extends Composer {
         ...variables,
       }}
     `);
+
+    return super.compile(rule);
   }
 }
 

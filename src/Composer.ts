@@ -1,18 +1,31 @@
 import { CSSProperties, RuleSet } from "styled-components";
-import { ValueReuser, createValueReuser } from "./utils/reuse";
+import { getHasValue, maybeValue } from "./utils/maybeValue";
 
 import { ComposerConfig } from "./ComposerConfig";
 import { MaybeUndefined } from "./utils/types";
 import { compileComposerStyles } from "./compilation";
-import { memoizePrototypeOf } from "./utils/memoizePrototype";
+import { createValueReuser } from "./utils/reuse";
+import { isNotNullish } from "./utils/nullish";
 
-export type GetStyles = () => string;
-export type ComposerStyle = CSSProperties | string | Composer;
+export interface GetStylesProps {
+  theme?: ThemeOrThemeProps;
+}
+export type ThemeOrThemeProps = GetStylesProps | object;
+
+export type GetStyles = (propsOrTheme?: ThemeOrThemeProps) => CompileResult;
+export type ComposerStyle = CSSProperties | string | Composer | RuleSet;
 
 export type StyledComposer<T extends Composer> = T extends GetStyles ? T : T & GetStyles;
 export type AnyStyledComposer = StyledComposer<Composer>;
 
-type CompileResult = string | string[] | RuleSet | null | Array<CompileResult>;
+export type PickComposer<T> = T extends StyledComposer<infer U> ? U : never;
+
+export type CompileResult = string | string[] | RuleSet | null | Array<CompileResult>;
+
+function getIsStyledComposer(value: unknown): value is StyledComposer<Composer> {
+  return typeof value === "function";
+}
+
 type ConstructorOf<T> = new (...args: any[]) => T;
 
 interface HolderFunction {
@@ -43,9 +56,21 @@ export function getIsComposer(input: unknown): input is Composer {
   return input instanceof Composer;
 }
 
-export abstract class Composer {
-  readonly styles?: ComposerStyle[] = [];
-  readonly configs?: Map<ComposerConfig, unknown>;
+export function pickComposer<C extends Composer>(input: C): C {
+  if (getIsStyledComposer(input)) {
+    return input.composer as C;
+  }
+
+  if (getIsComposer(input)) {
+    return input;
+  }
+
+  throw new Error("Invalid composer");
+}
+
+export class Composer {
+  readonly styles: ComposerStyle[] = [];
+  readonly configs: Map<ComposerConfig, unknown> = new Map();
 
   constructor() {
     const compileStyles: HolderFunction = () => {};
@@ -53,23 +78,13 @@ export abstract class Composer {
 
     const styledComposer = new Proxy(compileStyles, composerHolderFunctionProxyHandler) as unknown as Composer;
 
-    memoizePrototypeOf(styledComposer, ["reuseStyle", "addStyle", "updateConfig", "clone"]);
-
-    return styledComposer;
+    return styledComposer as StyledComposer<typeof this>;
   }
 
   private readonly reuseProperties = createValueReuser<CSSProperties>();
 
-  reuseStyle(style: ComposerStyle): ComposerStyle {
-    if (typeof style === "string") return style;
-
-    if (getIsComposer(style)) return style;
-
-    return this.reuseProperties(style);
-  }
-
   get composer() {
-    return this;
+    return pickComposer(this);
   }
 
   clone<T extends Composer>(this: T): StyledComposer<T> {
@@ -82,21 +97,31 @@ export abstract class Composer {
     return this.setConfig(config, { ...this.getConfig(config), ...changes });
   }
 
-  setConfigInner<T extends Composer, C>(this: T, config: ComposerConfig<C>, value: C): StyledComposer<T> {
-    const clone = new (this.constructor as ConstructorOf<T>)() as StyledComposer<T>;
+  private reuseConfig = createValueReuser<any>();
+  private reuseConfigMap = new Map<unknown, StyledComposer<any>>();
+
+  setConfig<T extends Composer, C>(this: T, config: ComposerConfig<C>, value: C): StyledComposer<T> {
+    value = this.reuseConfig(value);
+
+    let clone = this.reuseConfigMap.get(value) as StyledComposer<T> | undefined;
+
+    if (clone) {
+      return clone;
+    }
+
+    clone = new (this.constructor as ConstructorOf<T>)() as StyledComposer<T>;
 
     // @ts-expect-error
     clone.configs = new Map(this.configs);
 
     clone.configs.set(config, value);
 
+    // @ts-expect-error
+    clone.styles = this.styles;
+
+    this.reuseConfigMap.set(value, clone);
+
     return clone;
-  }
-
-  private reuseConfigValue = createValueReuser<unknown>();
-
-  setConfig<T extends Composer, C>(this: T, config: ComposerConfig<C>, value: C): StyledComposer<T> {
-    return this.setConfigInner(config, this.reuseConfigValue(value));
   }
 
   getConfig<C>(config: ComposerConfig<C>): C {
@@ -105,28 +130,55 @@ export abstract class Composer {
     return existingConfig ?? config.defaultConfig;
   }
 
-  private addStyleInner<T extends Composer>(this: T, style: ComposerStyle): StyledComposer<T> {
-    const clone = this.clone();
+  private reuseStyle(style: ComposerStyle): ComposerStyle {
+    if (typeof style === "string") return style;
 
-    // @ts-expect-error
-    clone.styles = [...(this.styles ?? [])];
+    if (getIsComposer(style)) return style;
 
-    clone.styles.push(style);
+    if (Array.isArray(style)) return style;
 
-    return clone;
+    return this.reuseProperties(style);
   }
 
+  private reuseStyleMap = new Map<ComposerStyle, StyledComposer<any>>();
+
   addStyle<T extends Composer>(this: T, style: ComposerStyle): StyledComposer<T> {
-    return this.addStyleInner(this.reuseStyle(style));
+    style = this.reuseStyle(style);
+
+    let clone = this.reuseStyleMap.get(style) as StyledComposer<T> | undefined;
+
+    if (clone) {
+      return clone;
+    }
+
+    clone = this.clone();
+
+    // @ts-expect-error
+    clone.styles = [...this.styles, style];
+
+    // @ts-expect-error
+    clone.configs = this.configs;
+
+    this.reuseStyleMap.set(style, clone);
+
+    return clone;
   }
 
   init() {
     return this as StyledComposer<typeof this>;
   }
 
-  compile(): CompileResult {
-    if (!this.styles) return null;
+  protected compileCache = maybeValue<CompileResult>();
 
-    return compileComposerStyles(this.styles);
+  compile(addedStyles?: ComposerStyle): CompileResult {
+    if (!this.styles && !addedStyles) return null;
+
+    if (getHasValue(this.compileCache)) {
+      return this.compileCache;
+    }
+
+    this.compileCache = compileComposerStyles([...(this.styles ?? []), addedStyles].filter(isNotNullish));
+
+    return this.compileCache;
   }
 }

@@ -1,4 +1,5 @@
 import { deepEqual } from "fast-equals";
+import { JSONValue } from "./json";
 
 export function createValueReuser<T>() {
   const values: T[] = [];
@@ -16,4 +17,4 @@ export function createValueReuser<T>() {
   };
 }
 
-export type ValueReuser<T> = ReturnType<typeof createValueReuser<T>>;
+export type ValueReuser<T extends JSONValue> = ReturnType<typeof createValueReuser<T>>;

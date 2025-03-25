@@ -36,7 +36,7 @@ export const compileComposerStyles = memoizeFn(
     // prettier-ignore
     const result = css`${precompiledStyles as Interpolation<object>}`;
 
-    simplifyRule(result);
+    // simplifyRule(result);
 
     return result;
   },

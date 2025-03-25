@@ -13,3 +13,5 @@ export { transition } from "./TransitionComposer";
 export { ComposerConfig, composerConfig } from "./ComposerConfig";
 export * from "./types";
 export { UI } from "./UI";
+export * from "./theme";
+export * from "./ThemedValue";

@@ -5,6 +5,7 @@ import type { CSSProperty } from "./types";
 import { Composer } from "./Composer";
 import { ComposerConfig } from "./ComposerConfig";
 import { Property } from "csstype";
+import { getHasValue } from "./utils/maybeValue";
 
 interface StyledTransitionConfig {
   easing: string;
@@ -62,6 +63,8 @@ export class TransitionComposer extends Composer {
   }
 
   compile() {
+    if (getHasValue(this.compileCache)) return this.compileCache;
+
     const { easing, duration, properties, slowRelease } = this.getConfig(config);
     const propertiesString = properties === "all" ? "all" : properties.join(", ");
 
@@ -79,7 +82,7 @@ export class TransitionComposer extends Composer {
     `);
     }
 
-    return styles;
+    return super.compile(styles);
   }
 }
 

@@ -2,6 +2,7 @@ import { blendColors, getColorBorderColor, getHighlightedColor, isColorDark, set
 
 import { Composer } from "./Composer";
 import { ComposerConfig } from "./ComposerConfig";
+import { getHasValue } from "./utils/maybeValue";
 import { isDefined } from "./utils";
 import { memoizeFn } from "./utils/memoize";
 
@@ -218,9 +219,11 @@ export class ColorComposer extends Composer {
   }
 
   compile() {
+    if (getHasValue(this.compileCache)) return this.compileCache;
+
     const currentConfig = this.getConfig(config);
 
-    return [super.compile(), getColorStyles(currentConfig)];
+    return super.compile(getColorStyles(currentConfig));
   }
 }
 

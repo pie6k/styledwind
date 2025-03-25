@@ -1,4 +1,3 @@
-// import "./app";
-
-import "./playground";
+import "./app";
+// import "./playground";
 import "./perf";

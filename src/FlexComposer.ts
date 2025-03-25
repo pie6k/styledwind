@@ -1,6 +1,9 @@
 import { CSSProperties } from "styled-components";
 import { Composer } from "./Composer";
-import { size } from "./SizeComposer";
+
+function levelToRem(level: number) {
+  return `${Math.pow(2, level) / 4}rem`;
+}
 
 export class FlexComposer extends Composer {
   init() {
@@ -48,7 +51,7 @@ export class FlexComposer extends Composer {
   }
 
   gap(value: number = 1) {
-    return this.addStyle(size.level(value).gap);
+    return this.addStyle({ gap: levelToRem(value) });
   }
 
   align(value: CSSProperties["alignItems"]) {
@@ -117,10 +120,6 @@ export class FlexComposer extends Composer {
 
   get inline() {
     return this.addStyle({ display: "inline-flex" });
-  }
-
-  compile() {
-    return super.compile();
   }
 }
 

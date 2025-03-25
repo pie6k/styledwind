@@ -1,5 +1,6 @@
 import { Composer } from "./Composer";
 import { ComposerConfig } from "./ComposerConfig";
+import { getHasValue } from "./utils/maybeValue";
 import { setColorOpacity } from "./utils/color";
 
 interface ShadowConfig {
@@ -50,11 +51,13 @@ export class ShadowComposer extends Composer {
   }
 
   compile() {
+    if (getHasValue(this.compileCache)) return this.compileCache;
+
     const { x, y, blur, color, inset, spread } = this.getConfig(shadowConfig);
 
     const shadowStyle = `box-shadow: ${x}px ${y}px ${blur}px ${spread}px ${color} ${inset ? "inset" : ""};`;
 
-    return [super.compile(), shadowStyle];
+    return super.compile(shadowStyle);
   }
 }
 
