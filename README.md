@@ -275,6 +275,20 @@ const UIDangerButton = styled.button`
 `;
 ```
 
+Use `.asColor`, `.asBg`, `.asFill` to decide how the color will be applied.
+
+If you use none of those, color will be simply pasted as is, eg.
+
+```tsx
+const UIDangerText = styled.button`
+  // color will be directly used
+  --my-custom-variable: ${dangerColor};
+
+  // color get 'active' variant, then lighten it even more and pass it directly to the variable
+  --my-custom-highlight-variable: ${dangerColor.active.lighten(0.2)};
+`;
+```
+
 Colors have plenty of methods to make working with them easier.
 
 ```ts
@@ -326,6 +340,11 @@ const UISmallLink = styled.a`
 const UIHeroHeader = styled.h1`
   ${heading.uppercase.center};
 `;
+
+// Or inline
+function App() {
+  return <UI.UIDangerLink styles={[label.underline, dangerColor.interactive.asColor]}>Read more</UI.UIDangerLink>;
+}
 ```
 
 You can group your typography styles into a single object and reuse it across your app.
