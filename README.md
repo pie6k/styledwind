@@ -358,3 +358,43 @@ export const typo = {
   label: label,
 };
 ```
+
+## Surface
+
+`surface` object allows defining shared styles such as `padding`, `border-radius`, etc.
+
+In many apps multiple components use similar sizing styles, eg. input and button will share size, padding and border-radius.
+
+```ts
+import { surface } from "styledwind";
+
+// Control will be used for inputs, buttons, select, etc
+const control = sizing({
+  paddingX: 2,
+  paddingY: 2,
+  height: 8,
+  radius: 1,
+});
+
+> [!NOTE]
+> If values are passed as numbers, they will use the same units as Tailwind CSS - 1 unit = 0.25rem.
+```
+
+And then we can use it in our components:
+
+```tsx
+const UIInput = styled.input`
+  ${control.paddingX.minHeight.radius};
+`;
+
+const UITextarea = styled.textarea`
+  ${control.padding.radius};
+  min-height: 100px;
+`;
+
+const UISelect = styled.select`
+  ${control.paddingX.minHeight.radius};
+`;
+```
+
+We took the control object and declared which parts of it we want to apply
