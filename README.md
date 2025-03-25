@@ -375,10 +375,10 @@ const control = sizing({
   height: 8,
   radius: 1,
 });
+```
 
 > [!NOTE]
 > If values are passed as numbers, they will use the same units as Tailwind CSS - 1 unit = 0.25rem.
-```
 
 And then we can use it in our components:
 
