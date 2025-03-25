@@ -74,7 +74,6 @@ export function createThemeVariant<T extends ComposableThemeInputObject>(
 
   const changedPropertiesMap = createNestedRecordPropertiesMap(variantInput) as PropertiesMap;
 
-  getThemePropertiesMap(sourceTheme as ComposableTheme);
   const propertiesClone: PropertiesMap = new Map();
 
   for (const [path, value] of changedPropertiesMap.entries()) {
@@ -99,20 +98,6 @@ export function getIsTheme<T extends ComposableThemeInputObject>(value: unknown)
 
 export function getIsThemeVariant(value: unknown): value is ThemeVariant {
   return getIsThemeOrVariant(value) && value[DEFAULT_THEME] !== value;
-}
-
-export function getThemeComposerByPath(theme: ComposableTheme<ComposableThemeInputObject>, path: string): Composer {
-  const composer = theme[PROPERTIES].get(path);
-
-  if (!composer) {
-    throw new Error(`Composer not found for path: ${path}`);
-  }
-
-  if (!getIsComposer(composer)) {
-    throw new Error(`Composer is not a function for path: ${path}`);
-  }
-
-  return composer;
 }
 
 /**

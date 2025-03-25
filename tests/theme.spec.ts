@@ -37,6 +37,9 @@ describe("theme", () => {
 
     expect(getIsThemeVariant(blue)).toBe(true);
     expect(getIsTheme(blue)).toBe(false);
+
+    expect(getIsTheme(null)).toBe(false);
+    expect(getIsThemeVariant(null)).toBe(false);
   });
 
   test("converts composers to themed composers", () => {
@@ -48,15 +51,23 @@ describe("theme", () => {
     expect(getIsThemedComposer(theme.typo.base.underline.capitalize)).toBe(true);
   });
 
+  test("creating variant is not allowed on non theme", () => {
+    expect(() => {
+      // @ts-expect-error
+      createThemeVariant(blue, {});
+    }).toThrowErrorMatchingInlineSnapshot(`[Error: Can only create theme variant from source theme]`);
+  });
+
   test("primitive values are returned basing on theme", () => {
+    expect(theme.foo()).toBe(42);
+
+    expect(theme.foo(theme)).toBe(42);
+    expect(theme.foo(blue)).toBe(43);
+
     expect(theme.foo({ theme })).toBe(42);
     expect(theme.foo({ theme: blue })).toBe(43);
 
     expect(theme.foo({ theme: undefined })).toBe(42);
-    expect(theme.foo(theme)).toBe(42);
-    expect(theme.foo(blue)).toBe(43);
-
-    expect(theme.foo()).toBe(42);
   });
 
   test("correctly return theme variant for proper call", () => {
@@ -139,7 +150,7 @@ describe("theme", () => {
 
   test("throws error if theme is not composable", () => {
     expect(() => theme.colors.primary.asBg({ theme: {} })).toThrowErrorMatchingInlineSnapshot(
-      `[Error: There is theme provided in props, but it is not composable]`,
+      `[Error: There is some value provided as theme in props, but it is has unknown type]`,
     );
   });
 
@@ -158,7 +169,7 @@ describe("theme", () => {
     `);
   });
 
-  test("will throw if theme exists composable context", () => {
+  test("will throw if theme exits composable context", () => {
     const theme = createTheme({
       color: color({ color: "red" }),
     });

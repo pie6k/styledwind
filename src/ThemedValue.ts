@@ -132,21 +132,19 @@ function getThemeFromCallArg(propsOrTheme?: ThemeOrThemeProps): ComposableThemeO
     return propsOrTheme;
   }
 
-  if ("theme" in propsOrTheme) {
-    const maybeTheme = propsOrTheme.theme;
+  if (!("theme" in propsOrTheme)) return null;
 
-    if (maybeTheme === undefined) {
-      return null;
-    }
+  const maybeTheme = propsOrTheme.theme;
 
-    if (getIsThemeOrVariant(maybeTheme)) {
-      return maybeTheme;
-    }
-
-    throw new Error("There is theme provided in props, but it is not composable");
+  if (maybeTheme === undefined) {
+    return null;
   }
 
-  return null;
+  if (getIsThemeOrVariant(maybeTheme)) {
+    return maybeTheme;
+  }
+
+  throw new Error("There is some value provided as theme in props, but it is has unknown type");
 }
 
 function createHolder<C extends Composer>(themedComposer: C, manager: ThemedComposerManager<C>) {
@@ -253,10 +251,6 @@ function createThemedValueGetter<T>(path: string, defaultValue: T): ThemedValueG
 
     if (!theme) {
       return defaultValue;
-    }
-
-    if (!getIsThemeOrVariant(theme)) {
-      throw new Error("Theme is not composable");
     }
 
     const propertiesMap = getThemePropertiesMap(theme);
