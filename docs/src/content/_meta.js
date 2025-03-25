@@ -1,7 +1,6 @@
 export default {
-  index: '',
-  'get-started': '',
-  features: '',
-  themes: '',
-  advanced: ''
-}
+  index: "",
+  "get-started": "",
+  features: "",
+  advanced: "",
+};
