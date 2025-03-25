@@ -1,0 +1,54 @@
+{
+  "name": "styledwind",
+  "version": "1.0.0",
+  "type": "module",
+  "author": {
+    "name": "Adam Pietrasiak"
+  },
+  "main": "./dist/index.umd.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.umd.cjs"
+    }
+  },
+  "scripts": {
+    "dev": "vite --config vite.config.demo.ts",
+    "build": "vite --config vite.config.build.ts build",
+    "preview": "vite preview",
+    "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "@types/node": "^22.13.11",
+    "@types/react": "*",
+    "@types/react-dom": "*",
+    "@types/styled-components": "*",
+    "jest": "^29.7.0",
+    "prettier": "^3.0.3",
+    "react": "*",
+    "react-dom": "*",
+    "styled-components": "*",
+    "ts-jest": "^29.2.5",
+    "typescript": "*",
+    "vite": "^4.4.9",
+    "vite-plugin-dts": "^4.5.3",
+    "vitest": "^3.0.9"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "color": "^5.0.0",
+    "csstype": "^3.1.3",
+    "fast-equals": "^5.2.2"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "styled-components": "*"
+  },
+  "packageManager": "yarn@4.4.1"
+}
