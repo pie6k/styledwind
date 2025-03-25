@@ -1,7 +1,7 @@
 import { CSSProperties } from "styled-components";
 import { Composer } from "./Composer";
 import type { Property } from "csstype";
-import { size } from "./SizeComposer";
+import { convertToRem } from "./utils/convertUnits";
 
 const DISPLAY_GRID: CSSProperties = { display: "grid" };
 const DISPLAY_INLINE_GRID: CSSProperties = { display: "inline-grid" };
@@ -20,7 +20,7 @@ export class GridComposer extends Composer {
   }
 
   gap(value: number = 1) {
-    return this.addStyle(size.level(value).gap);
+    return this.addStyle({ gap: convertToRem(value, "level") + "rem" });
   }
 
   alignItems(value: Property.AlignItems) {

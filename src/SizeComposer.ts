@@ -1,7 +1,7 @@
 import { Composer } from "./Composer";
 import { ComposerConfig } from "./ComposerConfig";
 import { Length } from "./utils";
-import { isNotNullish } from "./utils/nullish";
+import { convertToRem } from "./utils/convertUnits";
 
 type SizeOutputTarget =
   | "width"
@@ -27,34 +27,6 @@ type SizeOutputTarget =
   | "max-height"
   | "transform-x"
   | "transform-y";
-
-function resolveProperty(target: SizeOutputTarget) {
-  if (target === "margin-x") {
-    return ["margin-left", "margin-right"] as const;
-  }
-
-  if (target === "margin-y") {
-    return ["margin-top", "margin-bottom"] as const;
-  }
-
-  if (target === "padding-x") {
-    return ["padding-left", "padding-right"] as const;
-  }
-
-  if (target === "padding-y") {
-    return ["padding-top", "padding-bottom"] as const;
-  }
-
-  if (target === "padding") {
-    return ["padding-top", "padding-right", "padding-bottom", "padding-left"] as const;
-  }
-
-  if (target === "margin") {
-    return ["margin-top", "margin-right", "margin-bottom", "margin-left"] as const;
-  }
-
-  return [target] as const;
-}
 
 interface StyledSizeConfig {
   targets: SizeOutputTarget[] | "inline";
@@ -99,18 +71,8 @@ export class SizeComposer extends Composer {
     return this.updateConfig(config, { value });
   }
 
-  private addTarget(target: SizeOutputTarget) {
-    const currentConfig = this.getConfig(config);
-
-    if (currentConfig.targets === "inline") {
-      return this.updateConfig(config, { targets: [target] });
-    }
-
-    return this.updateConfig(config, { targets: [...currentConfig.targets, target] });
-  }
-
   base(value: number) {
-    return this.setValue(`${value / 4}rem`);
+    return this.setValue(convertToRem(value, "base") + "rem");
   }
 
   rem(value: number) {
@@ -118,9 +80,7 @@ export class SizeComposer extends Composer {
   }
 
   level(level: number) {
-    const multiplier = Math.pow(2, level);
-
-    return this.base(multiplier);
+    return this.setValue(convertToRem(level, "level") + "rem");
   }
 
   px(value: number) {
@@ -238,11 +198,17 @@ export class SizeComposer extends Composer {
   }
 
   get transformX() {
-    return this.addTarget("transform-x");
+    return this.addStyle({ transform: `translateX(${this.resolvedSize})` });
   }
 
   get transformY() {
-    return this.addTarget("transform-y");
+    return this.addStyle({ transform: `translateY(${this.resolvedSize})` });
+  }
+
+  get transformXY() {
+    const resolvedSize = this.resolvedSize;
+
+    return this.addStyle({ transform: `translate(${resolvedSize}, ${resolvedSize})` });
   }
 }
 

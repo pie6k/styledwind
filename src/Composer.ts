@@ -13,7 +13,7 @@ export interface GetStylesProps {
 export type ThemeOrThemeProps = GetStylesProps | object;
 
 export type GetStyles = (propsOrTheme?: ThemeOrThemeProps) => CompileResult;
-export type ComposerStyle = CSSProperties | string | Composer | RuleSet;
+export type ComposerStyle = CSSProperties | string | Composer | RuleSet | Array<ComposerStyle>;
 
 export type StyledComposer<T extends Composer> = T extends GetStyles ? T : T & GetStyles;
 export type AnyStyledComposer = StyledComposer<Composer>;

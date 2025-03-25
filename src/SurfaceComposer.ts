@@ -4,8 +4,8 @@ import { memoizeFn } from "./utils/memoize";
 import { resolveSizeValue } from "./SizeComposer";
 
 interface SizingBoxConfig {
-  px?: number;
-  py?: number;
+  paddingX?: number;
+  paddingY?: number;
   radius?: number;
   height?: number;
   width?: number;
@@ -23,31 +23,31 @@ export class SurfaceComposer extends FlexComposer {
   }
 
   get padding() {
-    const { px = 0, py = 0 } = this.getConfig(config);
+    const { paddingX = 0, paddingY = 0 } = this.getConfig(config);
 
     return this.addStyle({
-      paddingLeft: resolveSizeValue(px),
-      paddingRight: resolveSizeValue(px),
-      paddingTop: resolveSizeValue(py),
-      paddingBottom: resolveSizeValue(py),
+      paddingLeft: resolveSizeValue(paddingX),
+      paddingRight: resolveSizeValue(paddingX),
+      paddingTop: resolveSizeValue(paddingY),
+      paddingBottom: resolveSizeValue(paddingY),
     });
   }
 
   get paddingX() {
-    const { px = 0 } = this.getConfig(config);
+    const { paddingX = 0 } = this.getConfig(config);
 
     return this.addStyle({
-      paddingLeft: resolveSizeValue(px),
-      paddingRight: resolveSizeValue(px),
+      paddingLeft: resolveSizeValue(paddingX),
+      paddingRight: resolveSizeValue(paddingX),
     });
   }
 
   get paddingY() {
-    const { py = 0 } = this.getConfig(config);
+    const { paddingY = 0 } = this.getConfig(config);
 
     return this.addStyle({
-      paddingTop: resolveSizeValue(py),
-      paddingBottom: resolveSizeValue(py),
+      paddingTop: resolveSizeValue(paddingY),
+      paddingBottom: resolveSizeValue(paddingY),
     });
   }
 

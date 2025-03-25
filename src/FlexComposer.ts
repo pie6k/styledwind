@@ -1,9 +1,6 @@
 import { CSSProperties } from "styled-components";
 import { Composer } from "./Composer";
-
-function levelToRem(level: number) {
-  return `${Math.pow(2, level) / 4}rem`;
-}
+import { convertToRem } from "./utils/convertUnits";
 
 export class FlexComposer extends Composer {
   init() {
@@ -51,7 +48,7 @@ export class FlexComposer extends Composer {
   }
 
   gap(value: number = 1) {
-    return this.addStyle({ gap: levelToRem(value) });
+    return this.addStyle({ gap: convertToRem(value, "level") + "rem" });
   }
 
   align(value: CSSProperties["alignItems"]) {

@@ -15,3 +15,4 @@ export * from "./types";
 export { UI } from "./UI";
 export * from "./theme";
 export * from "./ThemedValue";
+export * from "./themeHooks";

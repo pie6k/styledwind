@@ -1,5 +1,10 @@
 import { CompileResult, Composer, ThemeOrThemeProps, getIsComposer } from "./Composer";
-import { ComposableThemeOrVariant, getIsThemeOrVariant, getThemePropertiesMap } from "./theme";
+import {
+  ComposableThemeInputObject,
+  ComposableThemeOrVariant,
+  getIsThemeOrVariant,
+  getThemePropertiesMap,
+} from "./theme";
 
 import { EqualKeyMap } from "./utils/map/EqualKeyMap";
 import { Primitive } from "./utils/primitive";
@@ -123,13 +128,15 @@ const themedComposerHolderProxyHandler: ProxyHandler<ThemedComposerHolder<Compos
 
 const themedComposers = new WeakSet<object>();
 
-function getThemeFromCallArg(propsOrTheme?: ThemeOrThemeProps): ComposableThemeOrVariant | null {
+function getThemeFromCallArg<T extends ComposableThemeInputObject>(
+  propsOrTheme?: ThemeOrThemeProps,
+): ComposableThemeOrVariant<T> | null {
   if (!propsOrTheme) {
     return null;
   }
 
   if (getIsThemeOrVariant(propsOrTheme)) {
-    return propsOrTheme;
+    return propsOrTheme as ComposableThemeOrVariant<T>;
   }
 
   if (!("theme" in propsOrTheme)) return null;
@@ -141,7 +148,7 @@ function getThemeFromCallArg(propsOrTheme?: ThemeOrThemeProps): ComposableThemeO
   }
 
   if (getIsThemeOrVariant(maybeTheme)) {
-    return maybeTheme;
+    return maybeTheme as ComposableThemeOrVariant<T>;
   }
 
   throw new Error("There is some value provided as theme in props, but it is has unknown type");

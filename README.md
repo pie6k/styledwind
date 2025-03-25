@@ -430,3 +430,155 @@ flex.gap("4px"); // gap: 4px;
 flex.gap("1em"); // gap: 1em;
 // etc.
 ```
+
+# Advanced
+
+## Creating custom composable styles
+
+You can create your own composable styles by extending the `Composer` class.
+
+Let's say you want to create a custom `DropDownStylesComposer` composer that will be used to style dropdowns.
+
+```ts
+import { Composer } from "styledwind";
+
+export class DropDownStylesComposer extends Composer {
+  get shadow() {
+    return this.addStyle({ boxShadow: "0 0 10px 0 rgba(0, 0, 0, 0.1)" });
+  }
+
+  get base() {
+    return this.addStyle({
+      padding: "1rem",
+      borderRadius: "0.5rem",
+    });
+  }
+
+  get border() {
+    return this.addStyle({
+      border: "1px solid #e0e0e0",
+    });
+  }
+
+  get background() {
+    return this.addStyle({
+      background: "white",
+    });
+
+    // or
+    return this.addStyle(theme.colors.dropdown.asBg);
+  }
+
+  get all() {
+    return this.shadow.base.border.background;
+  }
+}
+
+export const dropdown = new DropDownStylesComposer().init();
+```
+
+Now you can use it in your components:
+
+```tsx
+const UIDropDown = styled.div`
+  ${dropdown.shadow.base.border.background};
+  // or
+  ${dropdown.all};
+`;
+```
+
+> [!NOTE] > `.init()` call is only needed for TypeScript, as otherwise styled-components will complain about incorrect object passed inside `styled` tag.
+
+## Custom composables with config
+
+In some cases, you might want your composables to have some config before emmiting styles.
+
+For example, you want to create a `ButtonStylesComposer` that will be used to style buttons.
+
+```ts
+import { Composer, composerConfig, CSSProperties } from "styledwind";
+
+interface ButtonStylesConfig {
+  size: "regular" | "small" | "medium" | "large";
+  kind: "primary" | "secondary" | "tertiary";
+}
+
+const config = composerConfig<ButtonStylesConfig>({
+  size: "regular",
+  kind: "primary",
+});
+
+export class ButtonStylesComposer extends Composer {
+  setSize(size: ButtonStylesConfig["size"]) {
+    return this.setConfig(config, { size });
+  }
+
+  get regular() {
+    return this.setSize("regular");
+  }
+
+  get small() {
+    return this.setSize("small");
+  }
+
+  get medium() {
+    return this.setSize("medium");
+  }
+
+  get large() {
+    return this.setSize("large");
+  }
+
+  get primary() {
+    return this.setKind("primary");
+  }
+
+  get secondary() {
+    return this.setKind("secondary");
+  }
+
+  get tertiary() {
+    return this.setKind("tertiary");
+  }
+
+  setKind(kind: ButtonStylesConfig["kind"]) {
+    return this.setConfig(config, { kind });
+  }
+
+  private getButtonPropertiesForSize(size: ButtonStylesConfig["size"]): CSSProperties {
+    // Use some utility functions to get the values
+    const fontSize = getFontSizeForButtonSize(size);
+    const paddingX = getPaddingXForButtonSize(size);
+    const paddingY = getPaddingYForButtonSize(size);
+    const minHeight = getMinHeightForButtonSize(size);
+
+    return {
+      fontSize,
+      padding: `${paddingY} ${paddingX}`,
+      minHeight,
+    };
+  }
+
+  compile() {
+    const { size, kind } = this.getConfig(config);
+
+    return super.compile([
+      // Generate all styles based on config
+      this.getButtonPropertiesForSize(size),
+      // You can pass more styles as well:
+      // - CSSProperties,
+      // - string, RuleSet (css``), Composer>)
+    ]);
+  }
+}
+
+export const button = new ButtonStylesComposer().init();
+```
+
+And later we can use it like this:
+
+```tsx
+const UIGetStartedButton = styled.button`
+  ${button.regular.primary};
+`;
+```
