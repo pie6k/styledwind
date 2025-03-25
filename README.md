@@ -259,8 +259,44 @@ const dangerColor = color({
   active: "rgb(140, 0, 0)", // Optional
   readableText: "rgb(255, 255, 255)", // Optional
 });
-
-const hoverColor = color.hover;
-const activeColor = color.active;
-const readableTextColor = color.readableText;
 ```
+
+Later on, we can use it like this:
+
+```tsx
+// "static" example - it simply uses the color as background
+const UIDangerText = styled.button`
+  ${dangerColor.asColor};
+`;
+
+// "dynamic" example - it automatically generates &:hover and &:active styles
+const UIDangerButton = styled.button`
+  ${dangerColor.interactive.asBg};
+`;
+```
+
+Colors have plenty of methods to make working with them easier.
+
+```ts
+import { UI } from "styledwind";
+import { dangerColor } from "./colors";
+
+const subtleDangerColor = dangerColor.opacity(0.4).lighten(0.2);
+
+function Notice() {
+  return <UI.Notice styles={subtleDangerColor.asColor}>Notice</UI.Notice>;
+}
+```
+
+> [!NOTE]
+> It doesn't matter if you use chainable methods inside the component body or not. They are all cached. If the same modifiers are used multiple times across your app, they will be cached and reused.
+
+```tsx
+const subtleDangerColor = dangerColor.opacity(0.4).lighten(0.2);
+const subtleDangerColor2 = dangerColor.opacity(0.4).lighten(0.2);
+
+// subtleDangerColor and subtleDangerColor2 are the same
+subtleDangerColor === subtleDangerColor2; // true
+```
+
+## Typography
