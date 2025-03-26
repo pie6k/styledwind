@@ -1,60 +1,32 @@
-# Color System
-
-Stylewind is semi-opinionated about how we define and work with colors. Every color is defined together with its 'hover', 'active' and 'readable text' variants.
-
-## Basic Usage
+# Composable, reusable styles
 
 ```tsx
-import { color } from "styledwind";
+// We define some shared font styles
+const baseFont = font.family("Inter, sans-serif").lineHeight(1.5).antialiased;
 
-const primaryColor = color({ color: "red" });
-```
+export const typo = {
+  // And compose them into more specific styles
+  header: baseFont.size("2rem").lineHeight(1.25).bold,
+  copy: baseFont,
+  label: baseFont.size("0.875rem"),
+};
 
-## Color Variants
+// We define common rules for our animations (duration, easing)
+const baseAnimation = animation.duration("150ms").easeInOut;
 
-Each color comes with built-in variants:
+export const animations = {
+  // And compose it into specific animations
+  fadeIn: baseAnimation.properties({ opacity: [0, 1] }),
+  slideUp: baseAnimation.properties({ y: [10, 0] }),
+};
 
-```tsx
-const buttonColor = color({ color: "blue" });
+// Or continue composing inside components
+const UILink = styled.a`
+  ${typo.copy.underline};
+`;
 
-// Use different variants
-buttonColor.hover; // Hover state
-buttonColor.active; // Active state
-buttonColor.readableText; // Automatically calculated readable text color
-```
-
-## Color Composition
-
-You can compose colors with other styles:
-
-```tsx
-const button = styled.button`
-  ${color({ color: "blue" }).hover.active.readableText};
+const UIQuote = styled.blockquote`
+  ${typo.copy.italic};
+  ${animations.slideUp.duration("500ms")};
 `;
 ```
-
-## Theme Integration
-
-Colors work seamlessly with the theme system:
-
-```tsx
-const theme = createTheme({
-  colors: {
-    primary: color({ color: "blue" }),
-    secondary: color({ color: "gray" }),
-  },
-});
-
-// Use in components
-function Button() {
-  return <UI.Button styles={theme.colors.primary.hover.active.readableText}>Click me</UI.Button>;
-}
-```
-
-## Best Practices
-
-1. Define colors in your theme for consistency
-2. Use semantic color names (e.g., `primary`, `secondary`, `error`)
-3. Leverage built-in variants for interactive states
-4. Use `readableText` for ensuring text contrast
-5. Consider accessibility when choosing colors

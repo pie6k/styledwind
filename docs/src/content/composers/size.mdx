@@ -1,129 +1,154 @@
-# Theme System
+# Size Composer
 
-Styledwind provides a powerful theming system that allows you to create and manage theme variants while maintaining type safety and performance.
+The Size Composer provides a comprehensive API for managing dimensions, spacing, and transformations in your components. It offers a fluent interface for controlling various size-related properties with support for different units and scaling systems.
 
-## Creating Themes
-
-Themes are created using the `createTheme` function. It takes an object where you can pass composable and primitive values.
+## Basic Usage
 
 ```tsx
-import { createTheme, color, font } from "styledwind";
+import styled from "styled-components";
+import { size } from "styledwind";
 
-const baseFont = font.family("Inter, sans-serif").lineHeight(1.5).antialiased;
-
-const theme = createTheme({
-  // Primitive values
-  spacing: 16,
-
-  // Typography styles
-  typo: {
-    base: baseFont,
-    header: baseFont.size("2rem").bold,
-  },
-
-  // Color styles
-  colors: {
-    primary: color({ color: "red" }),
-    text: color({ color: "black" }),
-    background: color({ color: "white" }),
-  },
-});
-```
-
-## Theme Variants
-
-You can then create theme variants that inherit from a source theme but override specific values:
-
-```tsx
-import { createThemeVariant } from "styledwind";
-
-const darkTheme = createThemeVariant(theme, {
-  // Note: we can only pass values that we want to override. Everything else will be taken from the source theme.
-  colors: {
-    text: color({ color: "white" }),
-    background: color({ color: "black" }),
-  },
-});
-```
-
-## Using Themes
-
-To use theme, you simply read values from the theme object created before.
-
-```tsx
-import { theme } from "./theme";
-
-function Card() {
-  return (
-    <UI.Card styles={theme.colors.background.readableText.asBg}>
-      <UI.CardHeader_h1 styles={theme.typo.header} />
-      <UI.CardBody styles={flex.vertical.gap(2)}>Card content</UI.CardBody>
-    </UI.Card>
-  );
-}
-
-// Or
-
-const UICard = styled.div`
-  ${theme.colors.background.readableText.asBg};
+const Box = styled.div`
+  ${size.width(2).height(2)};
 `;
 ```
 
-## Theme Provider
+## Units
 
-To use the theme, you need to wrap your app in the `ThemeProvider` component.
-
-```tsx
-import { ThemeProvider } from "styledwind";
-import { theme, darkTheme } from "./theme";
-
-function App() {
-  const [currentTheme, setCurrentTheme] = useState(theme);
-
-  function setLightTheme() {
-    setCurrentTheme(theme);
-  }
-
-  function setDarkTheme() {
-    setCurrentTheme(darkTheme);
-  }
-
-  return (
-    <ThemeProvider theme={theme}>
-      <App onSetLightTheme={setLightTheme} onSetDarkTheme={setDarkTheme} />
-    </ThemeProvider>
-  );
-}
-```
-
-## Reading Theme Values
-
-If your theme defines some primitive values, you can read them using `useThemeValue` hook.
+Specify sizes using different units:
 
 ```tsx
-import { useThemeValue, createTheme } from "styledwind";
+// Base unit (scaled by 4)
+${size.base(1)} // 0.25rem
 
-// theme.ts
-const theme = createTheme({
-  footerColumns: 3,
-});
+// Rem units
+${size.rem(2)} // 2rem
 
-const wideTheme = createThemeVariant(theme, {
-  footerColumns: 4,
-});
+// Level-based scaling
+${size.level(2)} // Scaled by level system
 
-// Footer.tsx
-function Footer() {
-  const footerColumns = useThemeValue(theme.footerColumns);
-  return <div style={{ gridTemplateColumns: `repeat(${footerColumns}, 1fr)` }}>Hello</div>;
-}
+// Pixel units
+${size.px(16)} // 16px
+
+// Em units
+${size.em(1.5)} // 1.5em
 ```
 
-Optionally, anywhere (even outside of React) you can read theme values by calling theme values with `theme` argument.
+## Dimensions
 
-```ts
-const footerColumns = theme.footerColumns(theme); // 3
-const wideFooterColumns = theme.footerColumns(wideTheme); // 4
+Control element dimensions:
+
+```tsx
+// Width
+${size.width(2)}
+
+// Height
+${size.height(2)}
+
+// Both width and height
+${size.size(2)}
+
+// Minimum dimensions
+${size.minWidth(2)}
+${size.minHeight(2)}
+${size.minSize(2)}
+
+// Maximum dimensions
+${size.maxWidth(2)}
+${size.maxHeight(2)}
+${size.maxSize(2)}
 ```
 
-Note: All the code above is fully typed and will give you autocomplete and type safety.
+## Margins
+
+Add margins to elements:
+
+```tsx
+// All sides
+${size.margin(2)}
+
+// Horizontal margins
+${size.marginX(2)}
+
+// Vertical margins
+${size.marginY(2)}
+
+// Individual sides
+${size.marginTop(2)}
+${size.marginBottom(2)}
+${size.marginLeft(2)}
+${size.marginRight(2)}
+```
+
+## Padding
+
+Add padding to elements:
+
+```tsx
+// All sides
+${size.padding(2)}
+
+// Horizontal padding
+${size.paddingX(2)}
+
+// Vertical padding
+${size.paddingY(2)}
+
+// Individual sides
+${size.paddingTop(2)}
+${size.paddingBottom(2)}
+${size.paddingLeft(2)}
+${size.paddingRight(2)}
+```
+
+## Gap
+
+Add gap between elements:
+
+```tsx
+// Gap between grid or flex items
+${size.gap(2)}
+```
+
+## Transformations
+
+Apply translations:
+
+```tsx
+// Translate X
+${size.transformX(2)}
+
+// Translate Y
+${size.transformY(2)}
+
+// Translate both X and Y
+${size.transformXY(2)}
+```
+
+## Example Components
+
+Here's a practical example of how to use the Size Composer in real components:
+
+```tsx
+const Card = styled.div`
+  ${size.width(20).padding(2)};
+`;
+
+const Button = styled.button`
+  ${size.paddingX(2).paddingY(1)};
+`;
+
+const Grid = styled.div`
+  ${size.gap(2)};
+`;
+
+const Modal = styled.div`
+  ${size.width(30).maxHeight(40).padding(3)};
+`;
+
+const Icon = styled.div`
+  ${size.size(1.5).transformY(-0.25)};
+`;
+```
+
+The Size Composer makes it easy to manage dimensions and spacing across your application while maintaining consistency through its unit system. It provides a comprehensive set of tools for controlling all aspects of element sizing and positioning.

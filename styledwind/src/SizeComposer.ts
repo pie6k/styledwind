@@ -212,4 +212,4 @@ export class SizeComposer extends Composer {
   }
 }
 
-export const size = new SizeComposer().init();
+export const $size = new SizeComposer().init();

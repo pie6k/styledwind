@@ -513,4 +513,4 @@ export class AnimationComposer extends Composer {
   }
 }
 
-export const animation = new AnimationComposer().init();
+export const $animation = new AnimationComposer().init();

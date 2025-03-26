@@ -1,64 +1,164 @@
-# Composable Styles
+# Common Composer
 
-Styledwind provides a powerful system for composing and reusing styles. This guide will show you how to create and compose styles effectively.
+The Common Composer provides a comprehensive set of utility methods for common styling needs. It includes methods for dimensions, positioning, spacing, and various other frequently used CSS properties.
 
 ## Basic Usage
 
 ```tsx
 import styled from "styled-components";
-import { flex, animation } from "styledwind";
+import { style } from "styledwind";
 
-function App() {
-  return <UICard>Card</UICard>;
-}
-
-const UICard = styled.div`
-  ${flex.horizontal.alignCenter.gap(2)};
-
-  /* Fade in animation */
-  ${animation.properties({ opacity: [0, 1] }).duration("100ms")};
+const Container = styled.div`
+  ${style.fullWidth.relative};
 `;
 ```
 
-## Creating Reusable Styles
+## Dimensions
 
-You can define shared styles and compose them into more specific styles:
+Control element dimensions:
 
 ```tsx
-// We define some shared font styles
-const baseFont = font.family("Inter, sans-serif").lineHeight(1.5).antialiased;
+// Full dimensions
+${style.fullWidth}
+${style.fullHeight}
 
-export const typo = {
-  // And compose them into more specific styles
-  header: baseFont.size("2rem").lineHeight(1.25).bold,
-  copy: baseFont,
-  label: baseFont.size("0.875rem"),
-};
+// Specific dimensions
+${style.width("200px")}
+${style.height("100px")}
 
-// We define common rules for our animations (duration, easing)
-const baseAnimation = animation.duration("150ms").easeInOut;
+// Square element
+${style.size("50px")}
 
-export const animations = {
-  // And compose it into specific animations
-  fadeIn: baseAnimation.properties({ opacity: [0, 1] }),
-  slideUp: baseAnimation.properties({ y: [10, 0] }),
-};
+// Aspect ratio
+${style.aspectRatio(16/9)}
+${style.square} // 1:1 aspect ratio
 
-// Or continue composing inside components
-const UILink = styled.a`
-  ${typo.copy.underline};
+// Min/Max dimensions
+${style.minWidth("100px")}
+${style.maxWidth("500px")}
+${style.minHeight("50px")}
+${style.maxHeight("200px")}
+```
+
+## Positioning
+
+Control element positioning:
+
+```tsx
+// Position types
+${style.relative}
+${style.absolute}
+${style.fixed}
+
+// Position values
+${style.top("10px")}
+${style.right("20px")}
+${style.bottom("30px")}
+${style.left("40px")}
+
+// Inset (all sides)
+${style.inset("10px")}
+
+// Z-index
+${style.z(1)}
+```
+
+## Spacing
+
+Control margins and padding:
+
+```tsx
+// Padding
+${style.p("10px")} // All sides
+${style.px("10px")} // Horizontal
+${style.py("10px")} // Vertical
+${style.pt("10px")} // Top
+${style.pr("10px")} // Right
+${style.pb("10px")} // Bottom
+${style.pl("10px")} // Left
+
+// Margin
+${style.m("10px")} // All sides
+${style.mx("10px")} // Horizontal
+${style.my("10px")} // Vertical
+${style.mt("10px")} // Top
+${style.mr("10px")} // Right
+${style.mb("10px")} // Bottom
+${style.ml("10px")} // Left
+```
+
+## Transform
+
+Apply transforms:
+
+```tsx
+// Translation
+${style.x("10px")}
+${style.y("-20px")}
+```
+
+## States and Utilities
+
+Apply common states and utility styles:
+
+```tsx
+// Disabled state
+${style.disabled}
+
+// Opacity levels
+${style.secondary} // 50% opacity
+${style.tertiary} // 25% opacity
+${style.quaternary} // 12.5% opacity
+
+// Cursor
+${style.cursor("pointer")}
+${style.notAllowed}
+
+// Selection
+${style.notSelectable}
+
+// Overflow
+${style.overflowHidden}
+
+// Line clamping
+${style.lineClamp(2)}
+```
+
+## Example Components
+
+Here's a practical example of how to use the Common Composer in real components:
+
+```tsx
+const Card = styled.div`
+  ${style
+    .relative
+    .width("300px")
+    .p("20px")
+    .overflowHidden};
 `;
 
-const UIQuote = styled.blockquote`
-  ${typo.copy.italic};
-  ${animations.slideUp.duration("500ms")};
+const Button = styled.button`
+  ${style.relative.px("16px").py("8px").notSelectable.cursor("pointer")};
+`;
+
+const Modal = styled.div`
+  ${style
+    .fixed
+    .inset("0")
+    .z(1000)
+    .overflowHidden};
+`;
+
+const Avatar = styled.div`
+  ${style
+    .size("40px")
+    .circle
+    .overflowHidden};
+`;
+
+const TruncatedText = styled.p`
+  ${style.lineClamp(2)};
 `;
 ```
 
-## Best Practices
-
-1. Create base styles that can be reused across your application
-2. Use composition to build more specific styles from base styles
-3. Keep your style definitions close to where they are used
-4. Use meaningful names that describe the purpose of the style
-5. Leverage TypeScript for better type safety and autocompletion
+The Common Composer provides a comprehensive set of utility methods that cover most common styling needs. It's designed to be intuitive and chainable, making it easy to create complex styles with minimal code.

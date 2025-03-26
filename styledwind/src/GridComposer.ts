@@ -156,4 +156,4 @@ export class GridComposer extends Composer {
   }
 }
 
-export const grid = new GridComposer().init();
+export const $grid = new GridComposer().init();

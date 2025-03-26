@@ -1,10 +1,10 @@
 import { describe, expect, test } from "vitest";
 
-import { animation } from "@";
+import { $animation } from "@";
 
 describe("animation", () => {
   test("basic", () => {
-    expect(animation.fadeIn.property("transform-y", [0, 1])()).toMatchInlineSnapshot(`
+    expect($animation.fadeIn.property("transform-y", [0, 1])()).toMatchInlineSnapshot(`
       [
         "animation-name:",
         e {
@@ -28,8 +28,8 @@ describe("animation", () => {
   });
 
   test("complex composer is memoized", () => {
-    const composer1 = animation.fadeIn.property("transform-y", [0, 1]);
-    const composer2 = animation.fadeIn.property("transform-y", [0, 1]);
+    const composer1 = $animation.fadeIn.property("transform-y", [0, 1]);
+    const composer2 = $animation.fadeIn.property("transform-y", [0, 1]);
 
     expect(composer1).toBe(composer2);
   });

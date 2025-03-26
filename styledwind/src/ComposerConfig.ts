@@ -1,11 +1,11 @@
-interface ComposerConfigOptions<T> {
+interface ComposerConfigOptions {
   cache?: boolean;
 }
 
 export class ComposerConfig<T = unknown> {
   constructor(
     readonly defaultConfig: T,
-    readonly options: ComposerConfigOptions<T> = { cache: true },
+    readonly options: ComposerConfigOptions = { cache: true },
   ) {}
 }
 

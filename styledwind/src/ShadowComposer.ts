@@ -61,4 +61,4 @@ export class ShadowComposer extends Composer {
   }
 }
 
-export const shadow = new ShadowComposer().init();
+export const $shadow = new ShadowComposer().init();

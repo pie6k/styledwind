@@ -86,4 +86,4 @@ export class TransitionComposer extends Composer {
   }
 }
 
-export const transition = new TransitionComposer().init();
+export const $transition = new TransitionComposer().init();

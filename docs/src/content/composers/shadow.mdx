@@ -1,129 +1,90 @@
-# Theme System
+# Shadow Composer
 
-Styledwind provides a powerful theming system that allows you to create and manage theme variants while maintaining type safety and performance.
+The Shadow Composer provides a fluent API for creating box shadows in your components. It allows you to control all aspects of shadow styling, including offset, blur, spread, color, and opacity.
 
-## Creating Themes
-
-Themes are created using the `createTheme` function. It takes an object where you can pass composable and primitive values.
+## Basic Usage
 
 ```tsx
-import { createTheme, color, font } from "styledwind";
+import styled from "styled-components";
+import { shadow } from "styledwind";
 
-const baseFont = font.family("Inter, sans-serif").lineHeight(1.5).antialiased;
-
-const theme = createTheme({
-  // Primitive values
-  spacing: 16,
-
-  // Typography styles
-  typo: {
-    base: baseFont,
-    header: baseFont.size("2rem").bold,
-  },
-
-  // Color styles
-  colors: {
-    primary: color({ color: "red" }),
-    text: color({ color: "black" }),
-    background: color({ color: "white" }),
-  },
-});
-```
-
-## Theme Variants
-
-You can then create theme variants that inherit from a source theme but override specific values:
-
-```tsx
-import { createThemeVariant } from "styledwind";
-
-const darkTheme = createThemeVariant(theme, {
-  // Note: we can only pass values that we want to override. Everything else will be taken from the source theme.
-  colors: {
-    text: color({ color: "white" }),
-    background: color({ color: "black" }),
-  },
-});
-```
-
-## Using Themes
-
-To use theme, you simply read values from the theme object created before.
-
-```tsx
-import { theme } from "./theme";
-
-function Card() {
-  return (
-    <UI.Card styles={theme.colors.background.readableText.asBg}>
-      <UI.CardHeader_h1 styles={theme.typo.header} />
-      <UI.CardBody styles={flex.vertical.gap(2)}>Card content</UI.CardBody>
-    </UI.Card>
-  );
-}
-
-// Or
-
-const UICard = styled.div`
-  ${theme.colors.background.readableText.asBg};
+const Card = styled.div`
+  ${shadow.x(0).y(2).blur(4).color("rgba(0, 0, 0, 0.1)")};
 `;
 ```
 
-## Theme Provider
+## Shadow Properties
 
-To use the theme, you need to wrap your app in the `ThemeProvider` component.
-
-```tsx
-import { ThemeProvider } from "styledwind";
-import { theme, darkTheme } from "./theme";
-
-function App() {
-  const [currentTheme, setCurrentTheme] = useState(theme);
-
-  function setLightTheme() {
-    setCurrentTheme(theme);
-  }
-
-  function setDarkTheme() {
-    setCurrentTheme(darkTheme);
-  }
-
-  return (
-    <ThemeProvider theme={theme}>
-      <App onSetLightTheme={setLightTheme} onSetDarkTheme={setDarkTheme} />
-    </ThemeProvider>
-  );
-}
-```
-
-## Reading Theme Values
-
-If your theme defines some primitive values, you can read them using `useThemeValue` hook.
+Control various shadow properties:
 
 ```tsx
-import { useThemeValue, createTheme } from "styledwind";
+// Horizontal offset
+${shadow.x(2)}
 
-// theme.ts
-const theme = createTheme({
-  footerColumns: 3,
-});
+// Vertical offset
+${shadow.y(2)}
 
-const wideTheme = createThemeVariant(theme, {
-  footerColumns: 4,
-});
+// Blur radius
+${shadow.blur(4)}
 
-// Footer.tsx
-function Footer() {
-  const footerColumns = useThemeValue(theme.footerColumns);
-  return <div style={{ gridTemplateColumns: `repeat(${footerColumns}, 1fr)` }}>Hello</div>;
-}
+// Shadow color
+${shadow.color("rgba(0, 0, 0, 0.1)")}
+
+// Shadow spread
+${shadow.spread(1)}
+
+// Inset shadow
+${shadow.inset(true)}
+
+// Shadow opacity (requires color to be set first)
+${shadow.color("#000000").opacity(0.1)}
 ```
 
-Optionally, anywhere (even outside of React) you can read theme values by calling theme values with `theme` argument.
+## Common Shadow Patterns
 
-```ts
-const footerColumns = theme.footerColumns(theme); // 3
-const wideFooterColumns = theme.footerColumns(wideTheme); // 4
+Here are some common shadow patterns you might want to use:
+
+```tsx
+// Subtle elevation
+${shadow.x(0).y(1).blur(2).color("rgba(0, 0, 0, 0.1)")}
+
+// Medium elevation
+${shadow.x(0).y(2).blur(4).color("rgba(0, 0, 0, 0.1)")}
+
+// High elevation
+${shadow.x(0).y(4).blur(8).color("rgba(0, 0, 0, 0.1)")}
+
+// Inset shadow (for pressed state)
+${shadow.x(0).y(1).blur(2).color("rgba(0, 0, 0, 0.1)").inset(true)}
+
+// Colored shadow
+${shadow.x(0).y(2).blur(4).color("rgba(0, 123, 255, 0.2)")}
 ```
 
-Note: All the code above is fully typed and will give you autocomplete and type safety.
+## Example Components
+
+Here's a practical example of how to use the Shadow Composer in real components:
+
+```tsx
+const Card = styled.div`
+  ${shadow.x(0).y(2).blur(4).color("rgba(0, 0, 0, 0.1)")};
+`;
+
+const Button = styled.button`
+  ${shadow.x(0).y(1).blur(2).color("rgba(0, 0, 0, 0.1)")};
+  
+  &:active {
+    ${shadow.x(0).y(1).blur(2).color("rgba(0, 0, 0, 0.1)").inset(true)};
+  }
+`;
+
+const Modal = styled.div`
+  ${shadow.x(0).y(4).blur(8).color("rgba(0, 0, 0, 0.2)")};
+`;
+
+const FloatingButton = styled.button`
+  ${shadow.x(0).y(2).blur(4).color("rgba(0, 123, 255, 0.2)")};
+`;
+```
+
+The Shadow Composer makes it easy to create consistent elevation and depth across your application. It provides a clean API for controlling all aspects of box shadows, making it perfect for creating modern, layered interfaces.

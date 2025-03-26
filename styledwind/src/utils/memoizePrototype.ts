@@ -1,5 +1,4 @@
 import { DeepMap } from "./map/DeepMap";
-import { memoizeFn } from "./memoize";
 
 type AnyFunction = (...args: any[]) => any;
 

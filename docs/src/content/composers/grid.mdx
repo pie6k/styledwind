@@ -1,44 +1,152 @@
-# Semantic Styling
+# Grid Composer
 
-Styledwind encourages writing semantic styles that describe what something is, not just how it looks. This makes your code more maintainable and easier to understand.
+The Grid Composer provides a powerful API for creating CSS Grid layouts. It offers a fluent interface for defining grid templates, alignment, spacing, and flow patterns.
 
-## Using UI Components
-
-Often we don't want to define each part of the style as a separate component outside of our React component. Either when some styled part is simple, or when we rapidly iterate.
-
-We can do it inline, while next to the styles, still giving each part a semantic name and meaning (that will also be visible in devtools).
+## Basic Usage
 
 ```tsx
-import { UI, flex, font, box } from "styledwind";
+import styled from "styled-components";
+import { grid } from "styledwind";
 
-function Form() {
-  return (
-    {/* You can dynamically use `UI.AnyNameYouWant` */}
-    <UI.FormHolder styles={[flex.vertical.gap(3), animations.fadeIn]}>
-      {/* If name ends with eg "_h1", the result will be <h1> tag, etc */}
-      <UI.FormHeader_h1 styles={typo.header}>Form</UI.FormHeader_h1>
-      <UI.FormIntro_p styles={typo.copy.secondary}>
-        Intro here
-      </UI.FormIntro_p>
-      <UI.FormBody styles={flex.vertical.gap(2)}>
-        {/* ... */}
-        {/* ... */}
-      </UI.FormBody>
-    </UI.FormHolder>
-  );
-}
+const Layout = styled.div`
+  ${grid.columns("1fr 2fr 1fr").gap(2)};
+`;
 ```
 
-## Type Safety
+## Grid Template
 
-- For custom tags, eg `UI.Foo_h2`, Typescript will infer the correct type. Eg for `ref` it will be `RefObject<HTMLHeadingElement>`.
-- The UI namespace provides type-safe access to all HTML elements
-- Style properties are fully typed with TypeScript
+Define your grid structure using columns and rows:
 
-## Best Practices
+```tsx
+// Define columns
+${grid.columns("1fr 2fr 1fr")}
+${grid.columns("repeat(3, 1fr)")}
+${grid.columns("auto auto 1fr")}
 
-1. Use meaningful names that describe the purpose of the component
-2. Leverage the UI namespace for semantic HTML elements
-3. Keep styles close to where they are used
-4. Use TypeScript for better type safety
-5. Consider accessibility when naming components
+// Define rows
+${grid.rows("auto 1fr auto")}
+${grid.rows("repeat(2, 1fr)")}
+
+// Combine both
+${grid.columns("1fr 2fr").rows("auto 1fr")}
+```
+
+## Spacing
+
+Add gaps between grid items:
+
+```tsx
+// Add a gap of 1rem (default)
+${grid.gap()}
+
+// Add a custom gap
+${grid.gap(2)} // 2rem gap
+```
+
+## Item Alignment
+
+Control how items are aligned within their grid cells:
+
+```tsx
+// Align items vertically
+${grid.alignItemsCenter}
+${grid.alignItemsStart}
+${grid.alignItemsEnd}
+${grid.alignItemsStretch}
+
+// Align items horizontally
+${grid.justifyItemsCenter}
+${grid.justifyItemsStart}
+${grid.justifyItemsEnd}
+${grid.justifyItemsStretch}
+
+// Or use the generic methods
+${grid.alignItems("center")}
+${grid.justifyItems("center")}
+```
+
+## Content Alignment
+
+Control how the entire grid content is aligned when there's extra space:
+
+```tsx
+// Align content vertically
+${grid.alignContentCenter}
+${grid.alignContentStart}
+${grid.alignContentEnd}
+${grid.alignContentStretch}
+${grid.alignContentBetween}
+${grid.alignContentAround}
+${grid.alignContentEvenly}
+
+// Align content horizontally
+${grid.justifyContentCenter}
+${grid.justifyContentStart}
+${grid.justifyContentEnd}
+${grid.justifyContentStretch}
+${grid.justifyContentBetween}
+${grid.justifyContentAround}
+${grid.justifyContentEvenly}
+
+// Or use the generic methods
+${grid.alignContent("space-between")}
+${grid.justifyContent("space-between")}
+```
+
+## Auto Flow
+
+Control how items are automatically placed in the grid:
+
+```tsx
+// Flow by row (default)
+${grid.flowRow}
+
+// Flow by column
+${grid.flowColumn}
+
+// Dense packing by row
+${grid.flowRowDense}
+
+// Dense packing by column
+${grid.flowColumnDense}
+
+// Or use the generic method
+${grid.autoFlow("row dense")}
+```
+
+## Common Combinations
+
+```tsx
+// Center items in their cells
+${grid.center}
+
+// Create an inline grid
+${grid.inline}
+
+// Create a responsive grid
+${grid.columns("repeat(auto-fit, minmax(200px, 1fr))").gap(2)}
+```
+
+## Example Components
+
+Here's a practical example of how to use the Grid Composer in a real component:
+
+```tsx
+const Dashboard = styled.div`
+  ${grid.columns("250px 1fr").rows("auto 1fr auto").gap(2)};
+`;
+
+const Sidebar = styled.div`
+  ${grid.rows("auto 1fr auto").gap(2)};
+`;
+
+const MainContent = styled.div`
+  ${grid.columns("repeat(auto-fit, minmax(300px, 1fr))").gap(2)};
+`;
+
+const Header = styled.div`
+  ${grid.columns("1fr auto").alignItemsCenter};
+`;
+```
+
+The Grid Composer makes it easy to create complex, responsive layouts while maintaining a clean and readable codebase. Each method is chainable, allowing you to compose sophisticated grid layouts from simple building blocks.

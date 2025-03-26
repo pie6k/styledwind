@@ -1,129 +1,115 @@
-# Theme System
+# Surface Composer
 
-Styledwind provides a powerful theming system that allows you to create and manage theme variants while maintaining type safety and performance.
+The Surface Composer extends the Flex Composer to provide a specialized API for creating surface-like components with consistent padding, border radius, and dimensions. It's perfect for creating cards, buttons, and other container elements.
 
-## Creating Themes
-
-Themes are created using the `createTheme` function. It takes an object where you can pass composable and primitive values.
+## Basic Usage
 
 ```tsx
-import { createTheme, color, font } from "styledwind";
+import styled from "styled-components";
+import { surface } from "styledwind";
 
-const baseFont = font.family("Inter, sans-serif").lineHeight(1.5).antialiased;
-
-const theme = createTheme({
-  // Primitive values
-  spacing: 16,
-
-  // Typography styles
-  typo: {
-    base: baseFont,
-    header: baseFont.size("2rem").bold,
-  },
-
-  // Color styles
-  colors: {
-    primary: color({ color: "red" }),
-    text: color({ color: "black" }),
-    background: color({ color: "white" }),
-  },
-});
-```
-
-## Theme Variants
-
-You can then create theme variants that inherit from a source theme but override specific values:
-
-```tsx
-import { createThemeVariant } from "styledwind";
-
-const darkTheme = createThemeVariant(theme, {
-  // Note: we can only pass values that we want to override. Everything else will be taken from the source theme.
-  colors: {
-    text: color({ color: "white" }),
-    background: color({ color: "black" }),
-  },
-});
-```
-
-## Using Themes
-
-To use theme, you simply read values from the theme object created before.
-
-```tsx
-import { theme } from "./theme";
-
-function Card() {
-  return (
-    <UI.Card styles={theme.colors.background.readableText.asBg}>
-      <UI.CardHeader_h1 styles={theme.typo.header} />
-      <UI.CardBody styles={flex.vertical.gap(2)}>Card content</UI.CardBody>
-    </UI.Card>
-  );
-}
-
-// Or
-
-const UICard = styled.div`
-  ${theme.colors.background.readableText.asBg};
+const Card = styled.div`
+  ${surface({ paddingX: 2, paddingY: 1, radius: 1 })};
 `;
 ```
 
-## Theme Provider
+## Configuration
 
-To use the theme, you need to wrap your app in the `ThemeProvider` component.
-
-```tsx
-import { ThemeProvider } from "styledwind";
-import { theme, darkTheme } from "./theme";
-
-function App() {
-  const [currentTheme, setCurrentTheme] = useState(theme);
-
-  function setLightTheme() {
-    setCurrentTheme(theme);
-  }
-
-  function setDarkTheme() {
-    setCurrentTheme(darkTheme);
-  }
-
-  return (
-    <ThemeProvider theme={theme}>
-      <App onSetLightTheme={setLightTheme} onSetDarkTheme={setDarkTheme} />
-    </ThemeProvider>
-  );
-}
-```
-
-## Reading Theme Values
-
-If your theme defines some primitive values, you can read them using `useThemeValue` hook.
+Define surface properties through configuration:
 
 ```tsx
-import { useThemeValue, createTheme } from "styledwind";
-
-// theme.ts
-const theme = createTheme({
-  footerColumns: 3,
-});
-
-const wideTheme = createThemeVariant(theme, {
-  footerColumns: 4,
-});
-
-// Footer.tsx
-function Footer() {
-  const footerColumns = useThemeValue(theme.footerColumns);
-  return <div style={{ gridTemplateColumns: `repeat(${footerColumns}, 1fr)` }}>Hello</div>;
-}
+// Basic configuration
+${surface({
+  paddingX: 2,
+  paddingY: 1,
+  radius: 1,
+  height: 3,
+  width: 20
+})}
 ```
 
-Optionally, anywhere (even outside of React) you can read theme values by calling theme values with `theme` argument.
+## Padding
 
-```ts
-const footerColumns = theme.footerColumns(theme); // 3
-const wideFooterColumns = theme.footerColumns(wideTheme); // 4
+Control padding on surfaces:
+
+```tsx
+// All sides
+${surface({ paddingX: 2, paddingY: 1 }).padding}
+
+// Horizontal padding
+${surface({ paddingX: 2 }).paddingX}
+
+// Vertical padding
+${surface({ paddingY: 1 }).paddingY}
+
+// Remove padding on specific sides
+${surface({ paddingX: 2 }).noPT} // No padding top
+${surface({ paddingX: 2 }).noPB} // No padding bottom
+${surface({ paddingX: 2 }).noPL} // No padding left
+${surface({ paddingX: 2 }).noPR} // No padding right
 ```
 
-Note: All the code above is fully typed and will give you autocomplete and type safety.
+## Border Radius
+
+Control border radius:
+
+```tsx
+// Custom radius
+${surface({ radius: 1 }).radius}
+
+// Circular shape
+${surface({ radius: 1 }).circle}
+```
+
+## Dimensions
+
+Control surface dimensions:
+
+```tsx
+// Height
+${surface({ height: 3 }).height}
+
+// Width
+${surface({ width: 20 }).width}
+
+// Both height and width
+${surface({ height: 3, width: 20 }).size}
+```
+
+## Flex Properties
+
+Since Surface Composer extends Flex Composer, you can use all flex properties:
+
+```tsx
+// Combine surface properties with flex properties
+${surface({ paddingX: 2 }).row.alignCenter}
+${surface({ radius: 1 }).column.gap(2)}
+```
+
+## Example Components
+
+Here's a practical example of how to use the Surface Composer in real components:
+
+```tsx
+const Card = styled.div`
+  ${surface({ paddingX: 2, paddingY: 1, radius: 1 })};
+`;
+
+const Button = styled.button`
+  ${surface({ paddingX: 2, paddingY: 1, radius: 0.5, height: 2.5 })};
+`;
+
+const Avatar = styled.div`
+  ${surface({ size: 3, radius: 1 }).circle};
+`;
+
+const Input = styled.input`
+  ${surface({ paddingX: 2, paddingY: 1, radius: 0.5, height: 2.5 })};
+`;
+
+const Modal = styled.div`
+  ${surface({ paddingX: 3, paddingY: 2, radius: 2, width: 30 })};
+`;
+```
+
+The Surface Composer makes it easy to create consistent surface-like components across your application. It combines the power of flexbox layout with specialized surface properties, making it perfect for creating UI components that need both layout and surface styling.

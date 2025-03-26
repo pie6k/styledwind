@@ -120,4 +120,4 @@ export class FlexComposer extends Composer {
   }
 }
 
-export const flex = new FlexComposer().init();
+export const $flex = new FlexComposer().init();

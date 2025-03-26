@@ -96,7 +96,7 @@ export class SurfaceComposer extends FlexComposer {
   }
 }
 
-export const surface = memoizeFn(
+export const $surface = memoizeFn(
   function surface(config: SizingBoxConfig) {
     return new SurfaceComposer().define(config).init();
   },

@@ -1,113 +1,459 @@
-import { Steps } from 'nextra/components'
+# API
 
-# Get Started
+## Core Composers
 
-## Quick start with Vercel
+### Animation Composer (`$animation`)
 
-You can start by creating your own Nextra site and deploying to Vercel by
-clicking the link:
+The animation composer provides methods to create and control animations.
 
-[![](https://vercel.com/button)](https://vercel.com/new/clone?demo-description=Markdown%20powered%20docs%20site.%20Built%20with%20Next.js.&demo-image=https%3A%2F%2Fnextra.vercel.app%2Fdemo.png&demo-title=Documentation%20Starter%20Kit&demo-url=https%3A%2F%2Fnextra.vercel.app%2F&project-name=nextjs-docs&repository-name=nextjs-docs&s=https%3A%2F%2Fgithub.com%2Fshuding%2Fnextra&from=templates)
-
-Vercel will create the Nextra repository and deploy the site for you with just a
-few clicks. Once done, every change in the repository will be deployed
-automatically.
-
-## Create manually
-
-Nextra works like a Next.js plugin, and it accepts a theme config (layout) to
-render the page. To start: [^3]
-
-<Steps>
-### Install Next.js, Nextra and React [^1]
-
-```sh npm2yarn
-npm i react react-dom next nextra
+```typescript
+$animation
+  .property(property, steps)  // Animate a specific property
+  .duration(duration)         // Set animation duration
+  .delay(delay)              // Set animation delay
+  .easing(easing)            // Set animation timing function
+  .fillMode(mode)            // Set animation fill mode
+  .iterationCount(count)     // Set animation iteration count
 ```
 
-### Install the docs theme [^2]
+#### Preset Animations
+- `fadeIn` - Fade in animation
+- `fadeOut` - Fade out animation
+- `slideUpFromBottom(by)` - Slide up from bottom
+- `slideDownFromTop(by)` - Slide down from top
+- `slideLeftFromRight(by)` - Slide left from right
+- `slideRightFromLeft(by)` - Slide right from left
+- `zoomIn(scale)` - Zoom in animation
+- `zoomOut(scale)` - Zoom out animation
+- `spin` - Continuous rotation animation
+- `infinite` - Make animation loop infinitely
 
-```sh npm2yarn
-npm i nextra-theme-docs
+#### Property Animations
+- `rotate(angles)` - Animate rotation
+- `x(steps)` - Animate X position
+- `y(steps)` - Animate Y position
+- `scale(steps)` - Animate scale
+- `blur(steps)` - Animate blur
+- `opacity(steps)` - Animate opacity
+
+### Color Composer (`$color`)
+
+The color composer helps manage colors and their variations.
+
+```typescript
+$color(color)
+  .define(value)           // Define color configuration
+  .color(value)           // Set color value
+  .opacity(value)         // Set opacity
+  .outputType(value)      // Set output type (inline/background/color/border/outline/fill)
 ```
 
-### Create the following Next.js config and theme config under the root directory
+#### Color Modifiers
+- `secondary` - Use secondary color
+- `tertiary` - Use tertiary color
+- `transparent` - Make color transparent
+- `interactive` - Enable interactive states
+- `hover` - Apply hover state
+- `active` - Apply active state
+- `muted` - Apply muted state
+- `highlight(ratio)` - Adjust color brightness
+- `foreground` - Use as foreground color
 
-```js filename="next.config.mjs"
-import nextra from 'nextra'
+#### Output Types
+- `asBg` - Use as background
+- `asColor` - Use as text color
+- `asBorder` - Use as border color
+- `asOutline` - Use as outline color
+- `asFill` - Use as fill color
+- `withBorder` - Add border
 
-const withNextra = nextra({
-  theme: 'nextra-theme-blog',
-  themeConfig: './theme.config.js'
-})
-export default withNextra()
+### Common Composer (`$common`)
+
+The common composer provides basic styling utilities.
+
+#### Layout
+- `width(width)` - Set width
+- `height(height)` - Set height
+- `size(size)` - Set both width and height
+- `fullWidth` - Set width to 100%
+- `fullHeight` - Set height to 100%
+- `square` - Make element square
+- `circle` - Make element circular
+- `aspectRatio(ratio)` - Set aspect ratio
+
+#### Positioning
+- `relative` - Set position relative
+- `absolute` - Set position absolute
+- `fixed` - Set position fixed
+- `z(z)` - Set z-index
+- `left(left)` - Set left position
+- `right(right)` - Set right position
+- `top(top)` - Set top position
+- `bottom(bottom)` - Set bottom position
+- `inset(inset)` - Set all positions
+
+#### Spacing
+- `p(value)` - Set padding on all sides
+- `px(value)` - Set horizontal padding
+- `py(value)` - Set vertical padding
+- `pt(value)` - Set top padding
+- `pb(value)` - Set bottom padding
+- `pl(value)` - Set left padding
+- `pr(value)` - Set right padding
+- `m(value)` - Set margin on all sides
+- `mx(value)` - Set horizontal margin
+- `my(value)` - Set vertical margin
+- `mt(value)` - Set top margin
+- `mb(value)` - Set bottom margin
+- `ml(value)` - Set left margin
+- `mr(value)` - Set right margin
+
+#### Other
+- `disabled` - Apply disabled state
+- `round` - Add border radius
+- `notSelectable` - Prevent text selection
+- `cursor(cursor)` - Set cursor style
+- `overflowHidden` - Hide overflow
+- `lineClamp(lines)` - Limit text to number of lines
+
+### Flex Composer (`$flex`)
+
+The flex composer provides flexbox layout utilities.
+
+```typescript
+$flex
+  .direction(direction)     // Set flex direction
+  .wrap(wrap)              // Set flex wrap
+  .justify(justify)        // Set justify content
+  .align(align)            // Set align items
+  .gap(gap)                // Set gap between items
+  .order(order)            // Set order
+  .grow(grow)              // Set flex grow
+  .shrink(shrink)          // Set flex shrink
+  .basis(basis)            // Set flex basis
 ```
 
-### Create a `theme.config.js` file for the docs theme
+#### Direction
+- `row` - Set flex direction to row
+- `column` - Set flex direction to column
+- `horizontal` - Alias for row
+- `vertical` - Alias for column
+- `x` - Alias for row
+- `y` - Alias for column
+- `reverse` - Reverse flex direction
 
-```js filename="theme.config.js"
-export default {
-  project: {
-    link: 'https://github.com/shuding/nextra' // GitHub link in the navbar
-  },
-  docsRepositoryBase: 'https://github.com/shuding/nextra/blob/master', // base URL for the docs repository
-  getNextSeoProps: () => ({ titleTemplate: '%s – Nextra' }),
-  navigation: true,
-  darkMode: true,
-  footer: {
-    text: `MIT ${new Date().getFullYear()} © Shu Ding.`
-  },
-  editLink: {
-    text: 'Edit this page on GitHub'
-  },
-  logo: (
-    <>
-      <svg>...</svg>
-      <span>Next.js Static Site Generator</span>
-    </>
-  ),
-  head: (
-    <>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta name="description" content="Nextra: the next docs builder" />
-      <meta name="og:title" content="Nextra: the next docs builder" />
-    </>
-  ),
-  primaryHue: {
-    dark: 204,
-    light: 212
-  }
-}
+#### Alignment
+- `alignCenter` - Center items vertically
+- `alignStart` - Align items to start
+- `alignEnd` - Align items to end
+- `alignStretch` - Stretch items vertically
+- `alignBaseline` - Align items to baseline
+
+#### Justification
+- `justifyCenter` - Center items horizontally
+- `justifyStart` - Justify items to start
+- `justifyEnd` - Justify items to end
+- `justifyBetween` - Space items between
+- `justifyAround` - Space items around
+- `justifyEvenly` - Space items evenly
+
+#### Other
+- `center` - Center items both vertically and horizontally
+- `wrap` - Enable flex wrap
+- `inline` - Make flex container inline
+
+### Font Composer (`$font`)
+
+The font composer provides typography styling utilities.
+
+```typescript
+$font
+  .family(family)          // Set font family
+  .size(size)             // Set font size
+  .weight(weight)         // Set font weight
+  .style(style)           // Set font style
+  .lineHeight(height)     // Set line height
+  .letterSpacing(spacing) // Set letter spacing
+  .align(align)           // Set text align
+  .decoration(decoration) // Set text decoration
+  .transform(transform)   // Set text transform
+  .whitespace(whitespace) // Set whitespace handling
 ```
 
-> [!NOTE]
->
-> More configuration options for the docs theme can be found
-> [here](/themes/docs/configuration).
+#### Line Height
+- `copyLineHeight` - Set line height for copy text
+- `headingLineHeight` - Set line height for headings
+- `balance` - Balance text lines
+- `resetLineHeight` - Reset line height
 
-### You are good to go! Run `next dev` to start
+#### Text Transform
+- `uppercase` - Transform text to uppercase
+- `lowercase` - Transform text to lowercase
+- `capitalize` - Capitalize text
 
-</Steps>
+#### Text Decoration
+- `underline` - Add underline
 
----
+#### Text Alignment
+- `left` - Align text left
+- `center` - Align text center
+- `right` - Align text right
 
-<span id="sidebar-and-anchor-links" />
+#### Font Weight
+- `w100` through `w900` - Set font weight (100-900)
+- `normal` - Set normal font weight
 
-> [!NOTE]
->
-> Any `.md` or `.mdx` file will turn into a doc page and be displayed in
-> sidebar. You can also create a `_meta.js` file to customize the page order and
-> title. <br /> Check the source code: https://github.com/shuding/nextra for
-> more information.
+#### Other
+- `ellipsis` - Add text ellipsis
+- `nowrap` - Prevent text wrapping
+- `antialiased` - Enable font smoothing
+- `secondary` - Use secondary font
+- `tertiary` - Use tertiary font
 
-> [!TIP]
->
-> You can also use
-> [`<style jsx>`](https://nextjs.org/docs/basic-features/built-in-css-support#css-in-js)
-> to style elements inside `theme.config.js`.
+### Grid Composer (`$grid`)
 
-[^1]: Install Next.js, Nextra and React.
+The grid composer provides CSS Grid layout utilities.
 
-[^2]: Install the docs theme.
+```typescript
+$grid
+  .template(template)      // Set grid template
+  .columns(columns)       // Set grid columns
+  .rows(rows)            // Set grid rows
+  .gap(gap)              // Set grid gap
+  .area(area)            // Set grid area
+  .column(column)        // Set grid column
+  .row(row)              // Set grid row
+  .start(start)          // Set grid start
+  .end(end)              // Set grid end
+  .span(span)            // Set grid span
+```
 
-[^3]: To start.
+#### Alignment
+- `alignItemsCenter` - Center items vertically
+- `alignItemsStart` - Align items to start
+- `alignItemsEnd` - Align items to end
+- `alignItemsStretch` - Stretch items vertically
+
+#### Justification
+- `justifyItemsCenter` - Center items horizontally
+- `justifyItemsStart` - Justify items to start
+- `justifyItemsEnd` - Justify items to end
+- `justifyItemsStretch` - Stretch items horizontally
+
+#### Content Alignment
+- `alignContentCenter` - Center content
+- `alignContentStart` - Align content to start
+- `alignContentEnd` - Align content to end
+- `alignContentStretch` - Stretch content
+- `alignContentBetween` - Space content between
+- `alignContentAround` - Space content around
+- `alignContentEvenly` - Space content evenly
+
+#### Flow
+- `flowRow` - Set grid auto-flow to row
+- `flowColumn` - Set grid auto-flow to column
+- `flowRowDense` - Set grid auto-flow to row dense
+- `flowColumnDense` - Set grid auto-flow to column dense
+
+#### Other
+- `center` - Center grid items
+- `inline` - Make grid container inline
+
+### Shadow Composer (`$shadow`)
+
+The shadow composer provides box shadow utilities.
+
+```typescript
+$shadow
+  .define(value)          // Define shadow configuration
+  .color(color)          // Set shadow color
+  .blur(blur)            // Set shadow blur
+  .spread(spread)        // Set shadow spread
+  .offset(offset)        // Set shadow offset
+  .inset(value)          // Set shadow inset
+  .opacity(value)        // Set shadow opacity
+```
+
+### Size Composer (`$size`)
+
+The size composer provides sizing utilities.
+
+```typescript
+$size
+  .base(value)           // Set base size
+  .rem(value)           // Set size in rem units
+  .level(level)         // Set size level
+  .px(value)            // Set size in pixels
+  .em(value)            // Set size in em units
+```
+
+#### Size Properties
+- `width` - Set width
+- `height` - Set height
+- `size` - Set both width and height
+- `minSize` - Set minimum size
+- `maxSize` - Set maximum size
+- `minWidth` - Set minimum width
+- `maxWidth` - Set maximum width
+- `minHeight` - Set minimum height
+- `maxHeight` - Set maximum height
+
+#### Spacing Properties
+- `marginX` - Set horizontal margin
+- `marginY` - Set vertical margin
+- `marginTop` - Set top margin
+- `marginBottom` - Set bottom margin
+- `marginLeft` - Set left margin
+- `marginRight` - Set right margin
+- `margin` - Set all margins
+- `paddingX` - Set horizontal padding
+- `paddingY` - Set vertical padding
+- `paddingTop` - Set top padding
+- `paddingBottom` - Set bottom padding
+- `paddingLeft` - Set left padding
+- `paddingRight` - Set right padding
+- `padding` - Set all padding
+- `gap` - Set gap
+
+#### Transform Properties
+- `transformX` - Set X transform
+- `transformY` - Set Y transform
+- `transformXY` - Set both X and Y transform
+
+### Surface Composer (`$surface`)
+
+The surface composer extends the flex composer with additional surface styling.
+
+```typescript
+$surface(config)
+  .padding(padding)      // Set padding
+  .radius(radius)       // Set border radius
+  .shadow(shadow)       // Set box shadow
+```
+
+#### Properties
+- `padding` - Set padding
+- `paddingX` - Set horizontal padding
+- `paddingY` - Set vertical padding
+- `radius` - Set border radius
+- `height` - Set height
+- `width` - Set width
+- `circle` - Make surface circular
+- `size` - Set both width and height
+
+#### Padding Removal
+- `noPT` - Remove top padding
+- `noPB` - Remove bottom padding
+- `noPL` - Remove left padding
+- `noPR` - Remove right padding
+
+### Transition Composer (`$transition`)
+
+The transition composer provides transition utilities.
+
+```typescript
+$transition
+  .property(property)    // Set transition property
+  .duration(duration)    // Set transition duration
+  .delay(delay)         // Set transition delay
+  .easing(easing)       // Set transition timing function
+```
+
+#### Preset Transitions
+- `slowRelease` - Slow release transition
+- `all` - Transition all properties
+- `colors` - Transition color properties
+- `common` - Common transition properties
+
+## Theme System
+
+### Theme Creation
+
+```typescript
+createTheme<T extends ComposableThemeInputObject>(themeInput: T): ComposableTheme<T>
+```
+
+### Theme Variants
+
+```typescript
+createThemeVariant<T extends ComposableThemeInputObject>(
+  sourceTheme: ComposableTheme<T>,
+  variantInput: ThemeVariantInputObject<T>
+): ThemeVariant<T>
+```
+
+### Theme Composition
+
+```typescript
+composeThemeVariants<T extends ComposableThemeInputObject>(
+  sourceTheme: ComposableTheme<T>,
+  variants: ThemeVariant<T>[]
+): ThemeVariant<T>
+```
+
+### Themed Values
+
+```typescript
+createThemedValue<V extends ThemedValueInput>(
+  path: string,
+  defaultValue: V
+): ThemedValue<V>
+```
+
+## Utility Functions
+
+### Style Resolution
+
+```typescript
+resolveStylesInput(styles?: StylesInput): Array<AnyStyledComposer>
+```
+
+### Theme Hooks
+
+```typescript
+useThemeValue<T>(themedValue: ThemedValueGetter<T>): T
+```
+
+## Built-in Components
+
+The library provides a comprehensive set of styled HTML and SVG components through the `UI` export:
+
+```typescript
+import { UI } from 'styledwind'
+
+// HTML Elements
+<UI.div>...</UI.div>
+<UI.button>...</UI.button>
+<UI.input />
+<UI.form>...</UI.form>
+
+// SVG Elements
+<UI.svg>...</UI.svg>
+<UI.path />
+<UI.circle />
+```
+
+All components support the following props:
+- `as` - Change the underlying HTML element
+- `styles` - Apply styles using composers
+
+## Types
+
+### Length
+A type representing CSS length values:
+```typescript
+type Length = string | number
+```
+
+### StylesInput
+A type for style inputs:
+```typescript
+type StylesInput = Falsy | AnyStyledComposer | Array<AnyStyledComposer>
+```
+
+### ThemedValue
+A type for theme-aware values:
+```typescript
+type ThemedValue<V extends ThemedValueInput = ThemedValueInput> = 
+  V extends Primitive ? ThemedValueGetter<V> : V
+```

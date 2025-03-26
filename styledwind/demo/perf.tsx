@@ -1,23 +1,23 @@
 import * as sw from "@";
 
-import { color, createTheme, createThemeVariant, flex } from "@";
+import { $color, $flex, createTheme, createThemeVariant } from "@";
 
 Reflect.set(window, "sw", sw);
 
 console.time("flex");
 
 for (let i = 0; i < 10000; i++) {
-  flex.vertical.gap(2).alignCenter.justifyAround();
+  $flex.vertical.gap(2).alignCenter.justifyAround();
 }
 
 console.timeEnd("flex");
 
 const theme = createTheme({
-  color: color({ color: "red" }),
+  color: $color({ color: "red" }),
 });
 
 const variant = createThemeVariant(theme, {
-  color: color({ color: "blue" }),
+  color: $color({ color: "blue" }),
 });
 
 console.time("theme");

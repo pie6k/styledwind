@@ -1,70 +1,19 @@
-# Animation System
-
-Styledwind provides a powerful and easy-to-use animation system that integrates well with the rest of the library.
-
-## Basic Usage
+# Basic Styling
 
 ```tsx
-import { animation } from "styledwind";
+import styled from "styled-components";
+import { flex, animation } from "styledwind";
 
-const fadeIn = animation.properties({ opacity: [0, 1] }).duration("200ms").easeInOut;
-```
-
-## Animation Properties
-
-You can define various animation properties:
-
-```tsx
-const slideUp = animation
-  .properties({ y: [10, 0] })
-  .duration("300ms")
-  .easeInOut.delay("100ms");
-```
-
-## Reusable Animations
-
-Create reusable animations for consistent motion across your app:
-
-```tsx
-const baseAnimation = animation.duration("150ms").easeInOut;
-
-export const animations = {
-  fadeIn: baseAnimation.properties({ opacity: [0, 1] }),
-  slideUp: baseAnimation.properties({ y: [10, 0] }),
-  slideDown: baseAnimation.properties({ y: [-10, 0] }),
-};
-```
-
-## Using Animations
-
-Apply animations to components:
-
-```tsx
-const AnimatedCard = styled.div`
-  ${animations.fadeIn};
-`;
-
-// Or with UI components
-function Card() {
-  return <UI.Card styles={animations.slideUp}>Content</UI.Card>;
+function App() {
+  return <UICard>Card</UICard>;
 }
+
+const UICard = styled.div`
+  ${flex.horizontal.alignCenter.gap(2)};
+
+  /* Fade in animation */
+  ${animation.properties({ opacity: [0, 1] }).duration("100ms")};
+`;
 ```
 
-## Animation Properties
-
-Available animation properties:
-
-- `properties()` - Define what properties to animate
-- `duration()` - Set animation duration
-- `easeInOut()` - Set easing function
-- `delay()` - Set animation delay
-- `repeat()` - Set number of repetitions
-- `direction()` - Set animation direction
-
-## Best Practices
-
-1. Keep animations subtle and purposeful
-2. Use consistent durations across your app
-3. Consider performance impact
-4. Test animations on different devices
-5. Ensure animations don't interfere with accessibility
+This is a simple example, where `styledwind` helps to quickly define a style for the `UICard` component.

@@ -1,129 +1,121 @@
-# Theme System
+# Transition Composer
 
-Styledwind provides a powerful theming system that allows you to create and manage theme variants while maintaining type safety and performance.
+The Transition Composer provides a fluent API for creating smooth transitions in your components. It allows you to control transition properties, timing, and easing functions, making it easy to create polished animations.
 
-## Creating Themes
-
-Themes are created using the `createTheme` function. It takes an object where you can pass composable and primitive values.
+## Basic Usage
 
 ```tsx
-import { createTheme, color, font } from "styledwind";
+import styled from "styled-components";
+import { transition } from "styledwind";
 
-const baseFont = font.family("Inter, sans-serif").lineHeight(1.5).antialiased;
-
-const theme = createTheme({
-  // Primitive values
-  spacing: 16,
-
-  // Typography styles
-  typo: {
-    base: baseFont,
-    header: baseFont.size("2rem").bold,
-  },
-
-  // Color styles
-  colors: {
-    primary: color({ color: "red" }),
-    text: color({ color: "black" }),
-    background: color({ color: "white" }),
-  },
-});
-```
-
-## Theme Variants
-
-You can then create theme variants that inherit from a source theme but override specific values:
-
-```tsx
-import { createThemeVariant } from "styledwind";
-
-const darkTheme = createThemeVariant(theme, {
-  // Note: we can only pass values that we want to override. Everything else will be taken from the source theme.
-  colors: {
-    text: color({ color: "white" }),
-    background: color({ color: "black" }),
-  },
-});
-```
-
-## Using Themes
-
-To use theme, you simply read values from the theme object created before.
-
-```tsx
-import { theme } from "./theme";
-
-function Card() {
-  return (
-    <UI.Card styles={theme.colors.background.readableText.asBg}>
-      <UI.CardHeader_h1 styles={theme.typo.header} />
-      <UI.CardBody styles={flex.vertical.gap(2)}>Card content</UI.CardBody>
-    </UI.Card>
-  );
-}
-
-// Or
-
-const UICard = styled.div`
-  ${theme.colors.background.readableText.asBg};
+const Button = styled.button`
+  ${transition.duration(150).easing("ease-in-out")};
 `;
 ```
 
-## Theme Provider
+## Transition Properties
 
-To use the theme, you need to wrap your app in the `ThemeProvider` component.
-
-```tsx
-import { ThemeProvider } from "styledwind";
-import { theme, darkTheme } from "./theme";
-
-function App() {
-  const [currentTheme, setCurrentTheme] = useState(theme);
-
-  function setLightTheme() {
-    setCurrentTheme(theme);
-  }
-
-  function setDarkTheme() {
-    setCurrentTheme(darkTheme);
-  }
-
-  return (
-    <ThemeProvider theme={theme}>
-      <App onSetLightTheme={setLightTheme} onSetDarkTheme={setDarkTheme} />
-    </ThemeProvider>
-  );
-}
-```
-
-## Reading Theme Values
-
-If your theme defines some primitive values, you can read them using `useThemeValue` hook.
+Control which properties should transition:
 
 ```tsx
-import { useThemeValue, createTheme } from "styledwind";
+// All properties
+${transition.all}
 
-// theme.ts
-const theme = createTheme({
-  footerColumns: 3,
-});
+// Color-related properties
+${transition.colors}
 
-const wideTheme = createThemeVariant(theme, {
-  footerColumns: 4,
-});
+// Common properties (colors, opacity, shadows, transforms, filters)
+${transition.common}
 
-// Footer.tsx
-function Footer() {
-  const footerColumns = useThemeValue(theme.footerColumns);
-  return <div style={{ gridTemplateColumns: `repeat(${footerColumns}, 1fr)` }}>Hello</div>;
-}
+// Custom properties
+${transition.property("width", "height")}
 ```
 
-Optionally, anywhere (even outside of React) you can read theme values by calling theme values with `theme` argument.
+## Timing
 
-```ts
-const footerColumns = theme.footerColumns(theme); // 3
-const wideFooterColumns = theme.footerColumns(wideTheme); // 4
+Control transition timing:
+
+```tsx
+// Duration
+${transition.duration(150)} // 150ms
+${transition.duration("200ms")}
+
+// Slow release (longer duration on hover)
+${transition.duration(150).slowRelease}
 ```
 
-Note: All the code above is fully typed and will give you autocomplete and type safety.
+## Easing Functions
+
+Control transition easing:
+
+```tsx
+// Linear
+${transition.easing("linear")}
+
+// Ease-in-out
+${transition.easing("ease-in-out")}
+
+// Custom cubic-bezier
+${transition.easing("cubic-bezier(0.4, 0, 0.2, 1)")}
+```
+
+## Common Transition Patterns
+
+Here are some common transition patterns you might want to use:
+
+```tsx
+// Smooth color transitions
+${transition.colors.duration(150).easing("ease-in-out")}
+
+// Smooth transform transitions
+${transition.property("transform").duration(200).easing("cubic-bezier(0.4, 0, 0.2, 1)")}
+
+// Smooth opacity transitions
+${transition.property("opacity").duration(150)}
+
+// Smooth all transitions with slow release
+${transition.all.duration(200).slowRelease}
+```
+
+## Example Components
+
+Here's a practical example of how to use the Transition Composer in real components:
+
+```tsx
+const Button = styled.button`
+  ${transition.colors.duration(150).easing("ease-in-out")};
+  
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const Card = styled.div`
+  ${transition.common.duration(200)};
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const Modal = styled.div`
+  ${transition.property("opacity", "transform").duration(200)};
+  
+  &.entering {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  
+  &.entered {
+    opacity: 1;
+    transform: scale(1);
+  }
+`;
+
+const Toggle = styled.div`
+  ${transition.property("width", "height").duration(150).easing("ease-in-out")};
+`;
+```
+
+The Transition Composer makes it easy to create smooth, professional animations across your application. It provides a clean API for controlling all aspects of transitions, making it perfect for creating polished, interactive interfaces.

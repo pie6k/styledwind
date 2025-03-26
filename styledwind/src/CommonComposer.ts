@@ -206,4 +206,4 @@ export class CommonComposer extends Composer {
   }
 }
 
-export const style = new CommonComposer().init();
+export const $common = new CommonComposer().init();

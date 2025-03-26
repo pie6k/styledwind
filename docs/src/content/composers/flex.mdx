@@ -1,75 +1,190 @@
-# Layout System
+# Flex Composer
 
-Styledwind provides a flexible and powerful layout system that makes it easy to create complex layouts with minimal code.
+The Flex Composer provides a fluent API for creating flexbox layouts in your components. It's designed to encourage creating reusable layout patterns that maintain consistency across your application.
 
-## Flexbox Layouts
+## Basic Usage
 
 ```tsx
+import styled from "styled-components";
 import { flex } from "styledwind";
 
 const Card = styled.div`
-  ${flex.horizontal.alignCenter.gap(2)};
-`;
-
-const Stack = styled.div`
-  ${flex.vertical.gap(4)};
+  ${flex.column.gap(2)};
 `;
 ```
 
-## Grid Layouts
+## Creating Reusable Layout Patterns
+
+Start by defining common layout patterns that you can compose into more specific layouts:
 
 ```tsx
-import { grid } from "styledwind";
+// Define base layout patterns
+const layouts = {
+  // Common flex containers
+  row: flex.row.alignCenter,
+  column: flex.column.gap(2),
+  
+  // Card layouts
+  card: flex.column.gap(2),
+  cardHeader: flex.row.justifyBetween.alignCenter,
+  cardContent: flex.column.gap(1),
+  cardFooter: flex.row.justifyEnd.gap(1),
+  
+  // Form layouts
+  form: flex.column.gap(3),
+  formGroup: flex.column.gap(1),
+  formRow: flex.row.gap(2),
+  
+  // Navigation layouts
+  nav: flex.row.alignCenter.gap(2),
+  navItem: flex.row.alignCenter.gap(1),
+};
+```
 
-const Grid = styled.div`
-  ${grid.columns(3).gap(4)};
-`;
+## Direction
+
+The Flex Composer provides several ways to set the flex direction:
+
+```tsx
+// Row (horizontal) layout
+${flex.row}
+
+// Column (vertical) layout
+${flex.column}
+
+// Aliases for better readability
+${flex.horizontal} // same as row
+${flex.vertical}   // same as column
+${flex.x}          // same as row
+${flex.y}          // same as column
+```
+
+## Alignment
+
+Control how items are aligned along the cross-axis:
+
+```tsx
+// Center items
+${flex.alignCenter}
+
+// Align to start
+${flex.alignStart}
+
+// Align to end
+${flex.alignEnd}
+
+// Stretch items
+${flex.alignStretch}
+
+// Align to baseline
+${flex.alignBaseline}
+
+// Or use the generic align method
+${flex.align("center")}
+```
+
+## Justification
+
+Control how items are distributed along the main axis:
+
+```tsx
+// Center items
+${flex.justifyCenter}
+
+// Align to start
+${flex.justifyStart}
+
+// Align to end
+${flex.justifyEnd}
+
+// Space between items
+${flex.justifyBetween}
+
+// Space around items
+${flex.justifyAround}
+
+// Space evenly between items
+${flex.justifyEvenly}
+
+// Or use the generic justify method
+${flex.justify("space-between")}
 ```
 
 ## Spacing
 
-```tsx
-import { spacing } from "styledwind";
+Add gaps between flex items:
 
-const Container = styled.div`
-  ${spacing.padding(4)};
-  ${spacing.margin(2)};
-`;
+```tsx
+// Add a gap of 1rem (default)
+${flex.gap()}
+
+// Add a custom gap
+${flex.gap(2)} // 2rem gap
 ```
 
-## Responsive Layouts
+## Common Combinations
 
 ```tsx
-const ResponsiveGrid = styled.div`
-  ${grid.columns(1).gap(4)};
+// Center items both horizontally and vertically
+${flex.center}
 
-  @media (min-width: 768px) {
-    ${grid.columns(2)};
-  }
+// Create a responsive layout that wraps
+${flex.row.wrap}
 
-  @media (min-width: 1024px) {
-    ${grid.columns(3)};
-  }
-`;
+// Create an inline flex container
+${flex.inline}
+
+// Reverse the order of items
+${flex.reverse}
 ```
 
-## Layout Composition
+## Example Components
 
-Combine different layout utilities:
+Here's a practical example of how to compose layout styles in real components:
 
 ```tsx
+// Define base layout patterns
+const layouts = {
+  // Card layouts
+  card: flex.column.gap(2),
+  cardHeader: flex.row.justifyBetween.alignCenter,
+  cardContent: flex.column.gap(1),
+  cardFooter: flex.row.justifyEnd.gap(1),
+  
+  // Form layouts
+  form: flex.column.gap(3),
+  formGroup: flex.column.gap(1),
+  formRow: flex.row.gap(2),
+};
+
+// Use in components
 const Card = styled.div`
-  ${flex.horizontal.alignCenter.gap(2)};
-  ${spacing.padding(4)};
-  ${box.borderRadius("md")};
+  ${layouts.card};
+`;
+
+const CardHeader = styled.div`
+  ${layouts.cardHeader};
+`;
+
+const CardContent = styled.div`
+  ${layouts.cardContent};
+`;
+
+const CardFooter = styled.div`
+  ${layouts.cardFooter};
+`;
+
+const Form = styled.form`
+  ${layouts.form};
+`;
+
+const FormGroup = styled.div`
+  ${layouts.formGroup};
+`;
+
+const FormRow = styled.div`
+  ${layouts.formRow};
 `;
 ```
 
-## Best Practices
-
-1. Use semantic layout components
-2. Leverage responsive design
-3. Keep layouts consistent across your app
-4. Use spacing utilities for consistent gaps
-5. Consider mobile-first approach
-6. Test layouts on different screen sizes
+The Flex Composer makes it easy to create consistent layouts across your application. By defining base layout patterns and composing them into more specific layouts, you can maintain consistency while keeping your code DRY and maintainable.

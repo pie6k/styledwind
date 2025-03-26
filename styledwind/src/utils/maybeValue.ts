@@ -1,6 +1,6 @@
-const NO_VALUE_SYMBOL = Symbol("NO_VALUE");
+export const NO_VALUE_SYMBOL = Symbol("NO_VALUE");
 
-type MaybeValue<T> = T | typeof NO_VALUE_SYMBOL;
+export type MaybeValue<T> = T | typeof NO_VALUE_SYMBOL;
 
 export function getHasValue<T>(value: MaybeValue<T>): value is T {
   return value !== NO_VALUE_SYMBOL;

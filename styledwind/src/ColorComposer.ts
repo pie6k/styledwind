@@ -227,7 +227,7 @@ export class ColorComposer extends Composer {
   }
 }
 
-export const color = memoizeFn(
+export const $color = memoizeFn(
   function color(color: ColorsInput) {
     return new ColorComposer().define(color);
   },

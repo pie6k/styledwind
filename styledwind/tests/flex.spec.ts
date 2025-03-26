@@ -1,10 +1,10 @@
 import { describe, expect, test } from "vitest";
 
-import { flex } from "@";
+import { $flex } from "@";
 
 describe("flex", () => {
   test("basic", () => {
-    expect(flex.vertical()).toMatchInlineSnapshot(`
+    expect($flex.vertical()).toMatchInlineSnapshot(`
       [
         "display: flex;",
         "flex-direction: column;",
@@ -13,7 +13,7 @@ describe("flex", () => {
   });
 
   test("gap", () => {
-    expect(flex.vertical.gap(2)()).toMatchInlineSnapshot(`
+    expect($flex.vertical.gap(2)()).toMatchInlineSnapshot(`
       [
         "display: flex;",
         "flex-direction: column;",

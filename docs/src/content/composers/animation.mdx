@@ -1,70 +1,166 @@
-# Animation System
+# Animation Composer
 
-Styledwind provides a powerful and easy-to-use animation system that integrates well with the rest of the library.
+The Animation Composer provides a powerful API for creating complex animations in your components. It supports keyframe animations, transforms, filters, and various animation properties with a fluent interface.
 
 ## Basic Usage
 
 ```tsx
+import styled from "styled-components";
 import { animation } from "styledwind";
 
-const fadeIn = animation.properties({ opacity: [0, 1] }).duration("200ms").easeInOut;
+const FadeIn = styled.div`
+  ${animation.fadeIn.duration(200)};
+`;
 ```
 
-## Animation Properties
+## Predefined Animations
 
-You can define various animation properties:
+Use common animation patterns:
 
 ```tsx
-const slideUp = animation
-  .properties({ y: [10, 0] })
-  .duration("300ms")
-  .easeInOut.delay("100ms");
+// Fade in
+${animation.fadeIn}
+
+// Fade out
+${animation.fadeOut}
+
+// Slide up from bottom
+${animation.slideUpFromBottom("20px")}
+
+// Slide down from top
+${animation.slideDownFromTop("20px")}
+
+// Slide left from right
+${animation.slideLeftFromRight("20px")}
+
+// Slide right from left
+${animation.slideRightFromLeft("20px")}
+
+// Zoom in
+${animation.zoomIn(1.2)}
+
+// Zoom out
+${animation.zoomOut(0.8)}
+
+// Spin
+${animation.spin}
+
+// Infinite animation
+${animation.infinite}
 ```
 
-## Reusable Animations
+## Custom Properties
 
-Create reusable animations for consistent motion across your app:
+Create custom animations with specific properties:
 
 ```tsx
-const baseAnimation = animation.duration("150ms").easeInOut;
+// Opacity animation
+${animation.opacity([0, 1])}
 
-export const animations = {
-  fadeIn: baseAnimation.properties({ opacity: [0, 1] }),
-  slideUp: baseAnimation.properties({ y: [10, 0] }),
-  slideDown: baseAnimation.properties({ y: [-10, 0] }),
-};
+// Transform animations
+${animation.x([0, 20])}
+${animation.y([0, -20])}
+${animation.scale([1, 1.2])}
+${animation.rotate(["0deg", "45deg"])}
+
+// Filter animations
+${animation.blur(["0px", "4px"])}
 ```
 
-## Using Animations
+## Animation Configuration
 
-Apply animations to components:
+Control animation behavior:
 
 ```tsx
-const AnimatedCard = styled.div`
-  ${animations.fadeIn};
+// Duration
+${animation.duration(200)}
+
+// Delay
+${animation.delay(100)}
+
+// Easing function
+${animation.easing("ease-in-out")}
+
+// Fill mode
+${animation.fillMode("forwards")}
+
+// Iteration count
+${animation.iterationCount(2)}
+```
+
+## Transform Style
+
+Control how transforms are rendered:
+
+```tsx
+// Use 3D transforms
+${animation.transformStyle("preserve-3d")}
+```
+
+## Complex Animations
+
+Create complex animations by combining multiple properties:
+
+```tsx
+// Fade in and slide up
+${animation
+  .opacity([0, 1])
+  .y([20, 0])
+  .duration(300)
+  .easing("ease-out")}
+
+// Scale and rotate
+${animation
+  .scale([1, 1.2])
+  .rotate(["0deg", "45deg"])
+  .duration(200)
+  .easing("ease-in-out")}
+
+// Multiple transforms
+${animation
+  .x([0, 20])
+  .y([0, -20])
+  .scale([1, 1.1])
+  .duration(300)}
+```
+
+## Example Components
+
+Here's a practical example of how to use the Animation Composer in real components:
+
+```tsx
+const Modal = styled.div`
+  ${animation
+    .opacity([0, 1])
+    .scale([0.95, 1])
+    .duration(200)
+    .easing("ease-out")};
 `;
 
-// Or with UI components
-function Card() {
-  return <UI.Card styles={animations.slideUp}>Content</UI.Card>;
-}
+const Button = styled.button`
+  ${animation
+    .scale([1, 1.05])
+    .duration(150)
+    .easing("ease-in-out")};
+    
+  &:active {
+    ${animation
+      .scale([1.05, 0.95])
+      .duration(100)
+      .easing("ease-in-out")};
+  }
+`;
+
+const LoadingSpinner = styled.div`
+  ${animation.spin.duration(1000).infinite};
+`;
+
+const Notification = styled.div`
+  ${animation
+    .slideRightFromLeft("100%")
+    .duration(300)
+    .easing("ease-out")};
+`;
 ```
 
-## Animation Properties
-
-Available animation properties:
-
-- `properties()` - Define what properties to animate
-- `duration()` - Set animation duration
-- `easeInOut()` - Set easing function
-- `delay()` - Set animation delay
-- `repeat()` - Set number of repetitions
-- `direction()` - Set animation direction
-
-## Best Practices
-
-1. Keep animations subtle and purposeful
-2. Use consistent durations across your app
-3. Consider performance impact
-4. Test animations on different devices
-5. Ensure animations don't interfere with accessibility
+The Animation Composer makes it easy to create sophisticated animations across your application. It provides a comprehensive set of tools for controlling all aspects of animations, from simple transitions to complex keyframe-based animations.

@@ -142,4 +142,4 @@ export class FontComposer extends Composer {
   }
 }
 
-export const font = new FontComposer().init();
+export const $font = new FontComposer().init();
