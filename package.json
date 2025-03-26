@@ -1,17 +1,17 @@
 {
-  "name": "styledwind-root",
+  "name": "stylings-root",
   "version": "1.0.0",
   "main": "index.js",
   "private": true,
   "workspaces": {
     "packages": [
-      "styledwind",
+      "stylings",
       "docs"
     ]
   },
   "scripts": {
-    "sw": "yarn workspace styledwind",
-    "docs": "yarn workspace styledwind-docs"
+    "stylings": "yarn workspace stylings",
+    "docs": "yarn workspace stylings-docs"
   },
   "packageManager": "yarn@4.5.0"
 }
