@@ -1,30 +1,30 @@
-import 'nextra-theme-docs/style.css'
+import "nextra-theme-docs/style.css";
 
-import { Banner, Head } from 'nextra/components'
+import { Banner, Head } from "nextra/components";
 /* eslint-env node */
-import { Footer, Layout, Navbar } from 'nextra-theme-docs'
+import { Footer, Layout, Navbar } from "nextra-theme-docs";
 
-import { getPageMap } from 'nextra/page-map'
+import { getPageMap } from "nextra/page-map";
 
 export const metadata = {
-  metadataBase: new URL('https://nextra.site'),
+  metadataBase: new URL("https://styledwind.dev"),
   title: {
-    template: '%s - Nextra'
+    template: "%s - styledwind",
   },
-  description: 'Nextra: the Next.js site builder',
-  applicationName: 'Nextra',
-  generator: 'Next.js',
+  description: "styledwind: joyful styling for React and Styled Components",
+  applicationName: "styledwind",
+  generator: "Next.js",
   appleWebApp: {
-    title: 'Nextra'
+    title: "styledwind",
   },
   other: {
-    'msapplication-TileImage': '/ms-icon-144x144.png',
-    'msapplication-TileColor': '#fff'
+    "msapplication-TileImage": "/ms-icon-144x144.png",
+    "msapplication-TileColor": "#fff",
   },
   twitter: {
-    site: 'https://nextra.site'
-  }
-}
+    site: "https://styledwind.dev",
+  },
+};
 
 export default async function RootLayout({ children }) {
   const navbar = (
@@ -35,10 +35,9 @@ export default async function RootLayout({ children }) {
         </div>
       }
       projectLink="https://github.com/pie6k/styledwind"
-
     />
-  )
-  const pageMap = await getPageMap()
+  );
+  const pageMap = await getPageMap();
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <Head faviconGlyph="✦" />
@@ -56,5 +55,5 @@ export default async function RootLayout({ children }) {
         </Layout>
       </body>
     </html>
-  )
+  );
 }
