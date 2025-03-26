@@ -1,6 +1,9 @@
 export default {
   index: "",
   "get-started": "",
-  features: "",
-  advanced: "",
+  examples: "Examples & Concepts",
+  composers: "Composers",
+  theming: "Theming",
+  advanced: "Advanced",
+  api: "API",
 };

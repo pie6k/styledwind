@@ -1,0 +1,75 @@
+# Layout System
+
+Styledwind provides a flexible and powerful layout system that makes it easy to create complex layouts with minimal code.
+
+## Flexbox Layouts
+
+```tsx
+import { flex } from "styledwind";
+
+const Card = styled.div`
+  ${flex.horizontal.alignCenter.gap(2)};
+`;
+
+const Stack = styled.div`
+  ${flex.vertical.gap(4)};
+`;
+```
+
+## Grid Layouts
+
+```tsx
+import { grid } from "styledwind";
+
+const Grid = styled.div`
+  ${grid.columns(3).gap(4)};
+`;
+```
+
+## Spacing
+
+```tsx
+import { spacing } from "styledwind";
+
+const Container = styled.div`
+  ${spacing.padding(4)};
+  ${spacing.margin(2)};
+`;
+```
+
+## Responsive Layouts
+
+```tsx
+const ResponsiveGrid = styled.div`
+  ${grid.columns(1).gap(4)};
+
+  @media (min-width: 768px) {
+    ${grid.columns(2)};
+  }
+
+  @media (min-width: 1024px) {
+    ${grid.columns(3)};
+  }
+`;
+```
+
+## Layout Composition
+
+Combine different layout utilities:
+
+```tsx
+const Card = styled.div`
+  ${flex.horizontal.alignCenter.gap(2)};
+  ${spacing.padding(4)};
+  ${box.borderRadius("md")};
+`;
+```
+
+## Best Practices
+
+1. Use semantic layout components
+2. Leverage responsive design
+3. Keep layouts consistent across your app
+4. Use spacing utilities for consistent gaps
+5. Consider mobile-first approach
+6. Test layouts on different screen sizes

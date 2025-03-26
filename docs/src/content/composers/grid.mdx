@@ -1,0 +1,44 @@
+# Semantic Styling
+
+Styledwind encourages writing semantic styles that describe what something is, not just how it looks. This makes your code more maintainable and easier to understand.
+
+## Using UI Components
+
+Often we don't want to define each part of the style as a separate component outside of our React component. Either when some styled part is simple, or when we rapidly iterate.
+
+We can do it inline, while next to the styles, still giving each part a semantic name and meaning (that will also be visible in devtools).
+
+```tsx
+import { UI, flex, font, box } from "styledwind";
+
+function Form() {
+  return (
+    {/* You can dynamically use `UI.AnyNameYouWant` */}
+    <UI.FormHolder styles={[flex.vertical.gap(3), animations.fadeIn]}>
+      {/* If name ends with eg "_h1", the result will be <h1> tag, etc */}
+      <UI.FormHeader_h1 styles={typo.header}>Form</UI.FormHeader_h1>
+      <UI.FormIntro_p styles={typo.copy.secondary}>
+        Intro here
+      </UI.FormIntro_p>
+      <UI.FormBody styles={flex.vertical.gap(2)}>
+        {/* ... */}
+        {/* ... */}
+      </UI.FormBody>
+    </UI.FormHolder>
+  );
+}
+```
+
+## Type Safety
+
+- For custom tags, eg `UI.Foo_h2`, Typescript will infer the correct type. Eg for `ref` it will be `RefObject<HTMLHeadingElement>`.
+- The UI namespace provides type-safe access to all HTML elements
+- Style properties are fully typed with TypeScript
+
+## Best Practices
+
+1. Use meaningful names that describe the purpose of the component
+2. Leverage the UI namespace for semantic HTML elements
+3. Keep styles close to where they are used
+4. Use TypeScript for better type safety
+5. Consider accessibility when naming components

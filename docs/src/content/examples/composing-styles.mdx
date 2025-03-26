@@ -1,0 +1,60 @@
+# Color System
+
+Stylewind is semi-opinionated about how we define and work with colors. Every color is defined together with its 'hover', 'active' and 'readable text' variants.
+
+## Basic Usage
+
+```tsx
+import { color } from "styledwind";
+
+const primaryColor = color({ color: "red" });
+```
+
+## Color Variants
+
+Each color comes with built-in variants:
+
+```tsx
+const buttonColor = color({ color: "blue" });
+
+// Use different variants
+buttonColor.hover; // Hover state
+buttonColor.active; // Active state
+buttonColor.readableText; // Automatically calculated readable text color
+```
+
+## Color Composition
+
+You can compose colors with other styles:
+
+```tsx
+const button = styled.button`
+  ${color({ color: "blue" }).hover.active.readableText};
+`;
+```
+
+## Theme Integration
+
+Colors work seamlessly with the theme system:
+
+```tsx
+const theme = createTheme({
+  colors: {
+    primary: color({ color: "blue" }),
+    secondary: color({ color: "gray" }),
+  },
+});
+
+// Use in components
+function Button() {
+  return <UI.Button styles={theme.colors.primary.hover.active.readableText}>Click me</UI.Button>;
+}
+```
+
+## Best Practices
+
+1. Define colors in your theme for consistency
+2. Use semantic color names (e.g., `primary`, `secondary`, `error`)
+3. Leverage built-in variants for interactive states
+4. Use `readableText` for ensuring text contrast
+5. Consider accessibility when choosing colors

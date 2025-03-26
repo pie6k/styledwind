@@ -1,0 +1,31 @@
+# Theme System
+
+Styledwind provides a powerful theming system that allows you to create and manage theme variants while maintaining type safety and performance.
+
+## Creating Themes
+
+Themes are created using the `createTheme` function. It takes an object where you can pass composable and primitive values.
+
+```tsx
+import { createTheme, color, font } from "styledwind";
+
+const baseFont = font.family("Inter, sans-serif").lineHeight(1.5).antialiased;
+
+const theme = createTheme({
+  // Primitive values
+  spacing: 16,
+
+  // Typography styles
+  typo: {
+    base: baseFont,
+    header: baseFont.size("2rem").bold,
+  },
+
+  // Color styles
+  colors: {
+    primary: color({ color: "red" }),
+    text: color({ color: "black" }),
+    background: color({ color: "white" }),
+  },
+});
+```

@@ -1,0 +1,64 @@
+# Composable Styles
+
+Styledwind provides a powerful system for composing and reusing styles. This guide will show you how to create and compose styles effectively.
+
+## Basic Usage
+
+```tsx
+import styled from "styled-components";
+import { flex, animation } from "styledwind";
+
+function App() {
+  return <UICard>Card</UICard>;
+}
+
+const UICard = styled.div`
+  ${flex.horizontal.alignCenter.gap(2)};
+
+  /* Fade in animation */
+  ${animation.properties({ opacity: [0, 1] }).duration("100ms")};
+`;
+```
+
+## Creating Reusable Styles
+
+You can define shared styles and compose them into more specific styles:
+
+```tsx
+// We define some shared font styles
+const baseFont = font.family("Inter, sans-serif").lineHeight(1.5).antialiased;
+
+export const typo = {
+  // And compose them into more specific styles
+  header: baseFont.size("2rem").lineHeight(1.25).bold,
+  copy: baseFont,
+  label: baseFont.size("0.875rem"),
+};
+
+// We define common rules for our animations (duration, easing)
+const baseAnimation = animation.duration("150ms").easeInOut;
+
+export const animations = {
+  // And compose it into specific animations
+  fadeIn: baseAnimation.properties({ opacity: [0, 1] }),
+  slideUp: baseAnimation.properties({ y: [10, 0] }),
+};
+
+// Or continue composing inside components
+const UILink = styled.a`
+  ${typo.copy.underline};
+`;
+
+const UIQuote = styled.blockquote`
+  ${typo.copy.italic};
+  ${animations.slideUp.duration("500ms")};
+`;
+```
+
+## Best Practices
+
+1. Create base styles that can be reused across your application
+2. Use composition to build more specific styles from base styles
+3. Keep your style definitions close to where they are used
+4. Use meaningful names that describe the purpose of the style
+5. Leverage TypeScript for better type safety and autocompletion

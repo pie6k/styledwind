@@ -1,0 +1,22 @@
+# Theme provider
+
+To use the theme, you need to wrap your app in the `ThemeProvider` component.
+
+```tsx
+import { ThemeProvider } from "styledwind";
+import { theme, darkTheme } from "./theme";
+
+function App() {
+  const [isDarkThemeActive, setIsDarkThemeActive] = useState(false);
+
+  function toggleDarkMode() {
+    setIsDarkThemeActive(!isDarkThemeActive);
+  }
+
+  return (
+    <ThemeProvider theme={theme} activeVariants={[isDarkThemeActive && darkTheme]}>
+      <App onToggleDarkMode={toggleDarkMode} />
+    </ThemeProvider>
+  );
+}
+```

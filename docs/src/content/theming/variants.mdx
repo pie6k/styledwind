@@ -1,0 +1,16 @@
+# Theme Variants
+
+You can then create theme variants that inherit from a source theme but override specific values:
+
+```tsx
+import { createThemeVariant } from "styledwind";
+import { theme } from "./theme";
+
+const darkTheme = createThemeVariant(theme, {
+  // Note: we can only pass values that we want to override. Everything else will be taken from the source theme.
+  colors: {
+    text: color({ color: "white" }),
+    background: color({ color: "black" }),
+  },
+});
+```
