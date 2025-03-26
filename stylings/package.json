@@ -19,7 +19,7 @@
     "build": "vite --config vite.config.build.ts build",
     "preview": "vite preview",
     "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
-    "test": "jest"
+    "test": "vitest"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
