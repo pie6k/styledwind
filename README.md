@@ -582,3 +582,7 @@ const UIGetStartedButton = styled.button`
   ${button.regular.primary};
 `;
 ```
+
+# License
+
+MIT License - see the [LICENSE](LICENSE) file for details.
