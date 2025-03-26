@@ -1,9 +1,10 @@
+import { Composer, styledComposer } from "./Composer";
+
 import { CSSProperties } from "styled-components";
-import { Composer } from "./Composer";
 import { convertToRem } from "./utils/convertUnits";
 
 export class FlexComposer extends Composer {
-  init() {
+  styled() {
     return this.addStyle({ display: "flex" });
   }
 
@@ -120,4 +121,4 @@ export class FlexComposer extends Composer {
   }
 }
 
-export const $flex = new FlexComposer().init();
+export const $flex = styledComposer(FlexComposer);

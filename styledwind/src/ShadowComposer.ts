@@ -1,4 +1,5 @@
-import { Composer } from "./Composer";
+import { Composer, styledComposer } from "./Composer";
+
 import { ComposerConfig } from "./ComposerConfig";
 import { getHasValue } from "./utils/maybeValue";
 import { setColorOpacity } from "./utils/color";
@@ -61,4 +62,4 @@ export class ShadowComposer extends Composer {
   }
 }
 
-export const $shadow = new ShadowComposer().init();
+export const $shadow = styledComposer(ShadowComposer);

@@ -1,15 +1,67 @@
 # Composable, reusable styles
 
+As composers are infinitely chainable and composable objects, they can be used to easily create reusable styles.
+
+Let's say we want to define some shared font styles. 
+
+We can first define some basic font styles, and then continue composing them into more specific styles.
+
 ```tsx
+import { $font } from "stylings";
+
+const $baseFont = font.family("Inter, sans-serif").lineHeight(1.5).antialiased;
+```
+
+We now defined some core font style. Now we can compose it into more specific styles.
+
+```tsx
+const $header = $baseFont.size("2rem").lineHeight(1.25).bold;
+const $label = $baseFont.size("0.875rem");
+```
+
+Using `$baseFont` and continuing chaining, we were able to create more specific styles.
+
+Note that we can override styles defined previously. For example, we called `.lineHeight(1.25)` on `$header`, which means we override the line height defined in `$baseFont`.
+
+We can now organize our styles into a single object, and reuse them across our app.
+
+```tsx
+import { $font } from "stylings";
 // We define some shared font styles
-const baseFont = font.family("Inter, sans-serif").lineHeight(1.5).antialiased;
+const $baseFont = font.family("Inter, sans-serif").lineHeight(1.5).antialiased;
+const $header = $baseFont.size("2rem").lineHeight(1.25).bold;
+const $label = $baseFont.size("0.875rem");
 
 export const typo = {
-  // And compose them into more specific styles
-  header: baseFont.size("2rem").lineHeight(1.25).bold,
-  copy: baseFont,
-  label: baseFont.size("0.875rem"),
+  $copy: $baseFont,
+  $header: $baseFont.size("2rem").lineHeight(1.25).bold,
+  $label: $baseFont.size("0.875rem"),
 };
+```
+
+And use them in our components.
+
+```tsx
+const UIBlogPostParagraph = styled.p`
+  ${typo.$copy};
+`;
+```
+
+> [!NOTE]
+>
+> Recommended convention - all composable styles (even custom ones we just created) are prefixed with `$` to clearly indicate that they are composable.
+
+We can also continue composing styles even further if needed.
+
+Eg we can call `.underline` on `theme.$copy` to compose it into a link style.
+
+```tsx
+const UIBlogPostLink = styled.a`
+  ${typo.$copy.underline};
+`;
+```
+
+{/* 
 
 // We define common rules for our animations (duration, easing)
 const baseAnimation = animation.duration("150ms").easeInOut;
@@ -29,4 +81,4 @@ const UIQuote = styled.blockquote`
   ${typo.copy.italic};
   ${animations.slideUp.duration("500ms")};
 `;
-```
+``` */}

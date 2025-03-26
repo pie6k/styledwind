@@ -1,6 +1,7 @@
 import {
   $color,
   $font,
+  composeThemeVariants,
   createTheme,
   createThemeVariant,
   getIsTheme,
@@ -180,6 +181,54 @@ describe("theme", () => {
     }).toThrowErrorMatchingInlineSnapshot(
       `[Error: Themed composer called a method that did not return a composer (compile)]`,
     );
+  });
+
+  test("composing variants", () => {
+    const $theme = createTheme({
+      color: $color({ color: "red" }),
+      width: 100,
+    });
+
+    const blue = createThemeVariant($theme, {
+      color: $color({ color: "blue" }),
+    });
+
+    const wide = createThemeVariant($theme, {
+      width: 200,
+    });
+
+    const $all = composeThemeVariants($theme, [blue, wide]);
+    const $blueOnly = composeThemeVariants($theme, [blue]);
+    const $wideOnly = composeThemeVariants($theme, [wide]);
+
+    expect($theme.color()).toMatchInlineSnapshot(`
+      [
+        "red",
+      ]
+    `);
+
+    expect($theme.color($all)).toMatchInlineSnapshot(`
+      [
+        "blue",
+      ]
+    `);
+
+    expect($theme.color($blueOnly)).toMatchInlineSnapshot(`
+      [
+        "blue",
+      ]
+    `);
+
+    expect($theme.color($wideOnly)).toMatchInlineSnapshot(`
+      [
+        "red",
+      ]
+    `);
+
+    expect($theme.width()).toMatchInlineSnapshot(`100`);
+    expect($theme.width($all)).toMatchInlineSnapshot(`200`);
+    expect($theme.width($blueOnly)).toMatchInlineSnapshot(`100`);
+    expect($theme.width($wideOnly)).toMatchInlineSnapshot(`200`);
   });
 
   test("cache", () => {

@@ -1,8 +1,8 @@
+import { Composer, styledComposer } from "./Composer";
 import { DEFAULT_TRANSITION_DURATION_MS, DEFAULT_TRANSITION_EASING } from "./defaults";
 import { Length, addUnit, multiplyUnit } from "./utils";
 
 import type { CSSProperty } from "./types";
-import { Composer } from "./Composer";
 import { ComposerConfig } from "./ComposerConfig";
 import { Property } from "csstype";
 import { getHasValue } from "./utils/maybeValue";
@@ -86,4 +86,4 @@ export class TransitionComposer extends Composer {
   }
 }
 
-export const $transition = new TransitionComposer().init();
+export const $transition = styledComposer(TransitionComposer);

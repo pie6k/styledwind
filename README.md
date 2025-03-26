@@ -1,6 +1,6 @@
-# Styledwind
+# Stylings
 
-Styledwind is an opinionated and joyful library helping you write semantic, composable, reusable styles using `React` and `styled-components`.
+Stylings is an opinionated and joyful library helping you write semantic, composable, reusable styles using `React` and `styled-components`.
 
 It is battle tested and used in production in [Screen Studio](https://screen.studio).
 
@@ -9,11 +9,11 @@ If you want to see examples, scroll down to the [Examples](#examples) section.
 # Installation
 
 ```bash
-yarn install styledwind
+yarn install stylings
 # or
-npm install styledwind
+npm install stylings
 # or
-pnpm install styledwind
+pnpm install stylings
 ```
 
 # Goals & Motivation
@@ -33,7 +33,7 @@ pnpm install styledwind
 
 ```tsx
 import styled from "styled-components";
-import { flex, animation } from "styledwind";
+import { flex, animation } from "stylings";
 
 function App() {
   return <UICard>Card</UICard>;
@@ -47,7 +47,7 @@ const UICard = styled.div`
 `;
 ```
 
-This is a simple example, where `styledwind` helps to quickly define a style for the `UICard` component.
+This is a simple example, where `stylings` helps to quickly define a style for the `UICard` component.
 
 ## Composable, reusable styles
 
@@ -89,7 +89,7 @@ Often we don't want to define each part of the style as a separate component out
 We can do it inline, while next to the styles, still giving each part a semantic name and meaning (that will also be visible in devtools).
 
 ```tsx
-import { UI, flex, font, box } from "styledwind";
+import { UI, flex, font, box } from "stylings";
 
 function Form() {
   return (
@@ -113,14 +113,14 @@ function Form() {
 
 # Theme System
 
-Styledwind provides a powerful theming system that allows you to create and manage theme variants while maintaining type safety and performance.
+Stylings provides a powerful theming system that allows you to create and manage theme variants while maintaining type safety and performance.
 
 ## Creating Themes
 
 Themes are created using the `createTheme` function. It takes an object where you can pass composable and primitive values.
 
 ```tsx
-import { createTheme, color, font } from "styledwind";
+import { createTheme, color, font } from "stylings";
 
 const baseFont = font.family("Inter, sans-serif").lineHeight(1.5).antialiased;
 
@@ -148,7 +148,7 @@ const theme = createTheme({
 You can then create theme variants that inherit from a source theme but override specific values:
 
 ```tsx
-import { createThemeVariant } from "styledwind";
+import { createThemeVariant } from "stylings";
 
 const darkTheme = createThemeVariant(theme, {
   // Note: we can only pass values that we want to override. Everything else will be taken from the source theme.
@@ -187,7 +187,7 @@ const UICard = styled.div`
 To use the theme, you need to wrap your app in the `ThemeProvider` component.
 
 ```tsx
-import { ThemeProvider } from "styledwind";
+import { ThemeProvider } from "stylings";
 import { theme, darkTheme } from "./theme";
 
 function App() {
@@ -214,7 +214,7 @@ function App() {
 If your theme defines some primitive values, you can read them using `useThemeValue` hook.
 
 ```tsx
-import { useThemeValue, createTheme } from "styledwind";
+import { useThemeValue, createTheme } from "stylings";
 
 // theme.ts
 const theme = createTheme({
@@ -292,7 +292,7 @@ const UIDangerText = styled.button`
 Colors have plenty of methods to make working with them easier.
 
 ```ts
-import { UI } from "styledwind";
+import { UI } from "stylings";
 import { dangerColor } from "./colors";
 
 const subtleDangerColor = dangerColor.opacity(0.4).lighten(0.2);
@@ -318,7 +318,7 @@ subtleDangerColor === subtleDangerColor2; // true
 To work with typography, we can use the `font` object. It provides a comprehensive set of properties to create and reuse typography styles.
 
 ```ts
-import { font } from "styledwind";
+import { font } from "stylings";
 
 // Basic typography composition. We define core, shared styles which we will later compose into more specific styles.
 const baseText = font.family("Inter, sans-serif").size("1rem").lineHeight(1.5).antialiased;
@@ -366,7 +366,7 @@ export const typo = {
 In many apps multiple components use similar sizing styles, eg. input and button will share size, padding and border-radius.
 
 ```ts
-import { surface } from "styledwind";
+import { surface } from "stylings";
 
 // Control will be used for inputs, buttons, select, etc
 const control = sizing({
@@ -440,7 +440,7 @@ You can create your own composable styles by extending the `Composer` class.
 Let's say you want to create a custom `DropDownStylesComposer` composer that will be used to style dropdowns.
 
 ```ts
-import { Composer } from "styledwind";
+import { Composer } from "stylings";
 
 export class DropDownStylesComposer extends Composer {
   get shadow() {
@@ -496,7 +496,7 @@ In some cases, you might want your composables to have some config before emmiti
 For example, you want to create a `ButtonStylesComposer` that will be used to style buttons.
 
 ```ts
-import { Composer, composerConfig, CSSProperties } from "styledwind";
+import { Composer, composerConfig, CSSProperties } from "stylings";
 
 interface ButtonStylesConfig {
   size: "regular" | "small" | "medium" | "large";

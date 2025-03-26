@@ -13,10 +13,15 @@ function getIsPlainObject(value: unknown): value is Record<string, unknown> {
   return value?.constructor === Object;
 }
 
+function getPath(currentPath: string, key: string) {
+  if (!currentPath) return key;
+
+  return `${currentPath}.${key}`;
+}
+
 function buildPropertiesMap(currentPath: string, result: PropertiesMap, input: NestedRecord) {
-  for (const key in input) {
-    const path = currentPath ? `${currentPath}.${key}` : key;
-    const value = input[key];
+  for (const [key, value] of Object.entries(input)) {
+    const path = getPath(currentPath, key);
 
     if (getIsPlainObject(value)) {
       buildPropertiesMap(path, result, value);
@@ -41,9 +46,8 @@ function innerMapNestedRecord(
 ): NestedRecord {
   const result: NestedRecord = {};
 
-  for (const key in input) {
-    const path = currentPath ? `${currentPath}.${key}` : key;
-    const value = input[key];
+  for (const [key, value] of Object.entries(input)) {
+    const path = getPath(currentPath, key);
 
     if (getIsPlainObject(value)) {
       result[key] = innerMapNestedRecord(path, value, mapper);

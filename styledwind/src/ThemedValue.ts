@@ -1,10 +1,5 @@
 import { CompileResult, Composer, ThemeOrThemeProps, getIsComposer } from "./Composer";
-import {
-  ComposableThemeInputObject,
-  ComposableThemeOrVariant,
-  getIsThemeOrVariant,
-  getThemePropertiesMap,
-} from "./theme";
+import { ThemeInput, ThemeOrVariant, getIsThemeOrVariant, getThemeValueByPath } from "./theme";
 
 import { EqualKeyMap } from "./utils/map/EqualKeyMap";
 import { Primitive } from "./utils/primitive";
@@ -74,34 +69,37 @@ interface AnalyzedPrototype {
   methods: string[];
 }
 
-const analytzePrototype = memoizeFn((prototype: object) => {
-  const result: AnalyzedPrototype = {
-    getters: [],
-    methods: [],
-  };
+const analytzePrototype = memoizeFn(
+  (prototype: object) => {
+    const result: AnalyzedPrototype = {
+      getters: [],
+      methods: [],
+    };
 
-  while (prototype) {
-    if (!prototype || prototype === Object.prototype) {
-      break;
-    }
-
-    const descriptors = Object.getOwnPropertyDescriptors(prototype);
-
-    for (const key in descriptors) {
-      const descriptor = descriptors[key];
-
-      if (descriptor.get) {
-        result.getters.push(key);
-      } else if (typeof descriptor.value === "function") {
-        result.methods.push(key);
+    while (prototype) {
+      if (!prototype || prototype === Object.prototype) {
+        break;
       }
+
+      const descriptors = Object.getOwnPropertyDescriptors(prototype);
+
+      for (const key in descriptors) {
+        const descriptor = descriptors[key];
+
+        if (descriptor.get) {
+          result.getters.push(key);
+        } else if (typeof descriptor.value === "function") {
+          result.methods.push(key);
+        }
+      }
+
+      prototype = Object.getPrototypeOf(prototype);
     }
 
-    prototype = Object.getPrototypeOf(prototype);
-  }
-
-  return result;
-});
+    return result;
+  },
+  { mode: "weak" },
+);
 
 const themedComposerHolderProxyHandler: ProxyHandler<ThemedComposerHolder<Composer>> = {
   get(holder, prop, receiver) {
@@ -128,15 +126,13 @@ const themedComposerHolderProxyHandler: ProxyHandler<ThemedComposerHolder<Compos
 
 const themedComposers = new WeakSet<object>();
 
-function getThemeFromCallArg<T extends ComposableThemeInputObject>(
-  propsOrTheme?: ThemeOrThemeProps,
-): ComposableThemeOrVariant<T> | null {
+function getThemeFromCallArg<T extends ThemeInput>(propsOrTheme?: ThemeOrThemeProps): ThemeOrVariant<T> | null {
   if (!propsOrTheme) {
     return null;
   }
 
   if (getIsThemeOrVariant(propsOrTheme)) {
-    return propsOrTheme as ComposableThemeOrVariant<T>;
+    return propsOrTheme as ThemeOrVariant<T>;
   }
 
   if (!("theme" in propsOrTheme)) return null;
@@ -148,7 +144,7 @@ function getThemeFromCallArg<T extends ComposableThemeInputObject>(
   }
 
   if (getIsThemeOrVariant(maybeTheme)) {
-    return maybeTheme as ComposableThemeOrVariant<T>;
+    return maybeTheme as ThemeOrVariant<T>;
   }
 
   throw new Error("There is some value provided as theme in props, but it is has unknown type");
@@ -215,19 +211,17 @@ class ThemedComposerManager<C extends Composer> {
       throw new Error("Theme is not composable");
     }
 
-    const propertiesMap = getThemePropertiesMap(theme);
+    const maybeComposer = getThemeValueByPath(theme, this.path);
 
-    const themeValue = propertiesMap.get(this.path);
-
-    if (!themeValue) {
+    if (!maybeComposer) {
       return this.defaultComposer;
     }
 
-    if (!getIsComposer(themeValue)) {
+    if (!getIsComposer(maybeComposer)) {
       throw new Error("Theme value is not a composer");
     }
 
-    return themeValue as C;
+    return maybeComposer as C;
   }
 
   applyForProps(props: ThemeOrThemeProps): CompileResult {
@@ -260,9 +254,11 @@ function createThemedValueGetter<T>(path: string, defaultValue: T): ThemedValueG
       return defaultValue;
     }
 
-    const propertiesMap = getThemePropertiesMap(theme);
+    const themeValue = getThemeValueByPath(theme, path);
 
-    const themeValue = propertiesMap.get(path);
+    if (!themeValue) {
+      return defaultValue;
+    }
 
     return themeValue as T;
   };

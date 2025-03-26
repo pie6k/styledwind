@@ -2,6 +2,7 @@ import { FlexComposer } from "./FlexComposer";
 import { composerConfig } from "./ComposerConfig";
 import { memoizeFn } from "./utils/memoize";
 import { resolveSizeValue } from "./SizeComposer";
+import { styledComposer } from "./Composer";
 
 interface SizingBoxConfig {
   paddingX?: number;
@@ -96,9 +97,11 @@ export class SurfaceComposer extends FlexComposer {
   }
 }
 
+const $surfaceBase = styledComposer(SurfaceComposer);
+
 export const $surface = memoizeFn(
   function surface(config: SizingBoxConfig) {
-    return new SurfaceComposer().define(config).init();
+    return $surfaceBase.define(config);
   },
   { mode: "equal" },
 );

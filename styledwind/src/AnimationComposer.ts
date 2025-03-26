@@ -4,7 +4,7 @@ import { resolveMaybeBaseValue, resolveMaybeBaseValues } from "./SizeComposer";
 import { type Length, addUnit, isInteger } from "./utils";
 
 import { simplifyRule } from "./compilation";
-import { Composer } from "./Composer";
+import { Composer, styledComposer } from "./Composer";
 import { ComposerConfig } from "./ComposerConfig";
 import { getHasValue } from "./utils/maybeValue";
 
@@ -513,4 +513,4 @@ export class AnimationComposer extends Composer {
   }
 }
 
-export const $animation = new AnimationComposer().init();
+export const $animation = styledComposer(AnimationComposer);

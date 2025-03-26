@@ -50,9 +50,32 @@ const composerHolderFunctionProxyHandler: ProxyHandler<HolderFunction> = {
   getPrototypeOf(target) {
     return Object.getPrototypeOf(target.composer);
   },
+  deleteProperty(target, prop) {
+    return Reflect.deleteProperty(target.composer, prop);
+  },
+  has(target, prop) {
+    return Reflect.has(target.composer, prop);
+  },
+  ownKeys(target) {
+    return Reflect.ownKeys(target.composer);
+  },
+  getOwnPropertyDescriptor(target, prop) {
+    return Reflect.getOwnPropertyDescriptor(target.composer, prop);
+  },
+  setPrototypeOf(target, proto) {
+    return Reflect.setPrototypeOf(target.composer, proto);
+  },
+  isExtensible(target) {
+    return Reflect.isExtensible(target.composer);
+  },
+  preventExtensions(target) {
+    return Reflect.preventExtensions(target.composer);
+  },
 };
 
 export function getIsComposer(input: unknown): input is Composer {
+  if (!input) return false;
+
   return input instanceof Composer;
 }
 
@@ -87,7 +110,7 @@ export class Composer {
     return pickComposer(this);
   }
 
-  clone<T extends Composer>(this: T): StyledComposer<T> {
+  cloneEmpty<T extends Composer>(this: T): StyledComposer<T> {
     const newComposer = new (this.constructor as ConstructorOf<T>)() as StyledComposer<T>;
 
     return newComposer;
@@ -151,7 +174,7 @@ export class Composer {
       return clone;
     }
 
-    clone = this.clone();
+    clone = this.cloneEmpty();
 
     // @ts-expect-error
     clone.styles = [...this.styles, style];
@@ -164,7 +187,7 @@ export class Composer {
     return clone;
   }
 
-  init() {
+  styled() {
     return this as StyledComposer<typeof this>;
   }
 
@@ -181,4 +204,8 @@ export class Composer {
 
     return this.compileCache;
   }
+}
+
+export function styledComposer<T extends Composer>(composer: ConstructorOf<T>): StyledComposer<T> {
+  return new composer().styled();
 }

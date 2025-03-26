@@ -5,7 +5,7 @@ You can create your own composable styles by extending the `Composer` class.
 Let's say you want to create a custom `DropDownStylesComposer` composer that will be used to style dropdowns.
 
 ```ts
-import { Composer } from "styledwind";
+import { Composer } from "stylings";
 
 export class DropDownStylesComposer extends Composer {
   get shadow() {
@@ -63,7 +63,7 @@ In some cases, you might want your composables to have some config before emmiti
 For example, you want to create a `ButtonStylesComposer` that will be used to style buttons.
 
 ```ts
-import { Composer, composerConfig, CSSProperties } from "styledwind";
+import { Composer, composerConfig, CSSProperties } from "stylings";
 
 interface ButtonStylesConfig {
   size: "regular" | "small" | "medium" | "large";

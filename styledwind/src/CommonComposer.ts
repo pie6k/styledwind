@@ -1,4 +1,5 @@
-import { Composer } from "./Composer";
+import { Composer, styledComposer } from "./Composer";
+
 import { Length } from "./utils";
 import type { Properties } from "csstype";
 import { resolveMaybeBaseValue } from "./SizeComposer";
@@ -206,4 +207,4 @@ export class CommonComposer extends Composer {
   }
 }
 
-export const $common = new CommonComposer().init();
+export const $common = styledComposer(CommonComposer);

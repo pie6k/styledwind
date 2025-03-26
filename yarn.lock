@@ -9274,9 +9274,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"styledwind-docs@workspace:docs":
+"styledwind-root@workspace:.":
   version: 0.0.0-use.local
-  resolution: "styledwind-docs@workspace:docs"
+  resolution: "styledwind-root@workspace:."
+  languageName: unknown
+  linkType: soft
+
+"stylings-docs@workspace:docs":
+  version: 0.0.0-use.local
+  resolution: "stylings-docs@workspace:docs"
   dependencies:
     next: "npm:^15.0.2"
     nextra: "npm:^4.2.17"
@@ -9287,15 +9293,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"styledwind-root@workspace:.":
+"stylings@workspace:styledwind":
   version: 0.0.0-use.local
-  resolution: "styledwind-root@workspace:."
-  languageName: unknown
-  linkType: soft
-
-"styledwind@workspace:styledwind":
-  version: 0.0.0-use.local
-  resolution: "styledwind@workspace:styledwind"
+  resolution: "stylings@workspace:styledwind"
   dependencies:
     "@jest/globals": "npm:^29.7.0"
     "@types/node": "npm:^22.13.11"

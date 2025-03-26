@@ -1,13 +1,13 @@
 # Theme System
 
-Styledwind provides a powerful theming system that allows you to create and manage theme variants while maintaining type safety and performance.
+Stylings provides a powerful theming system that allows you to create and manage theme variants while maintaining type safety and performance.
 
 ## Creating Themes
 
 Themes are created using the `createTheme` function. It takes an object where you can pass composable and primitive values.
 
 ```tsx
-import { createTheme, color, font } from "styledwind";
+import { createTheme, color, font } from "stylings";
 
 const baseFont = font.family("Inter, sans-serif").lineHeight(1.5).antialiased;
 
@@ -35,7 +35,7 @@ const theme = createTheme({
 You can then create theme variants that inherit from a source theme but override specific values:
 
 ```tsx
-import { createThemeVariant } from "styledwind";
+import { createThemeVariant } from "stylings";
 
 const darkTheme = createThemeVariant(theme, {
   // Note: we can only pass values that we want to override. Everything else will be taken from the source theme.
@@ -74,7 +74,7 @@ const UICard = styled.div`
 To use the theme, you need to wrap your app in the `ThemeProvider` component.
 
 ```tsx
-import { ThemeProvider } from "styledwind";
+import { ThemeProvider } from "stylings";
 import { theme, darkTheme } from "./theme";
 
 function App() {
@@ -101,7 +101,7 @@ function App() {
 If your theme defines some primitive values, you can read them using `useThemeValue` hook.
 
 ```tsx
-import { useThemeValue, createTheme } from "styledwind";
+import { useThemeValue, createTheme } from "stylings";
 
 // theme.ts
 const theme = createTheme({

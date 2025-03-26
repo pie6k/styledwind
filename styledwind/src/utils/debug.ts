@@ -2,7 +2,7 @@ import { RefObject, useEffect } from "react";
 
 import { IS_DEV } from "./env";
 import { getFunctionalComponentsStack } from "./react/internals";
-import { getIsStyledWindComponent } from "./registry";
+import { getIsStylesComponent } from "./registry";
 import { useConst } from "./hooks";
 
 function getFirstFunctionalParent() {
@@ -11,7 +11,7 @@ function getFirstFunctionalParent() {
   if (!stack) return null;
 
   for (const ComponentFunction of stack) {
-    if (getIsStyledWindComponent(ComponentFunction)) continue;
+    if (getIsStylesComponent(ComponentFunction)) continue;
 
     return ComponentFunction;
   }

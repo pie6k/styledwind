@@ -6,16 +6,16 @@ import { type AnyStyledComposer } from "./Composer";
 import { useElementDebugUIId } from "./utils/debug";
 import { useInnerForwardRef, useSameArray } from "./utils/hooks";
 import { memoizeFn } from "./utils/memoize";
-import { registerStyledWindComponent } from "./utils/registry";
+import { registerStylesComponent } from "./utils/registry";
 
 type IntrinsicElementName = keyof JSX.IntrinsicElements;
 
-interface StyledWindExtraProps {
+interface StylesExtraProps {
   as?: IntrinsicElementName;
   styles?: StylesInput;
 }
 
-type SWIntrinsicProps<T extends IntrinsicElementName> = ComponentProps<T> & StyledWindExtraProps;
+type SWIntrinsicProps<T extends IntrinsicElementName> = ComponentProps<T> & StylesExtraProps;
 
 type SWIntrinsicComponent<T extends IntrinsicElementName> = (props: SWIntrinsicProps<T>) => ReactNode;
 
@@ -25,15 +25,15 @@ type InferSWComponentFromKey<T extends string> = T extends `${string}_${infer T}
     : never
   : never;
 
-type CustomStyledWindComponents = {
+type CustomStylesComponents = {
   [P in `${string}_${IntrinsicElementName}`]: InferSWComponentFromKey<P>;
 } & Record<string, SWIntrinsicComponent<"div">>;
 
-const createStyledWindComponent = memoizeFn(function createStyledWindComponent<T extends IntrinsicElementName>(
+const createStylesComponent = memoizeFn(function createStylesComponent<T extends IntrinsicElementName>(
   intrinsicComponentType: T,
   customName?: string,
 ): SWIntrinsicComponent<T> {
-  function StyledWindComponent({ styles, as: asType = intrinsicComponentType, ref, ...props }: SWIntrinsicProps<T>) {
+  function StylesComponent({ styles, as: asType = intrinsicComponentType, ref, ...props }: SWIntrinsicProps<T>) {
     const innerRef = useInnerForwardRef<any>(ref);
 
     const stylesList = useSameArray(resolveStylesInput(styles));
@@ -50,220 +50,222 @@ const createStyledWindComponent = memoizeFn(function createStyledWindComponent<T
     }) as ReactNode;
   }
 
-  StyledWindComponent.displayName = `StyledWind${intrinsicComponentType}`;
+  StylesComponent.displayName = `StylesComponent${intrinsicComponentType}`;
 
-  registerStyledWindComponent(StyledWindComponent as FunctionComponent);
+  registerStylesComponent(StylesComponent as FunctionComponent);
 
-  return StyledWindComponent;
+  return StylesComponent;
 });
 
-const createStyledwindComponentFromCustomName = memoizeFn(function createStyledWindFromCustomName(customName: string) {
-  if (!customName.includes("_")) return createStyledWindComponent("div", customName);
+const createStylingsComponentFromCustomName = memoizeFn(function createStylingsComponentFromCustomName(
+  customName: string,
+) {
+  if (!customName.includes("_")) return createStylesComponent("div", customName);
 
   const [componentName, intrinsicElement] = customName.split("_");
 
-  if (!intrinsicElement) return createStyledWindComponent("div", customName);
+  if (!intrinsicElement) return createStylesComponent("div", customName);
 
-  if (!getIsIntrinsicElementName(intrinsicElement)) return createStyledWindComponent("div", customName);
+  if (!getIsIntrinsicElementName(intrinsicElement)) return createStylesComponent("div", customName);
 
-  return createStyledWindComponent(intrinsicElement, componentName);
+  return createStylesComponent(intrinsicElement, componentName);
 });
 
-const styledwindBuiltInComponents = {
-  a: createStyledWindComponent("a"),
-  abbr: createStyledWindComponent("abbr"),
-  address: createStyledWindComponent("address"),
-  area: createStyledWindComponent("area"),
-  article: createStyledWindComponent("article"),
-  aside: createStyledWindComponent("aside"),
-  audio: createStyledWindComponent("audio"),
-  b: createStyledWindComponent("b"),
-  base: createStyledWindComponent("base"),
-  bdi: createStyledWindComponent("bdi"),
-  bdo: createStyledWindComponent("bdo"),
-  blockquote: createStyledWindComponent("blockquote"),
-  body: createStyledWindComponent("body"),
-  br: createStyledWindComponent("br"),
-  button: createStyledWindComponent("button"),
-  canvas: createStyledWindComponent("canvas"),
-  caption: createStyledWindComponent("caption"),
-  cite: createStyledWindComponent("cite"),
-  code: createStyledWindComponent("code"),
-  col: createStyledWindComponent("col"),
-  colgroup: createStyledWindComponent("colgroup"),
-  data: createStyledWindComponent("data"),
-  datalist: createStyledWindComponent("datalist"),
-  dd: createStyledWindComponent("dd"),
-  del: createStyledWindComponent("del"),
-  details: createStyledWindComponent("details"),
-  dfn: createStyledWindComponent("dfn"),
-  dialog: createStyledWindComponent("dialog"),
-  div: createStyledWindComponent("div"),
-  dl: createStyledWindComponent("dl"),
-  dt: createStyledWindComponent("dt"),
-  em: createStyledWindComponent("em"),
-  embed: createStyledWindComponent("embed"),
-  fieldset: createStyledWindComponent("fieldset"),
-  figcaption: createStyledWindComponent("figcaption"),
-  figure: createStyledWindComponent("figure"),
-  footer: createStyledWindComponent("footer"),
-  form: createStyledWindComponent("form"),
-  h1: createStyledWindComponent("h1"),
-  h2: createStyledWindComponent("h2"),
-  h3: createStyledWindComponent("h3"),
-  h4: createStyledWindComponent("h4"),
-  h5: createStyledWindComponent("h5"),
-  h6: createStyledWindComponent("h6"),
-  head: createStyledWindComponent("head"),
-  header: createStyledWindComponent("header"),
-  hr: createStyledWindComponent("hr"),
-  html: createStyledWindComponent("html"),
-  i: createStyledWindComponent("i"),
-  iframe: createStyledWindComponent("iframe"),
-  img: createStyledWindComponent("img"),
-  input: createStyledWindComponent("input"),
-  ins: createStyledWindComponent("ins"),
-  kbd: createStyledWindComponent("kbd"),
-  label: createStyledWindComponent("label"),
-  legend: createStyledWindComponent("legend"),
-  li: createStyledWindComponent("li"),
-  link: createStyledWindComponent("link"),
-  main: createStyledWindComponent("main"),
-  map: createStyledWindComponent("map"),
-  mark: createStyledWindComponent("mark"),
-  menu: createStyledWindComponent("menu"),
-  meta: createStyledWindComponent("meta"),
-  meter: createStyledWindComponent("meter"),
-  nav: createStyledWindComponent("nav"),
-  noscript: createStyledWindComponent("noscript"),
-  object: createStyledWindComponent("object"),
-  ol: createStyledWindComponent("ol"),
-  optgroup: createStyledWindComponent("optgroup"),
-  option: createStyledWindComponent("option"),
-  output: createStyledWindComponent("output"),
-  p: createStyledWindComponent("p"),
-  picture: createStyledWindComponent("picture"),
-  pre: createStyledWindComponent("pre"),
-  progress: createStyledWindComponent("progress"),
-  q: createStyledWindComponent("q"),
-  rp: createStyledWindComponent("rp"),
-  rt: createStyledWindComponent("rt"),
-  ruby: createStyledWindComponent("ruby"),
-  s: createStyledWindComponent("s"),
-  samp: createStyledWindComponent("samp"),
-  script: createStyledWindComponent("script"),
-  section: createStyledWindComponent("section"),
-  select: createStyledWindComponent("select"),
-  small: createStyledWindComponent("small"),
-  source: createStyledWindComponent("source"),
-  span: createStyledWindComponent("span"),
-  strong: createStyledWindComponent("strong"),
-  style: createStyledWindComponent("style"),
-  sub: createStyledWindComponent("sub"),
-  summary: createStyledWindComponent("summary"),
-  sup: createStyledWindComponent("sup"),
-  table: createStyledWindComponent("table"),
-  tbody: createStyledWindComponent("tbody"),
-  td: createStyledWindComponent("td"),
-  template: createStyledWindComponent("template"),
-  textarea: createStyledWindComponent("textarea"),
-  tfoot: createStyledWindComponent("tfoot"),
-  th: createStyledWindComponent("th"),
-  thead: createStyledWindComponent("thead"),
-  time: createStyledWindComponent("time"),
-  title: createStyledWindComponent("title"),
-  tr: createStyledWindComponent("tr"),
-  track: createStyledWindComponent("track"),
-  u: createStyledWindComponent("u"),
-  ul: createStyledWindComponent("ul"),
-  var: createStyledWindComponent("var"),
-  video: createStyledWindComponent("video"),
-  wbr: createStyledWindComponent("wbr"),
+const stylingsBuiltInComponents = {
+  a: createStylesComponent("a"),
+  abbr: createStylesComponent("abbr"),
+  address: createStylesComponent("address"),
+  area: createStylesComponent("area"),
+  article: createStylesComponent("article"),
+  aside: createStylesComponent("aside"),
+  audio: createStylesComponent("audio"),
+  b: createStylesComponent("b"),
+  base: createStylesComponent("base"),
+  bdi: createStylesComponent("bdi"),
+  bdo: createStylesComponent("bdo"),
+  blockquote: createStylesComponent("blockquote"),
+  body: createStylesComponent("body"),
+  br: createStylesComponent("br"),
+  button: createStylesComponent("button"),
+  canvas: createStylesComponent("canvas"),
+  caption: createStylesComponent("caption"),
+  cite: createStylesComponent("cite"),
+  code: createStylesComponent("code"),
+  col: createStylesComponent("col"),
+  colgroup: createStylesComponent("colgroup"),
+  data: createStylesComponent("data"),
+  datalist: createStylesComponent("datalist"),
+  dd: createStylesComponent("dd"),
+  del: createStylesComponent("del"),
+  details: createStylesComponent("details"),
+  dfn: createStylesComponent("dfn"),
+  dialog: createStylesComponent("dialog"),
+  div: createStylesComponent("div"),
+  dl: createStylesComponent("dl"),
+  dt: createStylesComponent("dt"),
+  em: createStylesComponent("em"),
+  embed: createStylesComponent("embed"),
+  fieldset: createStylesComponent("fieldset"),
+  figcaption: createStylesComponent("figcaption"),
+  figure: createStylesComponent("figure"),
+  footer: createStylesComponent("footer"),
+  form: createStylesComponent("form"),
+  h1: createStylesComponent("h1"),
+  h2: createStylesComponent("h2"),
+  h3: createStylesComponent("h3"),
+  h4: createStylesComponent("h4"),
+  h5: createStylesComponent("h5"),
+  h6: createStylesComponent("h6"),
+  head: createStylesComponent("head"),
+  header: createStylesComponent("header"),
+  hr: createStylesComponent("hr"),
+  html: createStylesComponent("html"),
+  i: createStylesComponent("i"),
+  iframe: createStylesComponent("iframe"),
+  img: createStylesComponent("img"),
+  input: createStylesComponent("input"),
+  ins: createStylesComponent("ins"),
+  kbd: createStylesComponent("kbd"),
+  label: createStylesComponent("label"),
+  legend: createStylesComponent("legend"),
+  li: createStylesComponent("li"),
+  link: createStylesComponent("link"),
+  main: createStylesComponent("main"),
+  map: createStylesComponent("map"),
+  mark: createStylesComponent("mark"),
+  menu: createStylesComponent("menu"),
+  meta: createStylesComponent("meta"),
+  meter: createStylesComponent("meter"),
+  nav: createStylesComponent("nav"),
+  noscript: createStylesComponent("noscript"),
+  object: createStylesComponent("object"),
+  ol: createStylesComponent("ol"),
+  optgroup: createStylesComponent("optgroup"),
+  option: createStylesComponent("option"),
+  output: createStylesComponent("output"),
+  p: createStylesComponent("p"),
+  picture: createStylesComponent("picture"),
+  pre: createStylesComponent("pre"),
+  progress: createStylesComponent("progress"),
+  q: createStylesComponent("q"),
+  rp: createStylesComponent("rp"),
+  rt: createStylesComponent("rt"),
+  ruby: createStylesComponent("ruby"),
+  s: createStylesComponent("s"),
+  samp: createStylesComponent("samp"),
+  script: createStylesComponent("script"),
+  section: createStylesComponent("section"),
+  select: createStylesComponent("select"),
+  small: createStylesComponent("small"),
+  source: createStylesComponent("source"),
+  span: createStylesComponent("span"),
+  strong: createStylesComponent("strong"),
+  style: createStylesComponent("style"),
+  sub: createStylesComponent("sub"),
+  summary: createStylesComponent("summary"),
+  sup: createStylesComponent("sup"),
+  table: createStylesComponent("table"),
+  tbody: createStylesComponent("tbody"),
+  td: createStylesComponent("td"),
+  template: createStylesComponent("template"),
+  textarea: createStylesComponent("textarea"),
+  tfoot: createStylesComponent("tfoot"),
+  th: createStylesComponent("th"),
+  thead: createStylesComponent("thead"),
+  time: createStylesComponent("time"),
+  title: createStylesComponent("title"),
+  tr: createStylesComponent("tr"),
+  track: createStylesComponent("track"),
+  u: createStylesComponent("u"),
+  ul: createStylesComponent("ul"),
+  var: createStylesComponent("var"),
+  video: createStylesComponent("video"),
+  wbr: createStylesComponent("wbr"),
   // SVG elements
-  circle: createStyledWindComponent("circle"),
-  clipPath: createStyledWindComponent("clipPath"),
-  defs: createStyledWindComponent("defs"),
-  desc: createStyledWindComponent("desc"),
-  ellipse: createStyledWindComponent("ellipse"),
-  feBlend: createStyledWindComponent("feBlend"),
-  feColorMatrix: createStyledWindComponent("feColorMatrix"),
-  feComponentTransfer: createStyledWindComponent("feComponentTransfer"),
-  feComposite: createStyledWindComponent("feComposite"),
-  feConvolveMatrix: createStyledWindComponent("feConvolveMatrix"),
-  feDiffuseLighting: createStyledWindComponent("feDiffuseLighting"),
-  feDisplacementMap: createStyledWindComponent("feDisplacementMap"),
-  feDistantLight: createStyledWindComponent("feDistantLight"),
-  feDropShadow: createStyledWindComponent("feDropShadow"),
-  feFlood: createStyledWindComponent("feFlood"),
-  feFuncA: createStyledWindComponent("feFuncA"),
-  feFuncB: createStyledWindComponent("feFuncB"),
-  feFuncG: createStyledWindComponent("feFuncG"),
-  feFuncR: createStyledWindComponent("feFuncR"),
-  feGaussianBlur: createStyledWindComponent("feGaussianBlur"),
-  feImage: createStyledWindComponent("feImage"),
-  feMerge: createStyledWindComponent("feMerge"),
-  feMergeNode: createStyledWindComponent("feMergeNode"),
-  feMorphology: createStyledWindComponent("feMorphology"),
-  feOffset: createStyledWindComponent("feOffset"),
-  fePointLight: createStyledWindComponent("fePointLight"),
-  feSpecularLighting: createStyledWindComponent("feSpecularLighting"),
-  feSpotLight: createStyledWindComponent("feSpotLight"),
-  feTile: createStyledWindComponent("feTile"),
-  feTurbulence: createStyledWindComponent("feTurbulence"),
-  filter: createStyledWindComponent("filter"),
-  foreignObject: createStyledWindComponent("foreignObject"),
-  g: createStyledWindComponent("g"),
-  image: createStyledWindComponent("image"),
-  line: createStyledWindComponent("line"),
-  linearGradient: createStyledWindComponent("linearGradient"),
-  marker: createStyledWindComponent("marker"),
-  mask: createStyledWindComponent("mask"),
-  metadata: createStyledWindComponent("metadata"),
-  mpath: createStyledWindComponent("mpath"),
-  path: createStyledWindComponent("path"),
-  pattern: createStyledWindComponent("pattern"),
-  polygon: createStyledWindComponent("polygon"),
-  polyline: createStyledWindComponent("polyline"),
-  radialGradient: createStyledWindComponent("radialGradient"),
-  rect: createStyledWindComponent("rect"),
-  set: createStyledWindComponent("set"),
-  stop: createStyledWindComponent("stop"),
-  switch: createStyledWindComponent("switch"),
-  symbol: createStyledWindComponent("symbol"),
-  text: createStyledWindComponent("text"),
-  textPath: createStyledWindComponent("textPath"),
-  tspan: createStyledWindComponent("tspan"),
-  use: createStyledWindComponent("use"),
-  view: createStyledWindComponent("view"),
-  animate: createStyledWindComponent("animate"),
-  animateMotion: createStyledWindComponent("animateMotion"),
-  animateTransform: createStyledWindComponent("animateTransform"),
-  big: createStyledWindComponent("big"),
-  center: createStyledWindComponent("center"),
-  hgroup: createStyledWindComponent("hgroup"),
-  keygen: createStyledWindComponent("keygen"),
-  menuitem: createStyledWindComponent("menuitem"),
-  noindex: createStyledWindComponent("noindex"),
-  param: createStyledWindComponent("param"),
-  search: createStyledWindComponent("search"),
-  slot: createStyledWindComponent("slot"),
-  svg: createStyledWindComponent("svg"),
-  webview: createStyledWindComponent("webview"),
+  circle: createStylesComponent("circle"),
+  clipPath: createStylesComponent("clipPath"),
+  defs: createStylesComponent("defs"),
+  desc: createStylesComponent("desc"),
+  ellipse: createStylesComponent("ellipse"),
+  feBlend: createStylesComponent("feBlend"),
+  feColorMatrix: createStylesComponent("feColorMatrix"),
+  feComponentTransfer: createStylesComponent("feComponentTransfer"),
+  feComposite: createStylesComponent("feComposite"),
+  feConvolveMatrix: createStylesComponent("feConvolveMatrix"),
+  feDiffuseLighting: createStylesComponent("feDiffuseLighting"),
+  feDisplacementMap: createStylesComponent("feDisplacementMap"),
+  feDistantLight: createStylesComponent("feDistantLight"),
+  feDropShadow: createStylesComponent("feDropShadow"),
+  feFlood: createStylesComponent("feFlood"),
+  feFuncA: createStylesComponent("feFuncA"),
+  feFuncB: createStylesComponent("feFuncB"),
+  feFuncG: createStylesComponent("feFuncG"),
+  feFuncR: createStylesComponent("feFuncR"),
+  feGaussianBlur: createStylesComponent("feGaussianBlur"),
+  feImage: createStylesComponent("feImage"),
+  feMerge: createStylesComponent("feMerge"),
+  feMergeNode: createStylesComponent("feMergeNode"),
+  feMorphology: createStylesComponent("feMorphology"),
+  feOffset: createStylesComponent("feOffset"),
+  fePointLight: createStylesComponent("fePointLight"),
+  feSpecularLighting: createStylesComponent("feSpecularLighting"),
+  feSpotLight: createStylesComponent("feSpotLight"),
+  feTile: createStylesComponent("feTile"),
+  feTurbulence: createStylesComponent("feTurbulence"),
+  filter: createStylesComponent("filter"),
+  foreignObject: createStylesComponent("foreignObject"),
+  g: createStylesComponent("g"),
+  image: createStylesComponent("image"),
+  line: createStylesComponent("line"),
+  linearGradient: createStylesComponent("linearGradient"),
+  marker: createStylesComponent("marker"),
+  mask: createStylesComponent("mask"),
+  metadata: createStylesComponent("metadata"),
+  mpath: createStylesComponent("mpath"),
+  path: createStylesComponent("path"),
+  pattern: createStylesComponent("pattern"),
+  polygon: createStylesComponent("polygon"),
+  polyline: createStylesComponent("polyline"),
+  radialGradient: createStylesComponent("radialGradient"),
+  rect: createStylesComponent("rect"),
+  set: createStylesComponent("set"),
+  stop: createStylesComponent("stop"),
+  switch: createStylesComponent("switch"),
+  symbol: createStylesComponent("symbol"),
+  text: createStylesComponent("text"),
+  textPath: createStylesComponent("textPath"),
+  tspan: createStylesComponent("tspan"),
+  use: createStylesComponent("use"),
+  view: createStylesComponent("view"),
+  animate: createStylesComponent("animate"),
+  animateMotion: createStylesComponent("animateMotion"),
+  animateTransform: createStylesComponent("animateTransform"),
+  big: createStylesComponent("big"),
+  center: createStylesComponent("center"),
+  hgroup: createStylesComponent("hgroup"),
+  keygen: createStylesComponent("keygen"),
+  menuitem: createStylesComponent("menuitem"),
+  noindex: createStylesComponent("noindex"),
+  param: createStylesComponent("param"),
+  search: createStylesComponent("search"),
+  slot: createStylesComponent("slot"),
+  svg: createStylesComponent("svg"),
+  webview: createStylesComponent("webview"),
 } satisfies Record<IntrinsicElementName, SWIntrinsicComponent<any>>;
 
 function getIsIntrinsicElementName(element: string | symbol): element is IntrinsicElementName {
-  return element in styledwindBuiltInComponents;
+  return element in stylingsBuiltInComponents;
 }
 
-type StyledWindComponentsLibrary = typeof styledwindBuiltInComponents & CustomStyledWindComponents;
+export type StylesComponentsLibrary = typeof stylingsBuiltInComponents & CustomStylesComponents;
 
-export const UI = new Proxy(styledwindBuiltInComponents, {
+export const UI = new Proxy(stylingsBuiltInComponents, {
   get(builtInElements, prop) {
     if (getIsIntrinsicElementName(prop)) return builtInElements[prop];
 
-    return createStyledwindComponentFromCustomName(prop as string);
+    return createStylingsComponentFromCustomName(prop as string);
   },
-}) as StyledWindComponentsLibrary;
+}) as StylesComponentsLibrary;
 
 const SW = styled.div<{ $styles?: AnyStyledComposer[] }>`
   ${(props) => props.$styles}

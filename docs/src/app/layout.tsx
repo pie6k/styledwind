@@ -7,22 +7,22 @@ import { Footer, Layout, Navbar } from "nextra-theme-docs";
 import { getPageMap } from "nextra/page-map";
 
 export const metadata = {
-  metadataBase: new URL("https://styledwind.dev"),
+  metadataBase: new URL("https://stylings.dev"),
   title: {
-    template: "%s - styledwind",
+    template: "%s - stylings",
   },
-  description: "styledwind: joyful styling for React and Styled Components",
-  applicationName: "styledwind",
+  description: "stylings: joyful styling for React and Styled Components",
+  applicationName: "stylings",
   generator: "Next.js",
   appleWebApp: {
-    title: "styledwind",
+    title: "stylings",
   },
   other: {
     "msapplication-TileImage": "/ms-icon-144x144.png",
     "msapplication-TileColor": "#fff",
   },
   twitter: {
-    site: "https://styledwind.dev",
+    site: "https://stylings.dev",
   },
 };
 
@@ -31,10 +31,10 @@ export default async function RootLayout({ children }) {
     <Navbar
       logo={
         <div>
-          <b>styledwind</b>
+          <b>stylings</b>
         </div>
       }
-      projectLink="https://github.com/pie6k/styledwind"
+      projectLink="https://github.com/pie6k/stylings"
     />
   );
   const pageMap = await getPageMap();
@@ -45,9 +45,9 @@ export default async function RootLayout({ children }) {
         <Layout
           // banner={<Banner storageKey="Nextra 2">Nextra 2 Alpha</Banner>}
           navbar={navbar}
-          footer={<Footer>MIT {new Date().getFullYear()} © styledwind.</Footer>}
+          footer={<Footer>MIT {new Date().getFullYear()} © stylings.</Footer>}
           editLink="Edit this page on GitHub"
-          docsRepositoryBase="https://github.com/pie6k/styledwind/blob/main/docs"
+          docsRepositoryBase="https://github.com/pie6k/stylings/blob/main/docs"
           sidebar={{ defaultMenuCollapseLevel: 1 }}
           pageMap={pageMap}
         >
