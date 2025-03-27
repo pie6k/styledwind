@@ -177,19 +177,6 @@ export class DropDownStylesComposer extends Composer {
 export const $dropdown = composer(DropDownStylesComposer);
 ```
 
-## Conventions
-
-### Gaps
-
-The `.gap(level)` modifier on `$flex` and `$grid` uses exponential growth:
-
-```tsx
-$flex.gap(1); // 0.5rem
-$flex.gap(2); // 1rem
-$flex.gap(3); // 2rem
-$flex.gap(4); // 4rem
-```
-
 ## License
 
 MIT License
