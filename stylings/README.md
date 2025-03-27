@@ -190,15 +190,6 @@ $flex.gap(3); // 2rem
 $flex.gap(4); // 4rem
 ```
 
-## Performance
-
-Stylings primitives are heavily optimized for performance. In benchmarks, it can handle creating and compiling millions of different styles efficiently:
-
-```tsx
-// Example: 1 million style compilations
-// flex: 393.7880859375 ms on M3 Max MacBook Pro
-```
-
 ## License
 
 MIT License
