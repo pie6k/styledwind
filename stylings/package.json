@@ -1,10 +1,29 @@
 {
   "name": "stylings",
-  "version": "1.0.0",
+  "url": "https://stylings.dev",
+  "version": "1.0.2",
   "type": "module",
   "author": {
     "name": "Adam Pietrasiak"
   },
+  "description": "An opinionated and joyful library for writing semantic, composable, and reusable styles in React using styled-components. Features chainable style composers, inline components, theming system, and automated style variants.",
+  "keywords": [
+    "react",
+    "styled-components",
+    "css-in-js",
+    "styling",
+    "theme",
+    "semantic-styling",
+    "composable-styles",
+    "inline-components",
+    "style-composers",
+    "flexbox",
+    "grid",
+    "animations",
+    "colors",
+    "typography",
+    "design-system"
+  ],
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.es.js",
   "types": "./dist/index.d.ts",
