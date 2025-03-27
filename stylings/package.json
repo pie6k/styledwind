@@ -1,7 +1,7 @@
 {
   "name": "stylings",
-  "url": "https://stylings.dev",
-  "version": "1.0.2",
+  "homepage": "https://stylings.dev",
+  "version": "1.0.3",
   "type": "module",
   "author": {
     "name": "Adam Pietrasiak"
