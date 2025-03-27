@@ -1,4 +1,4 @@
-import { isPrimitive } from "./utils";
+import { isPrimitive } from "../primitive";
 
 export class MaybeWeakMap<K, V> {
   private readonly weakMap = new WeakMap<K & object, V>();

@@ -7,7 +7,7 @@ export { $font, FontComposer } from "./FontComposer";
 export { $grid, GridComposer } from "./GridComposer";
 export { $shadow, ShadowComposer } from "./ShadowComposer";
 export { $size, SizeComposer } from "./SizeComposer";
-export { $surface, SurfaceComposer } from "./SurfaceComposer";
+export { $frame, FrameComposer } from "./SurfaceComposer";
 export { $transition, TransitionComposer } from "./TransitionComposer";
 export { resolveStylesInput, type PropsWithStyles } from "./input";
 export { ComposerConfig, composerConfig } from "./ComposerConfig";

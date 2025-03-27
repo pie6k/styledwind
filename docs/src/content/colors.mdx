@@ -1,130 +1,67 @@
 
-# Basic Composers
+# Working with colors
 
-There are several built-in composers `stylings` provides.
+`stylings` provides a `$color` composer that can be used to work with colors.
 
-Note that all composers are infinitely chainable. In the later chapters, we will learn how to create our own composers.
+## Defining and using colors
 
-## `$flex`
+First, we need to define a color.
 
-```tsx
-import { $flex } from 'stylings';
-
-$flex.horizontal.alignCenter.gap(2);
-$flex.vertical.center.wrap.inline;
-// etc.
-```
-
-## `$grid`
-
-```tsx
-import { $grid } from 'stylings';
-
-$grid.columns(2).rows(2).gap(2);
-```
-
-## `$transition`
-
-## `$common`
-
-```tsx
-import { $common } from 'stylings';
-
-$common.opacity(0.5).absolute.inset(0).notSelectable;
-$common.pt(10).pb(10).px(20);
-$common.cursor('pointer');
-$common.userSelect('none');
-$common.pointerEvents('none');
-$common.z(10);
-$common.widthFull.heightFull;
-$common.relative;
-$common.overflowHidden;
-$common.aspectRatio(16/9);
-
-```
-
-## `$animation`
-
-```tsx
-import { $animation } from 'stylings';
-
-/**
- * We can first define some base animation style such as duration and easing function.
- * Then we can compose it into more specific animations.
- */
-const $quickEasedAnimation = $animation.duration(200).easeInOut;
-
-const animations = {
-  fadeIn: $quickEasedAnimation.property('opacity', [0, 1]),
-  fadeOut: $quickEasedAnimation.property('opacity', [1, 0]),
-  slideUp: $quickEasedAnimation.property('y', [0, -10]),
-  slideDown: $quickEasedAnimation.property('y', [0, 10]),
-  spin: $animation.property('rotateZ', [0, 360]).linear.infinite,
-}
-```
-
-## `$media`
-
-## `$font`
-
-```tsx filename="styles.ts"
-import { $font } from 'stylings';
-
-/**
- * Define a base font style with properties that are common to text styles we will use.
- * Then we can compose it into more specific fonts.
- */
-const $baseFont = $font.family("Inter, sans-serif").size("1rem").lineHeight(1.5).antialiased;
-
-const typo = {
-  $copy: $baseFont,
-  // We can override properties from the base font if needed
-  $heading: $baseFont.size("2rem").lineHeight(1.25).bold, 
-  $label: $baseFont.size("0.875rem"),
-}
-```
-
-As composer is chainable, we can continue to compose them into even more specific styles.
-
-```tsx filename="SmallLink.tsx"
-import { typo } from './styles';
-import { UI } from 'stylings';
-
-function SmallLink() {
-  return (
-    <UI.a styles={[typo.$label.underline]}>
-      Click me
-    </UI.a>
-  )
-}
-```
-
-## `$color`
-
-Color composer is somewhat opinionated. 
-
-Each color in `stylings` is defined together with 3 variations of it:
-- different states (hover, active). 
-- "readable text" color (aka if given color is used as background, what color should be used for text to be readable).
-
-All variations are optional. If not provided, `stylings` will automatically generate them using some heuristics.
-
-```tsx filename="styles.ts"
+```tsx filename="colors.ts" {3}
 import { $color } from 'stylings';
 
-const danger = $color("#f00")
+const $primary = $color("#048");
 ```
 
+Then, we can use it in our styles.
 
+```tsx filename="Button.tsx" /asBg/ /$primary/
+import styled from 'styled-components';
+import { $primary } from './colors';
 
-## `$surface`
+const Button = styled.button`
+  ${$primary.asBg};
+`;
+```
 
-The concept of `surface` is also somewhat opinionated.
+We are now using `$primary` color as a background color of the button.
 
-In many apps, multiple components and controls share some (or all) characteristics.
+You can also use `.asColor`, `.asFill`, etc. You can use multiple of those together eg `$primary.asBg.asFill`.
 
-For example, we might have buttons, selects and inputs that share size, padding, border radius, etc.
+## Dynamic colors
 
-This is exactly what `surface` is for.
+In the example above, background of the button is static, even if button is hovered, focused or clicked.
 
-## `$shadow`
+We can make it dynamic by using `.interactive` modifier.
+
+```tsx filename="Button.tsx" /interactive/
+const Button = styled.button`
+  ${$primary.interactive.asBg};
+`;
+```
+
+## Using color value directly
+
+When using `.asBg`, `.asColor`, etc, `stylings` will automatically generate ready-to-use CSS styles.
+
+Sometimes, we might want to use color value directly in our styles.
+
+We can do that by passing color without using those modifiers.
+
+```tsx filename="Button.tsx" /asColor/
+const Button = styled.button`
+  color: ${$primary};
+  border-color: ${$primary};
+  --some-variable: ${$primary};
+`;
+```
+
+## Modifying colors
+
+If needed, we can modify and adjust the color, using modifiers like `.opacity()`, `.lighten()`, `.darken()`, etc.
+
+```tsx filename="Button.tsx" /modify/
+const SubtleLink = styled.a`
+  ${$primary.opacity(0.5).asColor};
+`;
+```

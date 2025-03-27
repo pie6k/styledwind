@@ -1,17 +1,15 @@
-import { Primitive, isPrimitive, isPrimitiveOrSymbol } from "./utils";
-
 import { getObjectHash } from "../objectHash";
 
 const NO_LAST_KEY = Symbol("NO_LAST_KEY");
 
 export class HashMap<K, V> {
-  private valuesMap: Map<number, V> = new Map();
+  private map: Map<number, V> = new Map();
 
   constructor(entries?: Iterable<readonly [K, V]>) {
     if (!entries) return;
 
     for (const [key, value] of entries) {
-      this.valuesMap.set(getObjectHash(key), value);
+      this.map.set(getObjectHash(key), value);
     }
   }
 
@@ -36,15 +34,15 @@ export class HashMap<K, V> {
   }
 
   has(key: K) {
-    return this.valuesMap.has(this.getKey(key));
+    return this.map.has(this.getKey(key));
   }
 
   get(key: K) {
-    return this.valuesMap.get(this.getKey(key));
+    return this.map.get(this.getKey(key));
   }
 
   set(key: K, value: V) {
-    return this.valuesMap.set(this.getKey(key), value);
+    return this.map.set(this.getKey(key), value);
   }
 
   delete(key: K) {
@@ -53,6 +51,6 @@ export class HashMap<K, V> {
       this.lastKeyHash = null;
     }
 
-    return this.valuesMap.delete(this.getKey(key));
+    return this.map.delete(this.getKey(key));
   }
 }

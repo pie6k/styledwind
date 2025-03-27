@@ -4,9 +4,11 @@ import { getHasValue, maybeValue } from "./utils/maybeValue";
 import { ComposerConfig } from "./ComposerConfig";
 import { DeepMap } from "./utils/map/DeepMap";
 import { HashMap } from "./utils/map/HashMap";
-import { MaybeUndefined } from "./utils/types";
+import { MaybeUndefined } from "./utils/nullish";
 import { compileComposerStyles } from "./compilation";
+import { getObjectId } from "./utils/objectId";
 import { isPrimitive } from "./utils/primitive";
+import { memoizeFn } from "./utils/memoize";
 
 const IS_COMPOSER = Symbol("isComposer");
 
@@ -99,13 +101,28 @@ export function pickComposer<C extends Composer>(input: C): C {
   throw new Error("Invalid composer");
 }
 
+let isCreatingWithComposerFunction = false;
+
+const warnAboutCreatingInstanceDirectly = memoizeFn((constructor: typeof Composer) => {
+  const name = constructor.name;
+  console.warn(
+    `Seems you are creating ${name} composer using "const instance = new ${name}()". Use "const instance = composer(${name})" instead.`,
+  );
+});
+
+const EMPTY_CONFIGS = new Map<ComposerConfig, unknown>();
+const EMPTY_STYLES: ComposerStyle[] = [];
+
 export class Composer {
-  readonly styles: ComposerStyle[] = [];
-  readonly configs: Map<ComposerConfig, unknown> = new Map();
+  readonly styles: ComposerStyle[] = EMPTY_STYLES;
+  readonly configs: Map<ComposerConfig, unknown> = EMPTY_CONFIGS;
 
   readonly [IS_COMPOSER] = true;
 
   constructor() {
+    if (!isCreatingWithComposerFunction) {
+      warnAboutCreatingInstanceDirectly(this.constructor as typeof Composer);
+    }
     // return;
     const compileStyles: HolderFunction = () => {};
 
@@ -118,16 +135,33 @@ export class Composer {
     return pickComposer(this);
   }
 
-  cloneEmpty<T extends Composer>(this: T): StyledComposer<T> {
-    const newComposer = new (this.constructor as ConstructorOf<T>)() as StyledComposer<T>;
+  clone<T extends Composer>(
+    this: T,
+    styles: ComposerStyle[],
+    configs: Map<ComposerConfig, unknown>,
+  ): StyledComposer<T> {
+    try {
+      isCreatingWithComposerFunction = true;
 
-    return newComposer;
+      const newComposer = new (this.constructor as ConstructorOf<T>)() as StyledComposer<T>;
+
+      // @ts-expect-error
+      newComposer.styles = styles;
+      // @ts-expect-error
+      newComposer.configs = configs;
+
+      return newComposer;
+    } finally {
+      isCreatingWithComposerFunction = false;
+    }
   }
 
   private updateConfigCache = new DeepMap(HashMap);
 
   updateConfig<T extends Composer, C>(this: T, config: ComposerConfig<C>, changes: Partial<C>): StyledComposer<T> {
-    let clone = this.updateConfigCache.get([config, changes]) as StyledComposer<T> | undefined;
+    const key = [config, changes];
+
+    let clone = this.updateConfigCache.get(key) as StyledComposer<T> | undefined;
 
     if (clone) {
       return clone;
@@ -141,23 +175,17 @@ export class Composer {
       clone = this.setConfig(config, { ...existingConfig, ...changes });
     }
 
-    this.updateConfigCache.set([config, changes], clone);
+    this.updateConfigCache.set(key, clone);
 
     return clone;
   }
 
   private setConfig<T extends Composer, C>(this: T, config: ComposerConfig<C>, value: C): StyledComposer<T> {
-    let clone = new (this.constructor as ConstructorOf<T>)() as StyledComposer<T>;
+    const configs = new Map(this.configs);
 
-    // @ts-expect-error
-    clone.configs = new Map(this.configs);
+    configs.set(config, value);
 
-    clone.configs.set(config, value);
-
-    // @ts-expect-error
-    clone.styles = this.styles;
-
-    return clone;
+    return this.clone(this.styles, configs);
   }
 
   getConfig<C>(config: ComposerConfig<C>): C {
@@ -175,13 +203,7 @@ export class Composer {
       return clone;
     }
 
-    clone = this.cloneEmpty();
-
-    // @ts-expect-error
-    clone.styles = [...this.styles, style];
-
-    // @ts-expect-error
-    clone.configs = this.configs;
+    clone = this.clone([...this.styles, style], this.configs);
 
     this.reuseStyleMap.set(style, clone);
 
@@ -206,5 +228,12 @@ export class Composer {
 }
 
 export function composer<T extends Composer>(Composer: ConstructorOf<T>): StyledComposer<T> {
-  return new Composer().init();
+  try {
+    isCreatingWithComposerFunction = true;
+    const composer = new Composer();
+
+    return composer.init();
+  } finally {
+    isCreatingWithComposerFunction = false;
+  }
 }

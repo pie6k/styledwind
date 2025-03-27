@@ -1,3 +1,5 @@
+export type MaybeUndefined<T> = T | undefined;
+
 export type Nullish = null | undefined;
 
 export function isNotNullish<T>(input: T | Nullish): input is T {

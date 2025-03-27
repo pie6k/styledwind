@@ -1,0 +1,82 @@
+import { Bleed } from "nextra/components";
+
+# Inline Components
+
+In previous examples, we used `styled-components` to create styled parts of our app.
+
+Sometimes, we may want to use styles in a more inline way, e.g if some styles are simple or we want to iterate quickly.
+
+Inlined components allow us to do just that.
+
+## Creating inline components
+
+Similar to `styled-components`, we can create inline components using `UI.div`, `UI.span`, `UI.button`, etc.
+
+Those behave just like regular components, but with additional `styles` prop that allows us to pass styles we want to apply.
+
+```tsx filename="Component.tsx" {6,8}
+import { UI, $flex } from 'stylings';
+import { animations } from './styles';
+
+function App() {
+  return (
+    <UI.div styles={[animations.$fadeIn, $flex.horizontal.alignCenter.gap(2)]}>
+      Hello World
+    </UI.div>
+  )
+}
+```
+
+Those styles will then be combined together into a single `className`.
+
+## Named inline components
+
+In the example above, we described how our div looks, but we didn't describe what it is. 
+
+It could make it harder to reason about the code or to understand the structure of some component, especially if we have a lot of styles and nested components.
+
+Also, it might be hard to debug in devtools, as the component name is not clearly visible in the final HTML.
+
+`UI` object can be used to dynamically create a component with **any name**.
+
+```tsx
+<UI.MyAppIntro>
+  Hello World
+</UI.MyAppIntro>
+
+<UI.SomeSuperLongComponentName>
+  Hello World
+</UI.SomeSuperLongComponentName>
+```
+
+We can improve the previous example to use a named inline component.
+
+```tsx filename="Component.tsx" {6,8}
+import { UI, $flex } from 'stylings';
+import { animations } from './styles';
+
+function App() {
+  return (
+    <UI.MyAppIntro styles={[animations.$fadeIn, $flex.horizontal.alignCenter.gap(2)]}>
+      Hello World
+    </UI.MyAppIntro>
+  )
+}
+```
+
+By default, `div` will be used as the underlying tag.
+
+### Inline components with different tag
+
+If we want to use a different tag than `div`, we can use the convention `UI.Name_tag`, e.g., `UI.MyLink_a`.
+
+
+```tsx /_a/
+<UI.MyLink_a href="#">
+  Click me
+</UI.MyLink_a>
+```
+
+TypeScript will automatically infer the correct types based on this convention.
+
+Optionally, you can pass `as` prop to the component to use a different tag, however, in this case TypeScript will not update the component type to match the new underlying tag.

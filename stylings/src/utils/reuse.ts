@@ -1,4 +1,3 @@
-import { JSONValue } from "./json";
 import { HashMap } from "./map/HashMap";
 
 export function createValueReuser<T>() {
@@ -13,4 +12,4 @@ export function createValueReuser<T>() {
   };
 }
 
-export type ValueReuser<T extends JSONValue> = ReturnType<typeof createValueReuser<T>>;
+export type ValueReuser<T> = ReturnType<typeof createValueReuser<T>>;

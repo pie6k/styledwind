@@ -1,5 +1,3 @@
-import { JSONObject, getJSONHash } from "./utils/json";
-
 import { FlexComposer } from "./FlexComposer";
 import { composer } from "./Composer";
 import { composerConfig } from "./ComposerConfig";
@@ -16,7 +14,7 @@ interface SizingBoxConfig {
 
 const config = composerConfig<SizingBoxConfig>({});
 
-export class SurfaceComposer extends FlexComposer {
+export class FrameComposer extends FlexComposer {
   getStyles() {
     return null;
   }
@@ -99,11 +97,11 @@ export class SurfaceComposer extends FlexComposer {
   }
 }
 
-const $surfaceBase = composer(SurfaceComposer);
+const $frameBase = composer(FrameComposer);
 
-export const $surface = memoizeFn(
-  function surface(config: SizingBoxConfig) {
-    return $surfaceBase.define(config);
+export const $frame = memoizeFn(
+  function frame(config: SizingBoxConfig) {
+    return $frameBase.define(config);
   },
   { mode: "hash" },
 );

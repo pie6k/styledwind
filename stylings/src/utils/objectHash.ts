@@ -1,16 +1,15 @@
 import { getObjectId } from "./objectId";
 
 // String hashing function
-function hashString(str: string): number {
-  let hash = 0;
+function hashString(str: string) {
+  let length = str.length;
+  let hash = 5381;
 
-  const length = str.length;
-
-  for (let i = 0; i < length; i++) {
-    // hash * 31 + char
-    hash = ((hash << 5) - hash) ^ str.charCodeAt(i);
+  for (let i = 0; i < length; ++i) {
+    hash = 33 * hash + str.charCodeAt(i);
   }
-  return hash >>> 0; // Convert to unsigned 32-bit integer
+
+  return hash;
 }
 
 /**
@@ -21,21 +20,44 @@ export function getObjectHash<T>(obj: T): number {
   return getValueHash(obj) >>> 0;
 }
 
+const UNDEFINED_HASH = hashString("undefined");
+const NULL_HASH = hashString("null");
+const NUMBER_HASH = hashString("number");
+const BOOLEAN_HASH = hashString("boolean");
+const STRING_HASH = hashString("string");
+const SYMBOL_HASH = hashString("symbol");
+const FUNCTION_HASH = hashString("function");
+const ARRAY_HASH = hashString("array");
+const OBJECT_HASH = hashString("object");
+const BIGINT_HASH = hashString("bigint");
+
 // Handle any value type for hashing
 function getValueHash(value: any): number {
-  if (value === undefined) return 0;
-  if (value === null) return 1;
-
   const type = typeof value;
 
-  if (type === "number") return ~~value * 31;
-  if (type === "boolean") return value ? 1231 : 1237;
-  if (type === "string") return hashString(value);
-  if (type === "symbol") return getObjectId(value as symbol);
-  if (type === "function") return getObjectId(value as Function);
+  switch (type) {
+    case "undefined":
+      return UNDEFINED_HASH;
+    case "object": {
+      if (value === null) return NULL_HASH;
+      break;
+    }
+    case "number":
+      return NUMBER_HASH + ~~value * 31;
+    case "boolean":
+      return BOOLEAN_HASH + (value ? 1231 : 1237);
+    case "string":
+      return STRING_HASH + hashString(value);
+    case "symbol":
+      return SYMBOL_HASH + getObjectId(value as symbol);
+    case "function":
+      return FUNCTION_HASH + getObjectId(value as Function);
+    case "bigint":
+      return BIGINT_HASH;
+  }
 
   if (Array.isArray(value)) {
-    let hash = value.length;
+    let hash = ARRAY_HASH + value.length;
     for (const item of value) {
       hash = hash * 31 + getValueHash(item);
     }
@@ -43,23 +65,19 @@ function getValueHash(value: any): number {
     return hash;
   }
 
-  if (type === "object") {
-    // Check if it's a plain object or an instance of a class
-    if (Object.getPrototypeOf(value) !== Object.prototype) {
-      // Non-plain object - use the objectKey function
-      return getObjectId(value) * 31;
-    }
-
-    // Plain object - proceed with normal hashing
-    let hash = 3;
-    for (const key in value) {
-      hash += hashString(key);
-      hash += getValueHash(value[key]);
-    }
-
-    return hash;
+  // Check if it's a plain object or an instance of a class
+  if (Object.getPrototypeOf(value) !== Object.prototype) {
+    const nameHash = hashString(Object.getPrototypeOf(value).constructor.name);
+    // Non-plain object - use the objectKey function
+    return nameHash + getObjectId(value) * 31;
   }
 
-  // For ther types, use a constant
-  return 4;
+  // Plain object - proceed with normal hashing
+  let hash = OBJECT_HASH;
+
+  for (const key in value) {
+    hash += hashString(key) + getValueHash(value[key]);
+  }
+
+  return hash;
 }

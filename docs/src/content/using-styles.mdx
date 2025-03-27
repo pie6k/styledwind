@@ -1,0 +1,113 @@
+
+# Using Styles
+
+At the core of `stylings` are style **style composers**. 
+
+Style composers are objects that collect desired styles and can be used to generate CSS.
+
+There are several built-in style composers: `$flex`, `$grid`, `$animation`, `$colors`, `$frame`, `$font`, `$shadow`, `$common`, `$transition`.
+
+```tsx {3} {5-9}
+import { $flex } from "stylings";
+
+$flex.horizontal.alignCenter.gap(2);
+
+// This represents the following CSS:
+// display: flex;
+// flex-direction: row;
+// align-items: center;
+// gap: 1rem;
+```
+
+## Chaining style composers
+
+Style composers are infinitely chainable using their **modifiers**.
+
+Some modifiers can be used without arguments, e.g., 
+
+```tsx /horizontal/ /center/
+$flex.horizontal.center;
+```
+
+Some modifiers require arguments, e.g., 
+
+```tsx /gap(2)/
+$flex.gap(2).horizontal.center;
+```
+
+You can use the same modifier multiple times (new modifiers will override previous ones), e.g., 
+
+```tsx /horizontal.center/
+$flex.horizontal.center.horizontal.center;
+```
+
+is technically valid and is the same as 
+
+```tsx /horizontal.center/
+$flex.horizontal.center;
+```
+
+## Using style composers with `styled-components`
+
+Style composers can be directly passed to styled components.
+
+```tsx /$flex/ {12} /ListOfItems/
+import { $flex } from "stylings";
+
+function Items() {
+  return <ListOfItems>
+    <div>Item 1</div>
+    <div>Item 2</div>
+    <div>Item 3</div>
+  </ListOfItems>
+}
+
+const ListOfItems = styled.div`
+  ${$flex.vertical.gap(2)}
+`;
+```
+
+
+## Naming conventions
+
+All composers are named with a `$` prefix. This is to make them easily recognizable and clearly indicate that they are chainable.
+
+If you're exporting composers from a file, it is recommended to also add a `$` prefix to the name of the variable.
+
+```tsx /$/
+export const $formField = $flex.horizontal.alignStretch.gap(2);
+```
+
+
+## Manually getting final CSS out of style composers
+
+> [!tip]
+>
+> You can skip this section as you will rarely need to do that manually. Composers are automatically compiled when used, e.g., as a part of styled-components.
+
+To read values from composers, you can:
+-  call its `composer.compile()` method
+-  or call the composer as a function, e.g `composer()` (`styled-components` does this automatically)
+
+
+```tsx /compile()/ /()/
+const $styles = $flex.horizontal.alignCenter.gap(2);
+
+$styles.compile();
+// above is equivalent to:
+$styles();
+
+// both will output:
+[
+  "display: flex",
+  "flex-direction: row",
+  "align-items: center",
+  "gap: 1rem",
+]
+```
+
+> [!note]
+>
+> Under the hood, composers behave both as functions and objects. Calling them as a function is an alias for calling `.compile()`. 
+>
+> This is needed because of how `styled-components` work. They accept functions as part of styles and then resolve them. If in the future, styled-components will, for example, support some API that allows custom objects to be used as styles, it will be possible to remove this distinction.

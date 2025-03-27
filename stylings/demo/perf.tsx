@@ -37,7 +37,7 @@ console.time("flex");
 const color = $color({ color: "red" });
 
 for (let i = 0; i < 10000; i++) {
-  $flex.gap(2).vertical.alignCenter.justifyAround();
+  // $flex.gap(i).vertical.alignCenter.justifyAround();
   // color.opacity(0.5).withBorder.asOutline.asBg();
   // color.opacity(0.5).withBorder.asOutline.asBg();
   // color.opacity(0.5).withBorder.asOutline.asBg();
@@ -61,8 +61,8 @@ const themedFlex = createTheme({
 
 console.time("theme");
 
-for (let i = 0; i < 10000; i++) {
-  themedFlex.$flex.gap(2).vertical.alignCenter.justifyAround(variant);
+for (let i = 0; i < 100000; i++) {
+  themedFlex.$flex.gap(i).vertical.alignCenter.justifyAround(variant);
   // theme.color.opacity(0.5).withBorder.asOutline.asBg(variant);
   // theme.color.opacity(0.5).withBorder.asOutline.asBg(variant);
   // theme.color.opacity(0.5).withBorder.asOutline.asBg(variant);

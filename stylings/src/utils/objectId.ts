@@ -1,5 +1,4 @@
-let id = 0xa0000000;
-// let id = 100;
+let id = 1;
 
 const objectIdMap = new WeakMap<WeakKey, number>();
 

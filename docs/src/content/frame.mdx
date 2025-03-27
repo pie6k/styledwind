@@ -1,0 +1,51 @@
+
+# Frame
+
+Very often, multiple UI elements share some "shape".
+
+For example, buttons, inputs and selects can have the same height, padding and border radius.
+
+`$frame` composer is designed to help us with that and couple those design rules into a single object.
+
+## Defining frame
+
+Let's define `$control` frame which we will use for buttons, inputs, selects, etc.
+
+```tsx filename="theme.ts" {3}
+import { $frame } from 'stylings';
+
+const $control = $frame({
+  height: 8,
+  paddingX: 2,
+  paddingY: 1,
+  radius: 1,
+});
+```
+
+> [!NOTE]
+> 
+> By default, when using length units, each counts as `0.25rem`, similar to Tailwind CSS. You can also pass string values like `10px`, `1rem`, `1.5em`, etc.
+
+Our frame is now ready. Let's use it for some components.
+
+```tsx filename="controls.tsx"
+const Button = styled.button`
+  ${$control.minHeight.paddingX.radius};
+  ${$flex.center};
+`;
+
+// Note textarea doesnt use min-height
+const Textarea = styled.textarea`
+  ${$control.padding.radius};
+`;
+
+const Select = styled.select`
+  ${$control.minHeight.paddingX.radius};
+  ${$flex.alignCenter};
+`;
+```
+
+
+
+
+

@@ -1,6 +1,6 @@
 import { Bleed } from "nextra/components";
 
-# Introduction
+# Quick start
 
 `stylings` is an opinionated and joyful library that helps you write semantic, composable, reusable styles using `React` and `styled-components`.
 
@@ -33,7 +33,7 @@ npm i stylings
 
 ### Compose your first styles
 
-```tsx filename="styles.ts"
+```tsx filename="styles.ts" {4, 8}
 import { $flex, $animation } from 'stylings'
 
 // Compose styles using chainable API
@@ -47,7 +47,7 @@ const animations = {
 
 ### Pass your styles to your styled components
 
-```tsx filename="Component.tsx"
+```tsx filename="Component.tsx" {6-7}
 import styled from 'styled-components';
 import { $flex } from 'stylings';
 import { animations } from './styles';
@@ -68,7 +68,7 @@ function App() {
 
 ### Pass styles to inline components for rapid iteration and reduced boilerplate
 
-```tsx filename="Component.tsx"
+```tsx filename="Component.tsx" {6,8}
 import { UI, $flex } from 'stylings';
 import { animations } from './styles';
 
@@ -87,7 +87,7 @@ Inline components accept all the same props as the regular `div`, `span`, `butto
 
 Next to "how it looks," define "what it is" by naming your inline components. The name will also be visible in devtools for a better debugging experience.
 
-```tsx filename="Component.tsx"
+```tsx filename="Component.tsx" {6,8}
 import { UI, $flex } from 'stylings';
 import { animations } from './styles';
 

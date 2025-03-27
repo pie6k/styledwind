@@ -5,7 +5,7 @@ You can create your own composable styles by extending the `Composer` class.
 Let's say you want to create a custom `DropDownStylesComposer` composer that will be used to style dropdowns.
 
 ```ts
-import { Composer } from "stylings";
+import { Composer, composer } from "stylings";
 
 export class DropDownStylesComposer extends Composer {
   get shadow() {
@@ -39,7 +39,7 @@ export class DropDownStylesComposer extends Composer {
   }
 }
 
-export const dropdown = new DropDownStylesComposer().init();
+export const $dropdown = composer(DropDownStylesComposer);
 ```
 
 Now you can use it in your components:
@@ -52,11 +52,7 @@ const UIDropDown = styled.div`
 `;
 ```
 
-> [!NOTE]
->
-> `.init()` call is only needed for TypeScript, as otherwise styled-components will complain about incorrect object passed inside `styled` tag.
-
-## Custom composables with config
+## Custom composers with config
 
 In some cases, you might want your composables to have some config before emmiting styles.
 
@@ -132,9 +128,6 @@ export class ButtonStylesComposer extends Composer {
     return super.compile([
       // Generate all styles based on config
       this.getButtonPropertiesForSize(size),
-      // You can pass more styles as well:
-      // - CSSProperties,
-      // - string, RuleSet (css``), Composer>)
     ]);
   }
 }

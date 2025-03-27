@@ -1,5 +1,4 @@
 const targetSymbol = { symbol: Symbol("DEEP_MAP_TARGET") };
-const undefinedSymbol = { symbol: Symbol("DEEP_MAP_UNDEFINED") };
 
 export interface MapLike<K, V> {
   get(key: K): V | undefined;
@@ -24,8 +23,6 @@ export class DeepMap<V> {
     let currentTarget = this.root;
 
     for (let part of path) {
-      if (part === undefined) part = undefinedSymbol;
-
       if (currentTarget.has(part)) {
         currentTarget = currentTarget.get(part)! as DeepMapLeaf<V>;
         continue;
@@ -43,8 +40,6 @@ export class DeepMap<V> {
     const { MapToUse } = this;
 
     for (let part of path) {
-      if (part === undefined) part = undefinedSymbol;
-
       const targetLeaf = currentTarget.get(part) as DeepMapLeaf<V> | undefined;
 
       if (targetLeaf !== undefined) {
