@@ -1,24 +1,21 @@
 import { DeepMap, MapLikeContructor } from "./map/DeepMap";
-import { EqualKeyMap } from "./map/EqualKeyMap";
+
+import { HashMap } from "./map/HashMap";
 import { MaybeWeakMap } from "./map/MaybeWeakMap";
 
-type MemoizeKeysMode = "maybeWeak" | "equal" | "default" | "weak";
+type MemoizeKeysMode = "maybeWeak" | "default" | "weak" | "hash";
 
 interface MemoizeOptions {
   mode?: MemoizeKeysMode;
 }
 
-function getMapToUse<K, V>(mode: MemoizeKeysMode): MapLikeContructor<K, V> {
-  switch (mode) {
-    case "maybeWeak":
-      return MaybeWeakMap<K, V>;
-    case "equal":
-      return EqualKeyMap<K, V>;
-    case "weak":
-      return WeakMap<K & object, V>;
-    default:
-      return Map<K, V>;
-  }
+function getMapToUse<K, V>(mode?: MemoizeKeysMode): MapLikeContructor<K, V> {
+  if (mode === "default") return Map;
+  if (mode === "maybeWeak") return MaybeWeakMap;
+  if (mode === "hash") return HashMap;
+  if (mode === "weak") return WeakMap;
+
+  return Map;
 }
 
 type AnyFunction = (...args: any[]) => any;
@@ -35,7 +32,7 @@ export type MemoizedFunction<F extends AnyFunction> = F & MemoizedFunctionExtra<
 export function memoizeFn<F extends AnyFunction>(callback: F, options?: MemoizeOptions): MemoizedFunction<F> {
   type A = Parameters<F>;
   type R = ReturnType<F>;
-  const deepMap = new DeepMap(getMapToUse<A, R>(options?.mode ?? "maybeWeak"));
+  const deepMap = new DeepMap(getMapToUse<A, R>(options?.mode));
 
   const getMemoized = (...args: A): R => {
     const result = deepMap.getOrCreateCallback<A>(callback, ...args);

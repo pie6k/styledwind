@@ -1,0 +1,127 @@
+# Themes
+
+Stylings provides a powerful theming system that allows you to create and manage theme variants while maintaining type safety and performance.
+
+## Creating Themes
+
+Themes are created using the `createTheme` function. It takes an object where you can pass composable and primitive values.
+
+```tsx
+import { createTheme, color, font } from "stylings";
+
+const baseFont = font.family("Inter, sans-serif").lineHeight(1.5).antialiased;
+
+const theme = createTheme({
+  // Primitive values
+  spacing: 16,
+
+  // Typography styles
+  typo: {
+    base: baseFont,
+    header: baseFont.size("2rem").bold,
+  },
+
+  // Color styles
+  colors: {
+    primary: color({ color: "red" }),
+    text: color({ color: "black" }),
+    background: color({ color: "white" }),
+  },
+});
+```
+
+## Theme Variants
+
+You can then create theme variants that inherit from a source theme but override specific values:
+
+```tsx
+import { createThemeVariant } from "stylings";
+import { theme } from "./theme";
+
+const darkTheme = createThemeVariant(theme, {
+  // Note: we can only pass values that we want to override. Everything else will be taken from the source theme.
+  colors: {
+    text: color({ color: "white" }),
+    background: color({ color: "black" }),
+  },
+});
+```
+
+## Theme provider
+
+To use the theme, you need to wrap your app in the `ThemeProvider` component.
+
+```tsx
+import { ThemeProvider } from "stylings";
+import { theme, darkTheme } from "./theme";
+
+function App() {
+  const [isDarkThemeActive, setIsDarkThemeActive] = useState(false);
+
+  function toggleDarkMode() {
+    setIsDarkThemeActive(!isDarkThemeActive);
+  }
+
+  return (
+    <ThemeProvider theme={theme} activeVariants={[isDarkThemeActive && darkTheme]}>
+      <App onToggleDarkMode={toggleDarkMode} />
+    </ThemeProvider>
+  );
+}
+```
+
+
+## Using Themes
+
+To use theme, you simply read values from the theme object created before.
+
+```tsx
+import { theme } from "./theme";
+
+function Card() {
+  return (
+    <UI.Card styles={theme.colors.background.readableText.asBg}>
+      <UI.CardHeader_h1 styles={theme.typo.header} />
+      <UI.CardBody styles={flex.vertical.gap(2)}>Card content</UI.CardBody>
+    </UI.Card>
+  );
+}
+
+// Or
+
+const UICard = styled.div`
+  ${theme.colors.background.readableText.asBg};
+`;
+```
+
+### Reading Theme Values
+
+If your theme defines some primitive values, you can read them using `useThemeValue` hook.
+
+```tsx
+import { useThemeValue, createTheme } from "stylings";
+
+// theme.ts
+const theme = createTheme({
+  footerColumns: 3,
+});
+
+const wideTheme = createThemeVariant(theme, {
+  footerColumns: 4,
+});
+
+// Footer.tsx
+function Footer() {
+  const footerColumns = useThemeValue(theme.footerColumns);
+  return <div style={{ gridTemplateColumns: `repeat(${footerColumns}, 1fr)` }}>Hello</div>;
+}
+```
+
+Optionally, anywhere (even outside of React) you can read theme values by calling theme values with `theme` argument.
+
+```ts
+const footerColumns = theme.footerColumns(theme); // 3
+const wideFooterColumns = theme.footerColumns(wideTheme); // 4
+```
+
+Note: All the code above is fully typed and will give you autocomplete and type safety.

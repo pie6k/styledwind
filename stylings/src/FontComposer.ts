@@ -1,4 +1,4 @@
-import { Composer, styledComposer } from "./Composer";
+import { Composer, composer } from "./Composer";
 import { Length, addUnit } from "./utils";
 
 import { Properties } from "csstype";
@@ -142,4 +142,4 @@ export class FontComposer extends Composer {
   }
 }
 
-export const $font = styledComposer(FontComposer);
+export const $font = composer(FontComposer);

@@ -1,4 +1,4 @@
-import { Composer, styledComposer } from "./Composer";
+import { Composer, composer } from "./Composer";
 
 import { CSSProperties } from "styled-components";
 import type { Property } from "csstype";
@@ -8,7 +8,7 @@ const DISPLAY_GRID: CSSProperties = { display: "grid" };
 const DISPLAY_INLINE_GRID: CSSProperties = { display: "inline-grid" };
 
 export class GridComposer extends Composer {
-  styled() {
+  init() {
     return this.addStyle(DISPLAY_GRID);
   }
 
@@ -157,4 +157,4 @@ export class GridComposer extends Composer {
   }
 }
 
-export const $grid = styledComposer(GridComposer);
+export const $grid = composer(GridComposer);

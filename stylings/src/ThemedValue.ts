@@ -1,20 +1,20 @@
 import { CompileResult, Composer, ThemeOrThemeProps, getIsComposer } from "./Composer";
+import { Primitive, isPrimitive } from "./utils/primitive";
 import { ThemeInput, ThemeOrVariant, getIsThemeOrVariant, getThemeValueByPath } from "./theme";
 
-import { EqualKeyMap } from "./utils/map/EqualKeyMap";
-import { Primitive } from "./utils/primitive";
+import { HashMap } from "./utils/map/HashMap";
 import { memoizeFn } from "./utils/memoize";
 
 interface ThemedComposerHolder<C extends Composer> {
   (propsOrTheme?: unknown): CompileResult;
-  composer: C;
   manager: ThemedComposerManager<C>;
+  prototypeInfo: AnalyzedPrototype;
 }
 
 type RepeatStep =
   | {
       type: "get";
-      property: string | symbol;
+      property: string;
       propertyType: "getter" | "method";
     }
   | {
@@ -27,12 +27,13 @@ const repeatStepsOnComposer = memoizeFn(
     if (getIsThemedComposer(composer)) {
       throw new Error("Cannot repeat steps on a themed composer. Underlying composer should be passed");
     }
+
     let result: unknown = composer;
     let currentThis = result;
 
     for (const step of steps) {
       if (step.type === "get") {
-        result = Reflect.get(result as object, step.property, result);
+        result = (result as Composer)[step.property as keyof Composer];
 
         if (step.propertyType === "getter") {
           currentThis = result;
@@ -65,15 +66,15 @@ const repeatStepsOnComposer = memoizeFn(
 );
 
 interface AnalyzedPrototype {
-  getters: string[];
-  methods: string[];
+  getters: Set<string>;
+  methods: Set<string>;
 }
 
 const analytzePrototype = memoizeFn(
   (prototype: object) => {
     const result: AnalyzedPrototype = {
-      getters: [],
-      methods: [],
+      getters: new Set(),
+      methods: new Set(),
     };
 
     while (prototype) {
@@ -87,9 +88,9 @@ const analytzePrototype = memoizeFn(
         const descriptor = descriptors[key];
 
         if (descriptor.get) {
-          result.getters.push(key);
+          result.getters.add(key);
         } else if (typeof descriptor.value === "function") {
-          result.methods.push(key);
+          result.methods.add(key);
         }
       }
 
@@ -101,30 +102,40 @@ const analytzePrototype = memoizeFn(
   { mode: "weak" },
 );
 
+const IS_THEMED_COMPOSER = Symbol("isThemedComposer");
+
 const themedComposerHolderProxyHandler: ProxyHandler<ThemedComposerHolder<Composer>> = {
-  get(holder, prop, receiver) {
-    const prototypeInfo = analytzePrototype(holder.composer.composer);
+  get(holder, prop) {
+    const prototypeInfo = holder.prototypeInfo;
 
-    if (prototypeInfo.getters.includes(prop as string)) {
-      return holder.manager.addStep({ type: "get", property: prop, propertyType: "getter" });
+    if (prototypeInfo.getters.has(prop as string)) {
+      return holder.manager.addStep({ type: "get", property: prop as string, propertyType: "getter" });
     }
 
-    if (prototypeInfo.methods.includes(prop as string)) {
-      return holder.manager.addStep({ type: "get", property: prop, propertyType: "method" });
+    if (prototypeInfo.methods.has(prop as string)) {
+      return holder.manager.addStep({ type: "get", property: prop as string, propertyType: "method" });
     }
 
-    return Reflect.get(holder.composer, prop, receiver);
+    return holder.manager.defaultComposer[prop as keyof Composer];
   },
   apply(target, _thisArg, argArray) {
-    if (target.manager.currentlyPointingAt === "method") {
+    if (!target.manager.canCompile) {
       return target.manager.addStep({ type: "apply", args: argArray });
     }
 
     return target.manager.applyForProps(argArray[0]);
   },
-};
+  has(target, prop) {
+    if (prop === IS_THEMED_COMPOSER) {
+      return true;
+    }
 
-const themedComposers = new WeakSet<object>();
+    return Reflect.has(target.manager.defaultComposer, prop);
+  },
+  set(target, prop, value) {
+    throw new Error("Cannot set a property on a themed composer");
+  },
+};
 
 function getThemeFromCallArg<T extends ThemeInput>(propsOrTheme?: ThemeOrThemeProps): ThemeOrVariant<T> | null {
   if (!propsOrTheme) {
@@ -150,15 +161,19 @@ function getThemeFromCallArg<T extends ThemeInput>(propsOrTheme?: ThemeOrThemePr
   throw new Error("There is some value provided as theme in props, but it is has unknown type");
 }
 
-function createHolder<C extends Composer>(themedComposer: C, manager: ThemedComposerManager<C>) {
-  const holder: ThemedComposerHolder<C> = () => null;
-  holder.composer = themedComposer.composer;
-  holder.manager = manager;
-  return holder;
+export function getIsThemedComposer(value: unknown): value is Composer {
+  if (isPrimitive(value)) return false;
+
+  return IS_THEMED_COMPOSER in (value as object);
 }
 
-export function getIsThemedComposer(value: unknown): value is Composer {
-  return themedComposers.has(value as Composer);
+function createThemedComposer<C extends Composer>(defaultComposer: C, path: string, steps: RepeatStep[]) {
+  const getThemedValue: ThemedComposerHolder<C> = () => null;
+  const manager = new ThemedComposerManager<C>(defaultComposer, path, steps);
+  getThemedValue.manager = manager;
+  getThemedValue.prototypeInfo = analytzePrototype(defaultComposer);
+
+  return new Proxy(getThemedValue, themedComposerHolderProxyHandler) as unknown as C;
 }
 
 class ThemedComposerManager<C extends Composer> {
@@ -168,32 +183,26 @@ class ThemedComposerManager<C extends Composer> {
     readonly steps: RepeatStep[],
   ) {}
 
-  get currentlyPointingAt(): "composer" | "method" {
+  get canCompile(): boolean {
     const lastStep = this.steps.at(-1);
 
-    if (!lastStep) return "composer";
+    if (!lastStep) return true;
 
-    if (lastStep.type === "apply") return "composer";
+    if (lastStep.type === "apply") return true;
 
-    return lastStep.propertyType === "getter" ? "composer" : "method";
+    return lastStep.propertyType === "getter" ? true : false;
   }
 
-  private addStepCache = new EqualKeyMap<RepeatStep, ThemedComposerManager<C>>();
+  private addStepCache = new HashMap<RepeatStep, C>();
 
-  addStep(step: RepeatStep): ThemedComposerManager<C> {
+  addStep(step: RepeatStep): C {
     let childComposer = this.addStepCache.get(step);
 
     if (childComposer) {
       return childComposer;
     }
 
-    const manager = new ThemedComposerManager<C>(this.defaultComposer, this.path, this.steps.concat(step));
-
-    const holder = createHolder<C>(this.defaultComposer, manager);
-
-    childComposer = new Proxy(holder, themedComposerHolderProxyHandler) as unknown as ThemedComposerManager<C>;
-
-    themedComposers.add(childComposer);
+    childComposer = createThemedComposer(this.defaultComposer, this.path, [...this.steps, step]);
 
     this.addStepCache.set(step, childComposer);
 
@@ -233,17 +242,6 @@ class ThemedComposerManager<C extends Composer> {
   }
 }
 
-function createThemedComposerRoot<C extends Composer>(path: string, defaultComposer: C): C {
-  const manager = new ThemedComposerManager<C>(defaultComposer, path, []);
-  const holder = createHolder<C>(defaultComposer, manager);
-
-  const themedComposer = new Proxy(holder, themedComposerHolderProxyHandler) as unknown as C;
-
-  themedComposers.add(themedComposer);
-
-  return themedComposer;
-}
-
 export type ThemedValueGetter<V> = (props?: ThemeOrThemeProps) => V;
 
 function createThemedValueGetter<T>(path: string, defaultValue: T): ThemedValueGetter<T> {
@@ -256,7 +254,7 @@ function createThemedValueGetter<T>(path: string, defaultValue: T): ThemedValueG
 
     const themeValue = getThemeValueByPath(theme, path);
 
-    if (!themeValue) {
+    if (themeValue === undefined) {
       return defaultValue;
     }
 
@@ -270,7 +268,7 @@ export type ThemedValue<V extends ThemedValueInput = ThemedValueInput> = V exten
 
 export function createThemedValue<V extends ThemedValueInput>(path: string, defaultValue: V): ThemedValue<V> {
   if (getIsComposer(defaultValue)) {
-    return createThemedComposerRoot(path, defaultValue) as ThemedValue<V>;
+    return createThemedComposer(defaultValue, path, []) as ThemedValue<V>;
   }
 
   return createThemedValueGetter(path, defaultValue) as ThemedValue<V>;

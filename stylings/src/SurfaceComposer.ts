@@ -1,8 +1,10 @@
+import { JSONObject, getJSONHash } from "./utils/json";
+
 import { FlexComposer } from "./FlexComposer";
+import { composer } from "./Composer";
 import { composerConfig } from "./ComposerConfig";
 import { memoizeFn } from "./utils/memoize";
 import { resolveSizeValue } from "./SizeComposer";
-import { styledComposer } from "./Composer";
 
 interface SizingBoxConfig {
   paddingX?: number;
@@ -97,11 +99,11 @@ export class SurfaceComposer extends FlexComposer {
   }
 }
 
-const $surfaceBase = styledComposer(SurfaceComposer);
+const $surfaceBase = composer(SurfaceComposer);
 
 export const $surface = memoizeFn(
   function surface(config: SizingBoxConfig) {
     return $surfaceBase.define(config);
   },
-  { mode: "equal" },
+  { mode: "hash" },
 );

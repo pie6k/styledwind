@@ -1,4 +1,4 @@
-import { Composer, styledComposer } from "./Composer";
+import { Composer, composer } from "./Composer";
 
 import { ComposerConfig } from "./ComposerConfig";
 import { getHasValue } from "./utils/maybeValue";
@@ -62,4 +62,4 @@ export class ShadowComposer extends Composer {
   }
 }
 
-export const $shadow = styledComposer(ShadowComposer);
+export const $shadow = composer(ShadowComposer);

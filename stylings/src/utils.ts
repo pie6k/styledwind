@@ -36,10 +36,6 @@ export function multiplyUnit(value: Length, multiplier: number, defaultUnit: str
 
 export type Length = string | number;
 
-export function getIsDefined<T>(value: T | undefined): value is T {
-  return value !== undefined;
-}
-
 export function isInteger(value: number) {
   return Number.isInteger(value);
 }

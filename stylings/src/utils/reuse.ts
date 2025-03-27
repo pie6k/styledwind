@@ -1,17 +1,13 @@
-import { deepEqual } from "fast-equals";
 import { JSONValue } from "./json";
+import { HashMap } from "./map/HashMap";
 
 export function createValueReuser<T>() {
-  const values: T[] = [];
+  const map = new HashMap<T, T>();
 
   return function getReused<I extends T>(value: I): I {
-    for (const cached of values) {
-      if (deepEqual(cached, value)) {
-        return cached as I;
-      }
-    }
+    if (map.has(value)) return map.get(value) as I;
 
-    values.unshift(value);
+    map.set(value, value);
 
     return value;
   };

@@ -1,4 +1,4 @@
-import { Composer, styledComposer } from "./Composer";
+import { Composer, composer } from "./Composer";
 import { DEFAULT_TRANSITION_DURATION_MS, DEFAULT_TRANSITION_EASING } from "./defaults";
 import { Length, addUnit, multiplyUnit } from "./utils";
 
@@ -86,4 +86,4 @@ export class TransitionComposer extends Composer {
   }
 }
 
-export const $transition = styledComposer(TransitionComposer);
+export const $transition = composer(TransitionComposer);

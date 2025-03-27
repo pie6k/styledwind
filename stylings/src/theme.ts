@@ -91,22 +91,31 @@ export function createThemeVariant<T extends ThemeInput>(
 }
 
 export function getIsThemeOrVariant<T extends ThemeInput>(value: unknown): value is ThemeOrVariant<T> {
-  return typeof value === "object" && value !== null && PROPERTIES in value;
+  if (typeof value !== "object" || value === null) return false;
+
+  return PROPERTIES in value;
 }
 
 export function getIsTheme<T extends ThemeInput>(value: unknown): value is Theme<T> {
-  return getIsThemeOrVariant(value) && value[DEFAULT_THEME] === value;
+  if (typeof value !== "object" || value === null) return false;
+
+  return DEFAULT_THEME in value && value[DEFAULT_THEME] === value;
 }
 
 export function getIsThemeVariant<T extends ThemeInput>(value: unknown): value is ThemeVariant<T> {
-  return getIsThemeOrVariant(value) && value[DEFAULT_THEME] !== value;
+  if (typeof value !== "object" || value === null) return false;
+
+  return DEFAULT_THEME in value && value[DEFAULT_THEME] !== value;
 }
 
 /**
  * @internal
  */
-export function getThemeValueByPath<T extends ThemeInput>(theme: ThemeOrVariant<T>, path: string): ThemedValue | null {
-  return theme[PROPERTIES].get(path) ?? null;
+export function getThemeValueByPath<T extends ThemeInput>(
+  theme: ThemeOrVariant<T>,
+  path: string,
+): ThemedValue | undefined {
+  return theme[PROPERTIES].get(path);
 }
 
 export function composeThemeVariants<T extends ThemeInput>(

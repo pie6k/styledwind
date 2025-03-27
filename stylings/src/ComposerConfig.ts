@@ -1,3 +1,5 @@
+import { JSONObject } from "./utils/json";
+
 interface ComposerConfigOptions {
   cache?: boolean;
 }

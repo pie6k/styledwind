@@ -4,6 +4,7 @@ import { Banner, Head } from "nextra/components";
 /* eslint-env node */
 import { Footer, Layout, Navbar } from "nextra-theme-docs";
 
+import { GlobalStylings } from "./GlobalStylings";
 import { getPageMap } from "nextra/page-map";
 
 export const metadata = {
@@ -51,6 +52,7 @@ export default async function RootLayout({ children }) {
           sidebar={{ defaultMenuCollapseLevel: 1 }}
           pageMap={pageMap}
         >
+          <GlobalStylings />
           {children}
         </Layout>
       </body>

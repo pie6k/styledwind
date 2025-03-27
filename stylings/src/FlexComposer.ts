@@ -1,11 +1,33 @@
-import { Composer, styledComposer } from "./Composer";
+import { Composer, composer } from "./Composer";
 
 import { CSSProperties } from "styled-components";
 import { convertToRem } from "./utils/convertUnits";
 
+const ROW: CSSProperties = { flexDirection: "row" };
+const COLUMN: CSSProperties = { flexDirection: "column" };
+
+const ALIGN_CENTER: CSSProperties = { alignItems: "center" };
+const ALIGN_START: CSSProperties = { alignItems: "flex-start" };
+const ALIGN_END: CSSProperties = { alignItems: "flex-end" };
+const ALIGN_STRETCH: CSSProperties = { alignItems: "stretch" };
+const ALIGN_BASELINE: CSSProperties = { alignItems: "baseline" };
+
+const JUSTIFY_CENTER: CSSProperties = { justifyContent: "center" };
+const JUSTIFY_START: CSSProperties = { justifyContent: "flex-start" };
+const JUSTIFY_END: CSSProperties = { justifyContent: "flex-end" };
+const JUSTIFY_BETWEEN: CSSProperties = { justifyContent: "space-between" };
+const JUSTIFY_AROUND: CSSProperties = { justifyContent: "space-around" };
+const JUSTIFY_EVENLY: CSSProperties = { justifyContent: "space-evenly" };
+
+const ROW_REVERSE: CSSProperties = { flexDirection: "row-reverse" };
+const WRAP: CSSProperties = { flexWrap: "wrap" };
+const INLINE: CSSProperties = { display: "inline-flex" };
+
+const FLEX: CSSProperties = { display: "flex" };
+
 export class FlexComposer extends Composer {
-  styled() {
-    return this.addStyle({ display: "flex" });
+  init() {
+    return this.addStyle(FLEX);
   }
 
   direction(value: CSSProperties["flexDirection"]) {
@@ -13,11 +35,11 @@ export class FlexComposer extends Composer {
   }
 
   get row() {
-    return this.direction("row");
+    return this.addStyle(ROW);
   }
 
   get column() {
-    return this.direction("column");
+    return this.addStyle(COLUMN);
   }
 
   /**
@@ -49,7 +71,7 @@ export class FlexComposer extends Composer {
   }
 
   gap(value: number = 1) {
-    return this.addStyle({ gap: convertToRem(value, "level") + "rem" });
+    return this.addStyle({ gap: `${convertToRem(value, "level")}rem` });
   }
 
   align(value: CSSProperties["alignItems"]) {
@@ -57,23 +79,23 @@ export class FlexComposer extends Composer {
   }
 
   get alignCenter() {
-    return this.align("center");
+    return this.addStyle(ALIGN_CENTER);
   }
 
   get alignStart() {
-    return this.align("flex-start");
+    return this.addStyle(ALIGN_START);
   }
 
   get alignEnd() {
-    return this.align("flex-end");
+    return this.addStyle(ALIGN_END);
   }
 
   get alignStretch() {
-    return this.align("stretch");
+    return this.addStyle(ALIGN_STRETCH);
   }
 
   get alignBaseline() {
-    return this.align("baseline");
+    return this.addStyle(ALIGN_BASELINE);
   }
 
   justify(value: CSSProperties["justifyContent"]) {
@@ -81,27 +103,27 @@ export class FlexComposer extends Composer {
   }
 
   get justifyCenter() {
-    return this.justify("center");
+    return this.addStyle(JUSTIFY_CENTER);
   }
 
   get justifyStart() {
-    return this.justify("flex-start");
+    return this.addStyle(JUSTIFY_START);
   }
 
   get justifyEnd() {
-    return this.justify("flex-end");
+    return this.addStyle(JUSTIFY_END);
   }
 
   get justifyBetween() {
-    return this.justify("space-between");
+    return this.addStyle(JUSTIFY_BETWEEN);
   }
 
   get justifyAround() {
-    return this.justify("space-around");
+    return this.addStyle(JUSTIFY_AROUND);
   }
 
   get justifyEvenly() {
-    return this.justify("space-evenly");
+    return this.addStyle(JUSTIFY_EVENLY);
   }
 
   get center() {
@@ -109,16 +131,16 @@ export class FlexComposer extends Composer {
   }
 
   get reverse() {
-    return this.addStyle({ flexDirection: "row-reverse" });
+    return this.addStyle(ROW_REVERSE);
   }
 
   get wrap() {
-    return this.addStyle({ flexWrap: "wrap" });
+    return this.addStyle(WRAP);
   }
 
   get inline() {
-    return this.addStyle({ display: "inline-flex" });
+    return this.addStyle(INLINE);
   }
 }
 
-export const $flex = styledComposer(FlexComposer);
+export const $flex = composer(FlexComposer);

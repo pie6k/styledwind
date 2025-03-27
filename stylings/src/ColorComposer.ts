@@ -1,6 +1,6 @@
+import { Composer, composer } from "./Composer";
 import { blendColors, getColorBorderColor, getHighlightedColor, isColorDark, setColorOpacity } from "./utils/color";
 
-import { Composer } from "./Composer";
 import { ComposerConfig } from "./ComposerConfig";
 import { getHasValue } from "./utils/maybeValue";
 import { isDefined } from "./utils";
@@ -229,7 +229,7 @@ export class ColorComposer extends Composer {
 
 export const $color = memoizeFn(
   function color(color: ColorsInput) {
-    return new ColorComposer().define(color);
+    return composer(ColorComposer).define(color);
   },
-  { mode: "equal" },
+  { mode: "hash" },
 );

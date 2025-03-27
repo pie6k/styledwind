@@ -1,0 +1,81 @@
+
+# Using Composers
+
+At the core of `stylings` are style **composers**. 
+
+Composers provide a great way to express and compose styles.
+
+```tsx
+import { $flex } from "stylings";
+
+$flex.horizontal.alignCenter.gap(2);
+
+// This represents the following CSS:
+// display: flex;
+// flex-direction: row;
+// align-items: center;
+// gap: 1rem;
+```
+
+## Chaining composers
+
+Composers are infinitely chainable.
+
+They can be assigned to variables and reused.
+
+If a reusable variable is later used, it can still be chained to make styles more specific.
+
+```tsx
+import { $font } from "stylings";
+
+const $baseFont = $font.family("Inter, sans-serif").size("1rem").lineHeight(1.5);
+
+// In other file
+const UILink = styled.a`
+  ${$baseFont.underline}
+`;
+```
+
+
+## Naming conventions
+
+All composers are named with a `$` prefix. This is to make them easily recognizable and clearly indicate that they are chainable.
+
+If you're exporting composers from a file, it is recommended to also add a `$` prefix to the name of the variable.
+
+```tsx
+export const $formField = $flex.horizontal.alignStretch.gap(2);
+```
+
+
+## Reading values out of composers
+
+> [!note]
+>
+> You will rarely need to do that manually. Composers are automatically compiled when used, e.g., as a part of styled-components.
+
+The main purpose of composers is to collect styles and later output them if needed.
+
+To read values from composers, you can:
+-  call its `.compile()` method
+-  or call the composer as a function (`styled-components` does this automatically)
+
+If you need to read values from the composer:
+
+```tsx
+const $styles = $flex.horizontal.alignCenter.gap(2);
+
+$styles.compile();
+// above is equivalent to:
+$styles();
+
+// both will output:
+[
+  "display: flex",
+  "flex-direction: row",
+  "align-items: center",
+  "gap: 1rem",
+]
+```
+
+

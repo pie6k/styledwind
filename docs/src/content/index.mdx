@@ -2,36 +2,110 @@ import { Bleed } from "nextra/components";
 
 # Introduction
 
-Stylings is an opinionated and joyful library helping you write semantic, composable, reusable styles using `React` and `styled-components`.
+`stylings` is an opinionated and joyful library that helps you write semantic, composable, reusable styles using `React` and `styled-components`.
 
-It is battle tested and used in production in [Screen Studio](https://screen.studio).
+It is battle-tested and used in production at [Screen Studio](https://screen.studio).
 
 ## Goals & Motivation
 
-- Joyful & productive developer experience
-- Easy to keep a consistent design language
-- Allow rapid iterations over UI code
-- Semantic styling - aka. code should not only describe how something looks, but also what it is
-- Good debugging experience in devtools
-- Make opinionated and automated choices on common styling patterns
-- Simple, chainable, composable API that is enjoyable to use
-- Automate some styling tasks (eg. generate hover color variants)
+- Joyful and productive developer experience  
+-  Easy to maintain a consistent design language  
+-  Allows rapid iterations over UI code  
+-  Semantic styling - i.e., code should not only describe how something looks, but also what it is  
+-  Good debugging experience in devtools  
+-  Makes opinionated and automated choices on common styling patterns  
+-  Simple, chainable, composable API that is enjoyable to use  
+-  Automate some styling tasks (e.g., generate hover color variants)  
 
-## Quick Start
 
-```bash
-yarn install stylings
-# or
-npm install stylings
-# or
-pnpm install stylings
+import { Steps } from 'nextra/components'
+
+## Quick start
+
+Install `stylings` and use it to start styling your applications.
+
+<Steps>
+### Install `stylings`
+
+```sh npm2yarn
+npm i stylings
 ```
 
-## Core Features
+### Compose your first styles
 
-- [Composable Styles](/features/composable-styles) - Create and compose reusable styles
-- [Semantic Styling](/features/semantic-styling) - Write meaningful, semantic styles
-- [Theme System](/features/theme-system) - Powerful theming with variants
-- [Color System](/features/colors) - Opinionated color management
-- [Animation System](/features/animations) - Easy-to-use animations
-- [Layout System](/features/layout) - Flexible layout utilities
+```tsx filename="styles.ts"
+import { $flex, $animation } from 'stylings'
+
+// Compose styles using chainable API
+$flex.horizontal.alignCenter.gap(2)
+
+// Create reusable styles and organize them how you like
+const animations = {
+  $fadeIn: $animation.properties({ opacity: [0, 1] }).duration("100ms").easeInOut,
+}
+```
+
+### Pass your styles to your styled components
+
+```tsx filename="Component.tsx"
+import styled from 'styled-components';
+import { $flex } from 'stylings';
+import { animations } from './styles';
+
+const Intro = styled.div`
+  ${animations.$fadeIn};
+  ${$flex.horizontal.alignCenter.gap(2)};
+`;
+
+function App() {
+  return (
+    <Intro>
+      Hello World
+    </Intro>
+  )
+}
+```
+
+### Pass styles to inline components for rapid iteration and reduced boilerplate
+
+```tsx filename="Component.tsx"
+import { UI, $flex } from 'stylings';
+import { animations } from './styles';
+
+function App() {
+  return (
+    <UI.div styles={[animations.$fadeIn, $flex.horizontal.alignCenter.gap(2)]}>
+      Hello World
+    </UI.div>
+  )
+}
+```
+
+Inline components accept all the same props as the regular `div`, `span`, `button`, etc. tags.
+
+### Create named inline components for more semantic styling
+
+Next to "how it looks," define "what it is" by naming your inline components. The name will also be visible in devtools for a better debugging experience.
+
+```tsx filename="Component.tsx"
+import { UI, $flex } from 'stylings';
+import { animations } from './styles';
+
+function App() {
+  return (
+    <UI.MyAppIntro styles={[animations.$fadeIn, $flex.horizontal.alignCenter.gap(2)]}>
+      Hello World
+    </UI.MyAppIntro>
+  )
+}
+```
+
+You can dynamically access `UI.AnyComponentNameYouWant` as needed. Dynamic components are cached. For one name, the component will be created only once.
+
+You can use the convention `UI.Name_tag`, e.g., `UI.MyLink_a`, to create components with a different tag than `div`. (TypeScript will automatically infer the correct types based on this convention)
+
+</Steps>
+
+---
+
+There are many more powerful features to discover. Check out the next section to learn more.

@@ -1,5 +1,5 @@
-const targetSymbol = { symbol: Symbol("target") };
-const undefinedSymbol = { symbol: Symbol("undefined") };
+const targetSymbol = { symbol: Symbol("DEEP_MAP_TARGET") };
+const undefinedSymbol = { symbol: Symbol("DEEP_MAP_UNDEFINED") };
 
 export interface MapLike<K, V> {
   get(key: K): V | undefined;
@@ -61,12 +61,16 @@ export class DeepMap<V> {
     return currentTarget;
   }
 
-  get(path: unknown[]) {
+  getForArgs(...path: unknown[]) {
     const targetMap = this.getFinalTargetMapIfExists(path);
 
     if (targetMap === null) return undefined;
 
     return targetMap.get(targetSymbol) as V | undefined;
+  }
+
+  get(path: unknown[]) {
+    return this.getForArgs(...path);
   }
 
   getOrCreate<P extends unknown[]>(path: P, create: (path: P) => V) {

@@ -1,4 +1,4 @@
-import { Composer, styledComposer } from "./Composer";
+import { Composer, composer } from "./Composer";
 
 import { ComposerConfig } from "./ComposerConfig";
 import { Length } from "./utils";
@@ -213,4 +213,4 @@ export class SizeComposer extends Composer {
   }
 }
 
-export const $size = styledComposer(SizeComposer);
+export const $size = composer(SizeComposer);
