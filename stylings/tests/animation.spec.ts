@@ -6,7 +6,7 @@ describe("animation", () => {
   test("basic", () => {
     expect($animation.fadeIn.property("transform-y", [0, 1])()).toMatchInlineSnapshot(`
       [
-        "animation-name:",
+        "animation-name: ",
         e {
           "id": "sc-keyframes-gNInrH",
           "inject": [Function],

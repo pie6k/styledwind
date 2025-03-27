@@ -5,7 +5,6 @@ export default {
   "inline-components": "Inline Components",
   colors: "Colors",
   frame: "Frame",
-  "basic-composers": "Basic Composers",
   themes: "Themes",
   "custom-composers": "Custom Composers",
   conventions: "Conventions",

@@ -51,11 +51,14 @@ export function createTheme<T extends ThemeInput>(themeInput: T): Theme<T> {
     }
 
     if (getIsComposer(value)) {
-      return createThemedValue(path, value);
+      // value.composer - ensure we dont use proxied version
+      return createThemedValue(path, value.rawComposer);
     }
 
     return value;
   }) as Theme<T>;
+
+  ensureRawComposersInPropertiesMap(propertiesMap);
 
   theme[PROPERTIES] = propertiesMap;
   theme[DEFAULT_THEME] = theme as Theme<T>;
@@ -64,6 +67,14 @@ export function createTheme<T extends ThemeInput>(themeInput: T): Theme<T> {
 }
 
 export interface ThemeVariant<T extends ThemeInput> extends ThemeVariantData<T> {}
+
+function ensureRawComposersInPropertiesMap(propertiesMap: PropertiesMap) {
+  for (const [path, value] of propertiesMap.entries()) {
+    if (getIsComposer(value)) {
+      propertiesMap.set(path, value.rawComposer);
+    }
+  }
+}
 
 export function createThemeVariant<T extends ThemeInput>(
   sourceTheme: Theme<T>,
@@ -80,6 +91,9 @@ export function createThemeVariant<T extends ThemeInput>(
   for (const [path, value] of changedPropertiesMap.entries()) {
     propertiesClone.set(path, value);
   }
+
+  ensureRawComposersInPropertiesMap(propertiesClone);
+  ensureRawComposersInPropertiesMap(changedPropertiesMap);
 
   const result: ThemeVariant<T> = {
     [PROPERTIES]: propertiesClone,
@@ -141,6 +155,9 @@ export function composeThemeVariants<T extends ThemeInput>(
   for (const [path, value] of changedProperties.entries()) {
     resolvedProperties.set(path, value);
   }
+
+  ensureRawComposersInPropertiesMap(resolvedProperties);
+  ensureRawComposersInPropertiesMap(changedProperties);
 
   return {
     [PROPERTIES]: resolvedProperties,

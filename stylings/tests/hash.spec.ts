@@ -29,4 +29,28 @@ describe("hash", () => {
     expect(hash([foo, foo])).not.toBe(hash([foo, bar]));
     expect(hash([foo, foo])).toBe(hash([foo, foo]));
   });
+
+  test("iteration", () => {
+    const previous = new Map<number, string>();
+
+    for (let i = 0; i < 10000; i++) {
+      const string = `gap: ${i}px;`;
+      const hashValue = hash(string);
+
+      const previousValue = previous.get(hashValue);
+
+      if (previousValue) {
+        console.info({
+          previousValue,
+          string,
+          previousHash: hash(previousValue),
+          currentHash: hash(string),
+        });
+      }
+
+      expect(previous.get(hashValue)).toBeUndefined();
+
+      previous.set(hashValue, string);
+    }
+  });
 });

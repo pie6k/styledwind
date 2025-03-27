@@ -4,28 +4,25 @@ import { CSSProperties } from "styled-components";
 import type { Property } from "csstype";
 import { convertToRem } from "./utils/convertUnits";
 
-const DISPLAY_GRID: CSSProperties = { display: "grid" };
-const DISPLAY_INLINE_GRID: CSSProperties = { display: "inline-grid" };
-
 export class GridComposer extends Composer {
   init() {
-    return this.addStyle(DISPLAY_GRID);
+    return this.addStyle(`display: grid;`);
   }
 
   columns(value: CSSProperties["gridTemplateColumns"]) {
-    return this.addStyle({ gridTemplateColumns: value });
+    return this.addStyle(`grid-template-columns: ${value};`);
   }
 
   rows(value: CSSProperties["gridTemplateRows"]) {
-    return this.addStyle({ gridTemplateRows: value });
+    return this.addStyle(`grid-template-rows: ${value};`);
   }
 
   gap(value: number = 1) {
-    return this.addStyle({ gap: convertToRem(value, "level") + "rem" });
+    return this.addStyle(`gap: ${convertToRem(value, "level")}rem;`);
   }
 
   alignItems(value: Property.AlignItems) {
-    return this.addStyle({ alignItems: value });
+    return this.addStyle(`align-items: ${value};`);
   }
 
   get alignItemsCenter() {
@@ -45,7 +42,7 @@ export class GridComposer extends Composer {
   }
 
   justifyItems(value: Property.JustifyItems) {
-    return this.addStyle({ justifyItems: value });
+    return this.addStyle(`justify-items: ${value};`);
   }
 
   get justifyItemsCenter() {
@@ -65,7 +62,7 @@ export class GridComposer extends Composer {
   }
 
   alignContent(value: Property.AlignContent) {
-    return this.addStyle({ alignContent: value });
+    return this.addStyle(`align-content: ${value};`);
   }
 
   get alignContentCenter() {
@@ -97,7 +94,7 @@ export class GridComposer extends Composer {
   }
 
   justifyContent(value: Property.JustifyContent) {
-    return this.addStyle({ justifyContent: value });
+    return this.addStyle(`justify-content: ${value};`);
   }
 
   get justifyContentCenter() {
@@ -129,7 +126,7 @@ export class GridComposer extends Composer {
   }
 
   autoFlow(value: Property.GridAutoFlow) {
-    return this.addStyle({ gridAutoFlow: value });
+    return this.addStyle(`grid-auto-flow: ${value};`);
   }
 
   get flowRow() {
@@ -153,7 +150,7 @@ export class GridComposer extends Composer {
   }
 
   get inline() {
-    return this.addStyle(DISPLAY_INLINE_GRID);
+    return this.addStyle(`display: inline-grid;`);
   }
 }
 

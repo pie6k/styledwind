@@ -5,19 +5,19 @@ import { Properties } from "csstype";
 
 export class FontComposer extends Composer {
   family(value: Properties["fontFamily"]) {
-    return this.addStyle({ fontFamily: value });
+    return this.addStyle(`font-family: ${value};`);
   }
 
   size(value: Length) {
-    return this.addStyle({ fontSize: addUnit(value, "em") });
+    return this.addStyle(`font-size: ${addUnit(value, "em")};`);
   }
 
   weight(value: Properties["fontWeight"]) {
-    return this.addStyle({ fontWeight: value });
+    return this.addStyle(`font-weight: ${value};`);
   }
 
   lineHeight(value: Length) {
-    return this.addStyle({ lineHeight: addUnit(value, "em") });
+    return this.addStyle(`line-height: ${addUnit(value, "em")};`);
   }
 
   get copyLineHeight() {
@@ -29,39 +29,39 @@ export class FontComposer extends Composer {
   }
 
   get balance() {
-    return this.addStyle({ textWrap: "balance" });
+    return this.addStyle(`text-wrap: balance;`);
   }
 
   get uppercase() {
-    return this.addStyle({ textTransform: "uppercase" });
+    return this.addStyle(`text-transform: uppercase;`);
   }
 
   get lowercase() {
-    return this.addStyle({ textTransform: "lowercase" });
+    return this.addStyle(`text-transform: lowercase;`);
   }
 
   get capitalize() {
-    return this.addStyle({ textTransform: "capitalize" });
+    return this.addStyle(`text-transform: capitalize;`);
   }
 
   get underline() {
-    return this.addStyle({ textDecoration: "underline" });
+    return this.addStyle(`text-decoration: underline;`);
   }
 
   get left() {
-    return this.addStyle({ textAlign: "left" });
+    return this.addStyle(`text-align: left;`);
   }
 
   get center() {
-    return this.addStyle({ textAlign: "center" });
+    return this.addStyle(`text-align: center;`);
   }
 
   get right() {
-    return this.addStyle({ textAlign: "right" });
+    return this.addStyle(`text-align: right;`);
   }
 
   get ellipsis() {
-    return this.addStyle({ textOverflow: "ellipsis", whiteSpace: "nowrap", overflow: "hidden" });
+    return this.addStyle(`text-overflow: ellipsis; white-space: nowrap; overflow: hidden;`);
   }
 
   get resetLineHeight() {
@@ -78,7 +78,7 @@ export class FontComposer extends Composer {
   }
 
   opacity(value: number) {
-    return this.addStyle({ opacity: value });
+    return this.addStyle(`opacity: ${value};`);
   }
 
   get secondary() {
@@ -118,7 +118,7 @@ export class FontComposer extends Composer {
   }
 
   letterSpacing(value: Length) {
-    return this.addStyle({ letterSpacing: addUnit(value, "em") });
+    return this.addStyle(`letter-spacing: ${addUnit(value, "em")};`);
   }
 
   get w700() {
@@ -134,11 +134,11 @@ export class FontComposer extends Composer {
   }
 
   get nowrap() {
-    return this.addStyle({ whiteSpace: "nowrap" });
+    return this.addStyle(`white-space: nowrap;`);
   }
 
   get antialiased() {
-    return this.addStyle({ WebkitFontSmoothing: "antialiased" });
+    return this.addStyle(`-webkit-font-smoothing: antialiased;`);
   }
 }
 

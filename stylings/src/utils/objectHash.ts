@@ -1,15 +1,16 @@
 import { getObjectId } from "./objectId";
 
 // String hashing function
-function hashString(str: string) {
-  let length = str.length;
-  let hash = 5381;
+function hashString(str: string): number {
+  let hash = 0;
 
-  for (let i = 0; i < length; ++i) {
-    hash = 33 * hash + str.charCodeAt(i);
+  const length = str.length;
+
+  for (let i = 0; i < length; i++) {
+    // hash * 31 + char
+    hash = ((hash << 5) - hash) ^ str.charCodeAt(i);
   }
-
-  return hash;
+  return hash >>> 0; // Convert to unsigned 32-bit integer
 }
 
 /**

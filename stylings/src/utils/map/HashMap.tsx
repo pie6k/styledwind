@@ -2,6 +2,8 @@ import { getObjectHash } from "../objectHash";
 
 const NO_LAST_KEY = Symbol("NO_LAST_KEY");
 
+const MAX_CACHE_SIZE = 10_000;
+
 export class HashMap<K, V> {
   private map: Map<number, V> = new Map();
 
@@ -15,6 +17,14 @@ export class HashMap<K, V> {
 
   private lastKey: K | typeof NO_LAST_KEY = NO_LAST_KEY;
   private lastKeyHash: number | null = null;
+
+  private removeFirstN(n: number) {
+    for (const key of this.map.keys()) {
+      this.map.delete(key);
+      n--;
+      if (n <= 0) break;
+    }
+  }
 
   private getKey(key: K) {
     /**
@@ -42,6 +52,10 @@ export class HashMap<K, V> {
   }
 
   set(key: K, value: V) {
+    if (this.map.size >= MAX_CACHE_SIZE) {
+      this.removeFirstN(1);
+    }
+
     return this.map.set(this.getKey(key), value);
   }
 

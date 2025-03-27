@@ -35,51 +35,49 @@ type ConstructorOf<T> = new (...args: any[]) => T;
 
 interface HolderFunction {
   (): void;
-  composer: Composer;
+  rawComposer: Composer;
 }
 
 const composerHolderFunctionProxyHandler: ProxyHandler<HolderFunction> = {
   get(holderFunction, prop) {
-    if (prop === "composer") {
-      return holderFunction.composer;
+    if (prop === "rawComposer") {
+      return holderFunction.rawComposer;
     }
 
-    // return Reflect.get(holderFunction.composer, prop, receiver);
-
-    return holderFunction.composer[prop as keyof Composer];
+    return holderFunction.rawComposer[prop as keyof Composer];
   },
   set(holderFunction, prop, value) {
     // @ts-expect-error
-    holderFunction.composer[prop as keyof Composer] = value;
+    holderFunction.rawComposer[prop as keyof Composer] = value;
 
     return true;
   },
   apply(holderFunction) {
-    return holderFunction.composer.compile();
+    return holderFunction.rawComposer.compile();
   },
   getPrototypeOf(target) {
-    return Object.getPrototypeOf(target.composer);
+    return Object.getPrototypeOf(target.rawComposer);
   },
   deleteProperty(target, prop) {
-    return Reflect.deleteProperty(target.composer, prop);
+    return Reflect.deleteProperty(target.rawComposer, prop);
   },
   has(target, prop) {
-    return Reflect.has(target.composer, prop);
+    return Reflect.has(target.rawComposer, prop);
   },
   ownKeys(target) {
-    return Reflect.ownKeys(target.composer);
+    return Reflect.ownKeys(target.rawComposer);
   },
   getOwnPropertyDescriptor(target, prop) {
-    return Reflect.getOwnPropertyDescriptor(target.composer, prop);
+    return Reflect.getOwnPropertyDescriptor(target.rawComposer, prop);
   },
   setPrototypeOf(target, proto) {
-    return Reflect.setPrototypeOf(target.composer, proto);
+    return Reflect.setPrototypeOf(target.rawComposer, proto);
   },
   isExtensible(target) {
-    return Reflect.isExtensible(target.composer);
+    return Reflect.isExtensible(target.rawComposer);
   },
   preventExtensions(target) {
-    return Reflect.preventExtensions(target.composer);
+    return Reflect.preventExtensions(target.rawComposer);
   },
 };
 
@@ -91,7 +89,7 @@ export function getIsComposer(input: unknown): input is Composer {
 
 export function pickComposer<C extends Composer>(input: C): C {
   if (getIsStyledComposer(input)) {
-    return input.composer as C;
+    return input.rawComposer as C;
   }
 
   if (getIsComposer(input)) {
@@ -113,6 +111,17 @@ const warnAboutCreatingInstanceDirectly = memoizeFn((constructor: typeof Compose
 const EMPTY_CONFIGS = new Map<ComposerConfig, unknown>();
 const EMPTY_STYLES: ComposerStyle[] = [];
 
+function createCompilerCallProxy<C extends Composer>(composer: C) {
+  if (typeof composer === "function") {
+    return composer;
+  }
+  const compileStyles: HolderFunction = () => {};
+
+  compileStyles.rawComposer = composer;
+
+  return new Proxy(compileStyles, composerHolderFunctionProxyHandler) as StyledComposer<C>;
+}
+
 export class Composer {
   readonly styles: ComposerStyle[] = EMPTY_STYLES;
   readonly configs: Map<ComposerConfig, unknown> = EMPTY_CONFIGS;
@@ -123,16 +132,10 @@ export class Composer {
     if (!isCreatingWithComposerFunction) {
       warnAboutCreatingInstanceDirectly(this.constructor as typeof Composer);
     }
-    // return;
-    const compileStyles: HolderFunction = () => {};
-
-    compileStyles.composer = this;
-
-    return new Proxy(compileStyles, composerHolderFunctionProxyHandler) as StyledComposer<typeof this>;
   }
 
-  get composer() {
-    return pickComposer(this);
+  get rawComposer() {
+    return this;
   }
 
   clone<T extends Composer>(
@@ -175,6 +178,8 @@ export class Composer {
       clone = this.setConfig(config, { ...existingConfig, ...changes });
     }
 
+    clone = createCompilerCallProxy(clone);
+
     this.updateConfigCache.set(key, clone);
 
     return clone;
@@ -203,7 +208,7 @@ export class Composer {
       return clone;
     }
 
-    clone = this.clone([...this.styles, style], this.configs);
+    clone = createCompilerCallProxy(this.clone([...this.styles, style], this.configs));
 
     this.reuseStyleMap.set(style, clone);
 
@@ -211,7 +216,7 @@ export class Composer {
   }
 
   init() {
-    return this as StyledComposer<typeof this>;
+    return this;
   }
 
   protected compileCache = maybeValue<CompileResult>();
@@ -232,7 +237,7 @@ export function composer<T extends Composer>(Composer: ConstructorOf<T>): Styled
     isCreatingWithComposerFunction = true;
     const composer = new Composer();
 
-    return composer.init();
+    return createCompilerCallProxy(composer.init());
   } finally {
     isCreatingWithComposerFunction = false;
   }

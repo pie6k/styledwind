@@ -3,43 +3,21 @@ import { Composer, composer } from "./Composer";
 import { CSSProperties } from "styled-components";
 import { convertToRem } from "./utils/convertUnits";
 
-const ROW: CSSProperties = { flexDirection: "row" };
-const COLUMN: CSSProperties = { flexDirection: "column" };
-
-const ALIGN_CENTER: CSSProperties = { alignItems: "center" };
-const ALIGN_START: CSSProperties = { alignItems: "flex-start" };
-const ALIGN_END: CSSProperties = { alignItems: "flex-end" };
-const ALIGN_STRETCH: CSSProperties = { alignItems: "stretch" };
-const ALIGN_BASELINE: CSSProperties = { alignItems: "baseline" };
-
-const JUSTIFY_CENTER: CSSProperties = { justifyContent: "center" };
-const JUSTIFY_START: CSSProperties = { justifyContent: "flex-start" };
-const JUSTIFY_END: CSSProperties = { justifyContent: "flex-end" };
-const JUSTIFY_BETWEEN: CSSProperties = { justifyContent: "space-between" };
-const JUSTIFY_AROUND: CSSProperties = { justifyContent: "space-around" };
-const JUSTIFY_EVENLY: CSSProperties = { justifyContent: "space-evenly" };
-
-const ROW_REVERSE: CSSProperties = { flexDirection: "row-reverse" };
-const WRAP: CSSProperties = { flexWrap: "wrap" };
-const INLINE: CSSProperties = { display: "inline-flex" };
-
-const FLEX: CSSProperties = { display: "flex" };
-
 export class FlexComposer extends Composer {
   init() {
-    return this.addStyle(FLEX);
+    return this.addStyle(`display: flex;`);
   }
 
   direction(value: CSSProperties["flexDirection"]) {
-    return this.addStyle({ flexDirection: value });
+    return this.addStyle(`flex-direction: ${value};`);
   }
 
   get row() {
-    return this.addStyle(ROW);
+    return this.addStyle(`flex-direction: row;`);
   }
 
   get column() {
-    return this.addStyle(COLUMN);
+    return this.addStyle(`flex-direction: column;`);
   }
 
   /**
@@ -70,60 +48,64 @@ export class FlexComposer extends Composer {
     return this.column;
   }
 
-  gap(value: number = 1) {
-    return this.addStyle({ gap: `${convertToRem(value, "level")}rem` });
+  gap(value: number | string = 1) {
+    if (typeof value === "string") {
+      return this.addStyle(`gap: ${value};`);
+    }
+
+    return this.addStyle(`gap: ${convertToRem(value, "level")}rem;`);
   }
 
   align(value: CSSProperties["alignItems"]) {
-    return this.addStyle({ alignItems: value });
+    return this.addStyle(`align-items: ${value};`);
   }
 
   get alignCenter() {
-    return this.addStyle(ALIGN_CENTER);
+    return this.addStyle(`align-items: center;`);
   }
 
   get alignStart() {
-    return this.addStyle(ALIGN_START);
+    return this.addStyle(`align-items: flex-start;`);
   }
 
   get alignEnd() {
-    return this.addStyle(ALIGN_END);
+    return this.addStyle(`align-items: flex-end;`);
   }
 
   get alignStretch() {
-    return this.addStyle(ALIGN_STRETCH);
+    return this.addStyle(`align-items: stretch;`);
   }
 
   get alignBaseline() {
-    return this.addStyle(ALIGN_BASELINE);
+    return this.addStyle(`align-items: baseline;`);
   }
 
   justify(value: CSSProperties["justifyContent"]) {
-    return this.addStyle({ justifyContent: value });
+    return this.addStyle(`justify-content: ${value};`);
   }
 
   get justifyCenter() {
-    return this.addStyle(JUSTIFY_CENTER);
+    return this.addStyle(`justify-content: center;`);
   }
 
   get justifyStart() {
-    return this.addStyle(JUSTIFY_START);
+    return this.addStyle(`justify-content: flex-start;`);
   }
 
   get justifyEnd() {
-    return this.addStyle(JUSTIFY_END);
+    return this.addStyle(`justify-content: flex-end;`);
   }
 
   get justifyBetween() {
-    return this.addStyle(JUSTIFY_BETWEEN);
+    return this.addStyle(`justify-content: space-between;`);
   }
 
   get justifyAround() {
-    return this.addStyle(JUSTIFY_AROUND);
+    return this.addStyle(`justify-content: space-around;`);
   }
 
   get justifyEvenly() {
-    return this.addStyle(JUSTIFY_EVENLY);
+    return this.addStyle(`justify-content: space-evenly;`);
   }
 
   get center() {
@@ -131,15 +113,15 @@ export class FlexComposer extends Composer {
   }
 
   get reverse() {
-    return this.addStyle(ROW_REVERSE);
+    return this.addStyle(`flex-direction: row-reverse;`);
   }
 
   get wrap() {
-    return this.addStyle(WRAP);
+    return this.addStyle(`flex-wrap: wrap;`);
   }
 
   get inline() {
-    return this.addStyle(INLINE);
+    return this.addStyle(`display: inline-flex;`);
   }
 }
 

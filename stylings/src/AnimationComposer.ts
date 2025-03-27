@@ -498,18 +498,27 @@ export class AnimationComposer extends Composer {
 
     const willChangeProperties = getWillChangeProperties(currentConfig.properties);
 
-    const rule = simplifyRule(css`
-      animation-name: ${animation};
+    // prettier-ignore
+    const animationName = css`animation-name: ${animation};`;
 
-      ${{
-        animationDuration: addUnit(currentConfig.duration, "ms"),
-        animationTimingFunction: currentConfig.easing,
-        willChange: willChangeProperties?.join(", ") ?? undefined,
-        ...variables,
-      }}
-    `);
+    // const rule = simplifyRule(css`
+    //   animation-name: ${animation};
 
-    return super.compile(rule);
+    //   ${{
+    //     animationDuration: addUnit(currentConfig.duration, "ms"),
+    //     animationTimingFunction: currentConfig.easing,
+    //     willChange: willChangeProperties?.join(", ") ?? undefined,
+    //     ...variables,
+    //   }}
+    // `);
+
+    return super.compile([
+      animationName,
+      `animation-duration: ${addUnit(currentConfig.duration, "ms")};`,
+      `animation-timing-function: ${currentConfig.easing};`,
+      willChangeProperties ? `will-change: ${willChangeProperties.join(", ")};` : undefined,
+      ...Object.entries(variables).map(([key, value]) => `${key}: ${value};`),
+    ]);
   }
 }
 

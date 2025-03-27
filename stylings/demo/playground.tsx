@@ -1,7 +1,11 @@
 import * as sw from "@";
 
-import { $flex } from "@";
-
-console.log($flex.vertical.gap(2)());
+import { $flex, createTheme } from "@";
 
 Reflect.set(window, "sw", sw);
+
+const { $flex: themedFlex } = createTheme({
+  $flex,
+});
+
+themedFlex.gap(2).vertical.alignCenter.justifyAround();

@@ -80,3 +80,26 @@ If we want to use a different tag than `div`, we can use the convention `UI.Name
 TypeScript will automatically infer the correct types based on this convention.
 
 Optionally, you can pass `as` prop to the component to use a different tag, however, in this case TypeScript will not update the component type to match the new underlying tag.
+
+Finally, when our components grow it might look like this:
+
+```tsx filename="Form.tsx" 
+import { UI, $flex, $font } from "stylings";
+
+import { animations, typo } from "./styles";
+
+function Form() {
+  return (
+    <UI.FormHolder styles={[$flex.vertical.gap(3), animations.fadeIn]}>
+      <UI.FormHeader_h1 styles={typo.header}>Form</UI.FormHeader_h1>
+      <UI.FormIntro_p styles={typo.copy.secondary}>
+        Intro here
+      </UI.FormIntro_p>
+      <UI.FormBody styles={flex.vertical.gap(2)}>
+        {/* ... */}
+        {/* ... */}
+      </UI.FormBody>
+    </UI.FormHolder>
+  );
+}
+```

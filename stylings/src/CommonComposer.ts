@@ -6,47 +6,47 @@ import { resolveMaybeBaseValue } from "./SizeComposer";
 
 export class CommonComposer extends Composer {
   get disabled() {
-    return this.addStyle({ opacity: 0.5, pointerEvents: "none" });
+    return this.addStyle([`opacity: 0.5;`, `pointer-events: none;`]);
   }
 
   get round() {
-    return this.addStyle({ borderRadius: "1000px" });
+    return this.addStyle(`border-radius: 1000px;`);
   }
 
   get secondary() {
-    return this.addStyle({ opacity: 0.5 });
+    return this.addStyle(`opacity: 0.5;`);
   }
 
   get tertiary() {
-    return this.addStyle({ opacity: 0.25 });
+    return this.addStyle(`opacity: 0.25;`);
   }
 
   get quaternary() {
-    return this.addStyle({ opacity: 0.125 });
+    return this.addStyle(`opacity: 0.125;`);
   }
 
   get notAllowed() {
-    return this.addStyle({ cursor: "not-allowed", opacity: 0.5 });
+    return this.addStyle([`cursor: not-allowed;`, `opacity: 0.5;`]);
   }
 
   get fullWidth() {
-    return this.addStyle({ width: "100%" });
+    return this.addStyle(`width: 100%;`);
   }
 
   get fullHeight() {
-    return this.addStyle({ height: "100%" });
+    return this.addStyle(`height: 100%;`);
   }
 
   width(width: Length) {
-    return this.addStyle({ width: resolveMaybeBaseValue(width) });
+    return this.addStyle(`width: ${resolveMaybeBaseValue(width)};`);
   }
 
   height(height: Length) {
-    return this.addStyle({ height: resolveMaybeBaseValue(height) });
+    return this.addStyle(`height: ${resolveMaybeBaseValue(height)};`);
   }
 
   get circle() {
-    return this.addStyle({ borderRadius: "1000px" });
+    return this.addStyle(`border-radius: 1000px;`);
   }
 
   size(size: Length) {
@@ -54,7 +54,7 @@ export class CommonComposer extends Composer {
   }
 
   z(z: number) {
-    return this.addStyle({ zIndex: z });
+    return this.addStyle(`z-index: ${z};`);
   }
 
   get widthFull() {
@@ -66,31 +66,31 @@ export class CommonComposer extends Composer {
   }
 
   get relative() {
-    return this.addStyle({ position: "relative" });
+    return this.addStyle(`position: relative;`);
   }
 
   get absolute() {
-    return this.addStyle({ position: "absolute" });
+    return this.addStyle(`position: absolute;`);
   }
 
   get fixed() {
-    return this.addStyle({ position: "fixed" });
+    return this.addStyle(`position: fixed;`);
   }
 
   get notSelectable() {
-    return this.addStyle({ userSelect: "none" });
+    return this.addStyle(`user-select: none;`);
   }
 
   cursor(cursor: Properties["cursor"]) {
-    return this.addStyle({ cursor });
+    return this.addStyle(`cursor: ${cursor};`);
   }
 
   pt(py: Length) {
-    return this.addStyle({ paddingTop: resolveMaybeBaseValue(py) });
+    return this.addStyle(`padding-top: ${resolveMaybeBaseValue(py)};`);
   }
 
   pb(py: Length) {
-    return this.addStyle({ paddingBottom: resolveMaybeBaseValue(py) });
+    return this.addStyle(`padding-bottom: ${resolveMaybeBaseValue(py)};`);
   }
 
   py(px: Length) {
@@ -98,11 +98,11 @@ export class CommonComposer extends Composer {
   }
 
   pl(px: Length) {
-    return this.addStyle({ paddingLeft: resolveMaybeBaseValue(px) });
+    return this.addStyle(`padding-left: ${resolveMaybeBaseValue(px)};`);
   }
 
   pr(px: Length) {
-    return this.addStyle({ paddingRight: resolveMaybeBaseValue(px) });
+    return this.addStyle(`padding-right: ${resolveMaybeBaseValue(px)};`);
   }
 
   px(px: Length) {
@@ -114,11 +114,11 @@ export class CommonComposer extends Composer {
   }
 
   mt(mt: Length) {
-    return this.addStyle({ marginTop: resolveMaybeBaseValue(mt) });
+    return this.addStyle(`margin-top: ${resolveMaybeBaseValue(mt)};`);
   }
 
   mb(mb: Length) {
-    return this.addStyle({ marginBottom: resolveMaybeBaseValue(mb) });
+    return this.addStyle(`margin-bottom: ${resolveMaybeBaseValue(mb)};`);
   }
 
   my(my: Length) {
@@ -126,11 +126,11 @@ export class CommonComposer extends Composer {
   }
 
   ml(ml: Length) {
-    return this.addStyle({ marginLeft: resolveMaybeBaseValue(ml) });
+    return this.addStyle(`margin-left: ${resolveMaybeBaseValue(ml)};`);
   }
 
   mr(mr: Length) {
-    return this.addStyle({ marginRight: resolveMaybeBaseValue(mr) });
+    return this.addStyle(`margin-right: ${resolveMaybeBaseValue(mr)};`);
   }
 
   mx(mx: Length) {
@@ -142,19 +142,19 @@ export class CommonComposer extends Composer {
   }
 
   left(left: Length) {
-    return this.addStyle({ left: resolveMaybeBaseValue(left) });
+    return this.addStyle(`left: ${resolveMaybeBaseValue(left)};`);
   }
 
   right(right: Length) {
-    return this.addStyle({ right: resolveMaybeBaseValue(right) });
+    return this.addStyle(`right: ${resolveMaybeBaseValue(right)};`);
   }
 
   top(top: Length) {
-    return this.addStyle({ top: resolveMaybeBaseValue(top) });
+    return this.addStyle(`top: ${resolveMaybeBaseValue(top)};`);
   }
 
   bottom(bottom: Length) {
-    return this.addStyle({ bottom: resolveMaybeBaseValue(bottom) });
+    return this.addStyle(`bottom: ${resolveMaybeBaseValue(bottom)};`);
   }
 
   inset(inset: Length) {
@@ -162,7 +162,7 @@ export class CommonComposer extends Composer {
   }
 
   aspectRatio(ratio: number) {
-    return this.addStyle({ aspectRatio: ratio });
+    return this.addStyle(`aspect-ratio: ${ratio};`);
   }
 
   get square() {
@@ -170,31 +170,31 @@ export class CommonComposer extends Composer {
   }
 
   maxWidth(maxWidth: Length) {
-    return this.addStyle({ maxWidth: resolveMaybeBaseValue(maxWidth) });
+    return this.addStyle(`max-width: ${resolveMaybeBaseValue(maxWidth)};`);
   }
 
   maxHeight(maxHeight: Length) {
-    return this.addStyle({ maxHeight: resolveMaybeBaseValue(maxHeight) });
+    return this.addStyle(`max-height: ${resolveMaybeBaseValue(maxHeight)};`);
   }
 
   minWidth(minWidth: Length) {
-    return this.addStyle({ minWidth: resolveMaybeBaseValue(minWidth) });
+    return this.addStyle(`min-width: ${resolveMaybeBaseValue(minWidth)};`);
   }
 
   minHeight(minHeight: Length) {
-    return this.addStyle({ minHeight: resolveMaybeBaseValue(minHeight) });
+    return this.addStyle(`min-height: ${resolveMaybeBaseValue(minHeight)};`);
   }
 
   x(x: Length) {
-    return this.addStyle({ transform: `translateX(${resolveMaybeBaseValue(x)})` });
+    return this.addStyle(`transform: translateX(${resolveMaybeBaseValue(x)});`);
   }
 
   y(y: Length) {
-    return this.addStyle({ transform: `translateY(${resolveMaybeBaseValue(y)})` });
+    return this.addStyle(`transform: translateY(${resolveMaybeBaseValue(y)});`);
   }
 
   get overflowHidden() {
-    return this.addStyle({ overflow: "hidden" });
+    return this.addStyle(`overflow: hidden;`);
   }
 
   lineClamp(lines: number) {

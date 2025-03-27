@@ -1,5 +1,6 @@
 import {
   $color,
+  $flex,
   $font,
   composeThemeVariants,
   createTheme,
@@ -179,7 +180,7 @@ describe("theme", () => {
       // @ts-expect-error
       theme.color.compile()();
     }).toThrowErrorMatchingInlineSnapshot(
-      `[Error: Themed composer called a method that did not return a composer (compile)]`,
+      `[Error: Failed to get theme value.]`,
     );
   });
 
@@ -258,6 +259,20 @@ describe("theme", () => {
     ).toBe(
       //
       $theme.colors.primary.addStyle({ accentColor: "red" }).hover(),
+    );
+  });
+
+  test("cache with configs", () => {
+    const { $flex: themedFlex } = createTheme({
+      $flex: $flex,
+    });
+
+    // expect(themedFlex.gap(2).vertical.alignCenter.justifyAround).toBe(
+    //   themedFlex.gap(2).vertical.alignCenter.justifyAround,
+    // );
+
+    expect(themedFlex.gap(2).vertical.alignCenter.justifyAround()).toBe(
+      themedFlex.gap(2).vertical.alignCenter.justifyAround(),
     );
   });
 });

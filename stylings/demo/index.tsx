@@ -1,3 +1,3 @@
-import "./app";
+// import "./app";
 // import "./playground";
 import "./perf";
