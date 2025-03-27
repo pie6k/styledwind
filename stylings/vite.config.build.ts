@@ -13,9 +13,9 @@ function collectExternalDependencies() {
 export default defineConfig({
   build: {
     lib: {
-      formats: ["es"],
+      formats: ["es", "cjs"],
       entry: resolve(__dirname, "src", "index.ts"),
-      fileName: () => "index.js",
+      fileName: (format) => `index.${format}.js`,
     },
     outDir: resolve(__dirname, "dist"),
     rollupOptions: {

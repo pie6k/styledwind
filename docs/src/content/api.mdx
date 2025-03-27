@@ -1,10 +1,8 @@
-# API
+# API Reference
 
 ## Core Composers
 
 ### Animation Composer (`$animation`)
-
-The animation composer provides methods to create and control animations.
 
 ```typescript
 $animation
@@ -38,8 +36,6 @@ $animation
 
 ### Color Composer (`$color`)
 
-The color composer helps manage colors and their variations.
-
 ```typescript
 $color(color)
   .define(value)           // Define color configuration
@@ -68,8 +64,6 @@ $color(color)
 - `withBorder` - Add border
 
 ### Common Composer (`$common`)
-
-The common composer provides basic styling utilities.
 
 #### Layout
 - `width(width)` - Set width
@@ -118,8 +112,6 @@ The common composer provides basic styling utilities.
 
 ### Flex Composer (`$flex`)
 
-The flex composer provides flexbox layout utilities.
-
 ```typescript
 $flex
   .direction(direction)     // Set flex direction
@@ -163,8 +155,6 @@ $flex
 - `inline` - Make flex container inline
 
 ### Font Composer (`$font`)
-
-The font composer provides typography styling utilities.
 
 ```typescript
 $font
@@ -211,8 +201,6 @@ $font
 - `tertiary` - Use tertiary font
 
 ### Grid Composer (`$grid`)
-
-The grid composer provides CSS Grid layout utilities.
 
 ```typescript
 $grid
@@ -261,8 +249,6 @@ $grid
 
 ### Shadow Composer (`$shadow`)
 
-The shadow composer provides box shadow utilities.
-
 ```typescript
 $shadow
   .define(value)          // Define shadow configuration
@@ -275,8 +261,6 @@ $shadow
 ```
 
 ### Size Composer (`$size`)
-
-The size composer provides sizing utilities.
 
 ```typescript
 $size
@@ -322,8 +306,6 @@ $size
 
 ### Surface Composer (`$surface`)
 
-The surface composer extends the flex composer with additional surface styling.
-
 ```typescript
 $surface(config)
   .padding(padding)      // Set padding
@@ -348,8 +330,6 @@ $surface(config)
 - `noPR` - Remove right padding
 
 ### Transition Composer (`$transition`)
-
-The transition composer provides transition utilities.
 
 ```typescript
 $transition
@@ -435,25 +415,4 @@ import { UI } from 'stylings'
 
 All components support the following props:
 - `as` - Change the underlying HTML element
-- `styles` - Apply styles using composers
-
-## Types
-
-### Length
-A type representing CSS length values:
-```typescript
-type Length = string | number
-```
-
-### StylesInput
-A type for style inputs:
-```typescript
-type StylesInput = Falsy | AnyStyledComposer | Array<AnyStyledComposer>
-```
-
-### ThemedValue
-A type for theme-aware values:
-```typescript
-type ThemedValue<V extends ThemedValueInput = ThemedValueInput> = 
-  V extends Primitive ? ThemedValueGetter<V> : V
-```
+- `styles` - Apply styles using composers 
