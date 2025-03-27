@@ -18,10 +18,10 @@ export const metadata = {
   appleWebApp: {
     title: "stylings",
   },
-  other: {
-    "msapplication-TileImage": "/ms-icon-144x144.png",
-    "msapplication-TileColor": "#fff",
-  },
+  // other: {
+  //   "msapplication-TileImage": "/ms-icon-144x144.png",
+  //   "msapplication-TileColor": "#fff",
+  // },
   twitter: {
     site: "https://stylings.dev",
   },
