@@ -24,6 +24,21 @@ export const metadata = {
   // },
   twitter: {
     site: "https://stylings.dev",
+    card: "summary_large_image",
+  },
+  openGraph: {
+    type: "website",
+    url: "https://stylings.dev",
+    title: "stylings",
+    description: "stylings: joyful styling for React and Styled Components",
+    images: [
+      {
+        url: "https://stylings.dev/opengraph-image.png",
+        width: 1200,
+        height: 630,
+        alt: "stylings",
+      },
+    ],
   },
 };
 
