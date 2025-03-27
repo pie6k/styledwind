@@ -13,5 +13,5 @@
     "stylings": "yarn workspace stylings",
     "docs": "yarn workspace stylings-docs"
   },
-  "packageManager": "yarn@4.5.0"
+  "packageManager": "yarn@4.4.1"
 }
